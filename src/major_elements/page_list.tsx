@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu, Icon } from "semantic-ui-react";
+import { Menu, Icon, Header } from "semantic-ui-react";
 import { Link, NavLink } from "react-router-dom";
 
 
@@ -8,6 +8,13 @@ export class PageList extends React.Component<{}, {}> {
     channels = ["general", "random"];
 
     page_items = [
+        <Menu.Item
+            key="home"
+            as={NavLink}
+            to={{ pathname: `/` }}>
+            <h1>Home</h1>
+        </Menu.Item>,
+
         <Menu.Item
             key="seq_search"
             as={NavLink}
@@ -27,7 +34,6 @@ export class PageList extends React.Component<{}, {}> {
         return (
             <Menu inverted pointing vertical fixed={"left"}>
                 <Menu.Item>
-                    <h1>Services</h1>
                     <Menu.Menu>{this.page_items}</Menu.Menu>
                 </Menu.Item>
             </Menu>

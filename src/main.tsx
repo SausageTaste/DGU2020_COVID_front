@@ -12,7 +12,7 @@ const switches = <Switch>
     <Route
         exact={true}
         path="/"
-        render={() => <h1>Sample Application</h1>} />
+        component={pag.HomePage} />
     <Route 
         exact={true}
         path="/seq_search"
@@ -21,6 +21,7 @@ const switches = <Switch>
         exact={true}
         path="/gl_view"
         component={pag.GLView} />
+    <Route component={pag.Page404} />
 </Switch>;
 
 

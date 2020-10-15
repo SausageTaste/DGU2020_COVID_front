@@ -2,7 +2,7 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader } from 'semantic-ui-react';
 
-import { requestEcho } from "./../utils/client";
+import * as clt from "./../utils/client";
 
 
 class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
@@ -100,9 +100,9 @@ export class SequenceSearch extends React.Component<SequenceSearchProps, Sequenc
             resultStr: "",
         });
 
-        requestEcho(this.state.userInput)
+        clt.similarSeqIDs(this.state.userInput, 5)
             .then((response) => {
-                this.setState({resultStr: JSON.stringify(response, null, '\t')});
+                this.setState({resultStr: JSON.stringify(response.data, null, '\t')});
                 this.setState({isLoading: false});
             })
             .catch(err => {

@@ -1,11 +1,11 @@
 import Axios, { AxiosInstance, AxiosResponse, CancelToken } from "axios";
 
 
-const baseURL = "http://localhost:5000/practice-chatapp-e41f8/us-central1/v1";
+const baseURL = "http://192.168.0.105:8000/api";
 
 const instance: AxiosInstance = Axios.create({
     baseURL,
-    timeout: 10000
+    timeout: 1000000,
 });
 
 
@@ -31,5 +31,9 @@ export const postMessage = (channelName: string, payload: Message, cancelToken: 
 }
 
 export const requestEcho = (message: string, cancelToken: CancelToken = null): Promise<AxiosResponse> => {
-    return instance.post(`/echo`, {body: message}, {cancelToken});
+    return instance.post("echo/", {body: message}, {cancelToken});
 }
+
+export const similarSeqIDs = (sequence: string, how_many: number, cancelToken: CancelToken = null): Promise<AxiosResponse> => {
+    return instance.post("similar_seq_ids/", {seq: sequence, how_many: how_many}, {cancelToken});
+};

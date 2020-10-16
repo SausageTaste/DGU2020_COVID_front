@@ -1,6 +1,6 @@
 {
-  "name": "DGU2020_COVID_front",
-  "version": "0.1.0",
+  "name": "dgu2020_covid_front",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {

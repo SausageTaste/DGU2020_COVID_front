@@ -6,12 +6,12 @@ module.exports = [{
     cache: true,
     devtool: "source-map",
     devServer: {
-        historyApiFallback: true
+        historyApiFallback: true,
     },
     context: path.resolve(__dirname, "src"),
     entry: "./main.tsx",
     output: {
-        filename: "./dist/js/build.js"
+        filename: "./dist/js/build.js",
     },
 
     module: {
@@ -20,15 +20,15 @@ module.exports = [{
                 test: /\.ts(x?)$/,
                 exclude: /node_module/,
                 use: ['ts-loader'],
-            }
-        ]
+            },
+        ],
     },
 
     resolve: {
         modules: [
             path.join(__dirname, "src"),
-            "node_modules"
+            "node_modules",
         ],
-        extensions: [".ts", ".tsx", ".js"]
-    }
+        extensions: [".ts", ".tsx", ".js"],
+    },
 }];

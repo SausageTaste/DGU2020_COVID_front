@@ -1,7 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse, CancelToken } from "axios";
 
 
-const baseURL = "http://192.168.0.105:8000/api";
+const baseURL = "http://localhost:8000/api";
 
 const instance: AxiosInstance = Axios.create({
     baseURL,

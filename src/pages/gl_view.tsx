@@ -6,6 +6,12 @@ import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader } from
 const FPS = 10;
 
 
+function glfunc(selectors: string): WebGLRenderingContext {
+    const canvas: any = document.querySelector(selectors);
+    return canvas.getContext("webgl");
+}
+
+
 interface GLWidgetProps {
     id: string
     width: string
@@ -43,8 +49,7 @@ class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
     }
 
     private draw() {
-        const canvas: any = document.querySelector("#" + this.props.id);
-        const gl = canvas.getContext("webgl");
+        const gl = glfunc("#" + this.props.id)
 
         const now = Date.now();
         const color = (now / 1000.0) % 1.0;

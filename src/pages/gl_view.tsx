@@ -332,10 +332,7 @@ void main() {
     //////// Methods ////////
 
     constructor() {
-        this.on_mouse_down = this.on_mouse_down.bind(this);
-        this.on_mouse_up = this.on_mouse_up.bind(this);
-        this.on_mouse_leave = this.on_mouse_leave.bind(this);
-        this.on_mouse_move = this.on_mouse_move.bind(this);
+
     }
 
     public init(gl: WebGLRenderingContext) {
@@ -415,12 +412,10 @@ void main() {
 
 
     public on_mouse_down(e: React.MouseEvent) {
-        console.log(`on_mouse_down: ${e.clientX}, ${e.clientX}`);
         this.mouse_captured = true;
     }
 
     public on_mouse_up(e: React.MouseEvent) {
-        console.log(`on_mouse_down: ${e.clientX}, ${e.clientX}`);
         this.mouse_captured = false;
     }
 

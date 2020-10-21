@@ -31,6 +31,7 @@ interface GLWidgetProps {
 
 interface GLWidgetState {
     interval: NodeJS.Timeout;
+    border_style: string;
 };
 
 export class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
@@ -40,6 +41,7 @@ export class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
 
         this.state = {
             interval: null,
+            border_style: "hiddle",
         };
     }
 
@@ -50,12 +52,39 @@ export class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
             id={this.props.id}
             width={this.props.width}
             height={this.props.height}
-            onMouseEnter={ud.on_mouse_enter}
-            onMouseLeave={ud.on_mouse_leave}
-            onMouseDown={ud.on_mouse_down}
-            onMouseUp={ud.on_mouse_up}
-            onMouseMove={ud.on_mouse_move}
-            onClick={ud.on_click}
+            style={{
+                borderColor: "red",
+                borderWidth: 2,
+                borderTopLeftRadius: 1,
+                borderStyle: this.state.border_style,
+            }}
+
+            onMouseEnter={(e) => {
+                this.setState({border_style: "solid"});
+                if (ud.on_mouse_enter)
+                    ud.on_mouse_enter(e);
+            }}
+            onMouseLeave={(e) => {
+                this.setState({border_style: "hidden"});
+                if (ud.on_mouse_leave)
+                    ud.on_mouse_leave(e);
+            }}
+            onMouseDown={(e) => {
+                if (ud.on_mouse_down)
+                    ud.on_mouse_down(e);
+            }}
+            onMouseUp={(e) => {
+                if (ud.on_mouse_up)
+                    ud.on_mouse_up(e);
+            }}
+            onMouseMove={(e) => {
+                if (ud.on_mouse_move)
+                    ud.on_mouse_move(e);
+            }}
+            onClick={(e) => {
+                if (ud.on_click)
+                    ud.on_click(e);
+            }}
         ></canvas>;
     }
 

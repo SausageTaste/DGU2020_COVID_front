@@ -456,7 +456,7 @@ export class GLView extends React.Component<GLViewProps, GLViewState> {
                 <Header as='h1' dividing>OpenGL View</Header>
 
                 <Segment basic textAlign='center'>
-                    <GLWidget id="glCanvas" width="800" height="450" fps={24} userdata={new MyDataGL()} />
+                    <GLWidget id="glCanvas" width="800" height="450" fps={30} userdata={new MyDataGL()} />
                 </Segment>
             </div>
         );

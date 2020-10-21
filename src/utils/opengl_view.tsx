@@ -7,6 +7,11 @@ function glfunc(selectors: string): WebGLRenderingContext {
 }
 
 
+export interface GLUserData {
+    init_gl: (gl: WebGLRenderingContext) => void;
+}
+
+
 interface GLWidgetProps {
     id: string;
     width: string;
@@ -14,7 +19,7 @@ interface GLWidgetProps {
     fps: number;
 
     draw_func: (gl: WebGLRenderingContext, userdata: any) => void;
-    userdata: any;
+    userdata: GLUserData;
 };
 
 interface GLWidgetState {
@@ -37,6 +42,7 @@ export class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
 
     public componentDidMount() {
         const gl = glfunc("#" + this.props.id);
+        this.props.userdata.init_gl(gl);
         const inter = setInterval(() => this.props.draw_func(gl, this.props.userdata), 1000 / this.props.fps);
         this.setState({interval: inter});
     }

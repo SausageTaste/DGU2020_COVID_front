@@ -346,13 +346,12 @@ void main() {
         const vert_shader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vert_shader, this.vert_shader_src);
         gl.compileShader(vert_shader);
-
-        const vert_log = gl.getShaderInfoLog(vert_shader);
-        console.log(vert_log);
+        console.log(gl.getShaderInfoLog(vert_shader));
 
         const frag_shader = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(frag_shader, this.frag_shader_src);
         gl.compileShader(frag_shader);
+        console.log(gl.getShaderInfoLog(frag_shader));
 
         this.program = gl.createProgram();
         gl.attachShader(this.program, vert_shader);
@@ -381,7 +380,7 @@ function draw_color(gl: WebGLRenderingContext, userdata: MyDataGL) {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     // Clear the canvas.
-    gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     // Tell it to use our program (pair of shaders)
@@ -403,7 +402,7 @@ function draw_color(gl: WebGLRenderingContext, userdata: MyDataGL) {
     const proj_mat = create_perspective_mat(40, gl.canvas.width / gl.canvas.height, 0.01, 100);
 
     const translate_mat = create_translate_mat(0, 0, -2);
-    const rotate_mat = create_rotate_mat(now * 20, 0.2, 1, 0);
+    const rotate_mat = create_rotate_mat(now * 30, 0.2, 1, 0);
     const model_mat = translate_mat.multiply(rotate_mat);
 
     gl.uniformMatrix4fv(gl.getUniformLocation(userdata.program, "u_model_mat"), false, model_mat.data)
@@ -431,7 +430,7 @@ export class GLView extends React.Component<GLViewProps, GLViewState> {
                 <Header as='h1' dividing>OpenGL View</Header>
 
                 <Segment basic textAlign='center'>
-                    <GLWidget id="glCanvas" width="800" height="450" fps={60} draw_func={draw_color} userdata={new MyDataGL()} />
+                    <GLWidget id="glCanvas" width="800" height="450" fps={24} draw_func={draw_color} userdata={new MyDataGL()} />
                 </Segment>
             </div>
         );

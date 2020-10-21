@@ -148,22 +148,85 @@ void main() {
     private frag_shader_src: string = `
 precision mediump float;
 
+
 uniform vec3 u_view_pos;
 
 varying vec3 v_frag_pos;
 varying vec3 v_frag_normal;
 
-const vec3 to_light_direc = normalize(vec3(0.0, 0.6, 1.0));
+
+const vec3 to_light_direc = normalize(vec3(0.0, 0.0, 1.0));
+
+const float PI = 3.14159265;
+const float EPSILON = 0.0001;
+
+const vec3 ALBEDO = vec3(1.0);
+const float METALLIC = 0.0;
+const float ROUGHNESS = 0.3;
+
+
+float _DistributionGGX(float NdotH, float roughness) {
+    float a = roughness * roughness;
+    float a2 = a*a;
+    float NdotH2 = NdotH*NdotH;
+
+    float nom   = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+
+    return nom / max(denom, EPSILON); // prevent divide by zero for roughness=0.0 and NdotH=1.0
+}
+
+float _GeometrySchlickGGX(float NdotV, float roughness) {
+    float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
+
+float _GeometrySmith(float NdotV, float NdotL, float roughness) {
+    float ggx2 = _GeometrySchlickGGX(NdotV, roughness);
+    float ggx1 = _GeometrySchlickGGX(NdotL, roughness);
+    return ggx1 * ggx2;
+}
+
+vec3 _fresnelSchlick(float cosTheta, vec3 F0) {
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+vec3 integratePBR(vec3 N, vec3 V, vec3 F0, vec3 L, vec3 albedo, float roughness, float metallic) {
+    vec3 H = normalize(V + L);
+
+    float NdotL = max(dot(N, L), 0.0);
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotH = max(dot(N, H), 0.0);
+
+    float NDF = _DistributionGGX(NdotH, roughness);
+    float G   = _GeometrySmith(NdotV, NdotL, roughness);
+    vec3  F   = _fresnelSchlick(NdotH, F0);
+
+    vec3  nominator   = NDF * G * F;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * NdotL;
+    vec3  specular    = nominator / max(denominator, EPSILON);
+
+    vec3 kD = vec3(1.0) - F;
+    kD *= 1.0 - metallic;
+
+    return (kD * albedo / PI + specular) * NdotL;
+}
 
 
 void main() {
-    float diffuse = max(dot(to_light_direc, v_frag_normal), 0.0);
-
     vec3 viewDir    = normalize(u_view_pos - v_frag_pos);
-    vec3 halfwayDir = normalize(to_light_direc + viewDir);
-    float specular = pow(max(dot(v_frag_normal, halfwayDir), 0.0), 8.0);
 
-    gl_FragColor.rgb = vec3(0.5) * (diffuse + specular) + vec3(0.1);
+    vec3 F0 = mix(vec3(0.04), ALBEDO, METALLIC);
+    vec3 radiance = vec3(2.0);
+    vec3 pbrL = integratePBR(v_frag_normal, viewDir, F0, to_light_direc, ALBEDO, ROUGHNESS, METALLIC) * radiance;
+
+    gl_FragColor.rgb = pbrL + vec3(0.1);
     gl_FragColor.a = 1.0;
 }
 `;

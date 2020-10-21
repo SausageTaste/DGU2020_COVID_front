@@ -14,21 +14,18 @@ class Mat4 {
         0, 0, 0, 0,
     ];
 
+    //////// Methods ////////
+
     public transpose() {
-        let new_data = [
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-        ];
+        const result = new Mat4();
 
         for (let i = 0; i < 4; ++i) {
             for (let j = 0; j < 4; ++j) {
-                new_data[4*i + j] = this.data[4*j + i];
+                result.data[4*i + j] = this.data[4*j + i];
             }
         }
 
-        this.data = new_data;
+        return result;
     };
 
     public at(row: number, col: number) {
@@ -72,8 +69,8 @@ function create_perspective_mat(fov_deg: number, aspect: number, n: number, f: n
                                 0,                0, -1 * (f + n) / (f - n), -1 * (2*f*n) / (f - n),
                                 0,                0,                     -1,                      0,
     ];
-    result.transpose();
-    return result;
+
+    return result.transpose();
 }
 
 function create_translate_mat(x: number, y: number, z: number) {
@@ -103,8 +100,8 @@ function create_rotate_mat(degree: number, x: number, y: number, z: number) {
                    sin(ya),                        -1*sin(xa)*cos(ya),                           cos(xa)*cos(ya), 0.0,
                        0.0,                                       0.0,                                       0.0, 1.0,
     ];
-    result.transpose();
-    return result;
+
+    return result.transpose();
 }
 
 function create_identity_mat() {

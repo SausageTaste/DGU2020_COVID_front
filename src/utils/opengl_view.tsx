@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 
-function glfunc(selectors: string): WebGLRenderingContext {
+function get_gl_context(selectors: string): WebGLRenderingContext {
     const canvas: any = document.querySelector(selectors);
     return canvas.getContext("webgl");
 }
@@ -41,7 +41,7 @@ export class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
     }
 
     public componentDidMount() {
-        const gl = glfunc("#" + this.props.id);
+        const gl = this.glfunc();
         const ud = this.props.userdata;
 
         ud.init(gl);
@@ -52,6 +52,10 @@ export class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
     public componentWillUnmount() {
         clearInterval(this.state.interval);
         this.setState({interval: null});
+    }
+
+    private glfunc() {
+        return get_gl_context("#" + this.props.id);
     }
 
 }

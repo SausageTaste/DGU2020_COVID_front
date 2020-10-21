@@ -125,7 +125,7 @@ class MyDataGL implements GLUserData {
 attribute vec4 a_position;
 attribute vec4 a_normal;
 
-uniform mat4 u_proj_mat;
+uniform mat4 u_proj_view_mat;
 uniform mat4 u_model_mat;
 
 varying vec3 v_frag_pos;
@@ -138,7 +138,7 @@ void main() {
     v_frag_pos = world_pos.xyz;
     v_frag_normal = normalize((u_model_mat * vec4(a_normal.xyz, 0.0)).xyz);
 
-    gl_Position = u_proj_mat * world_pos;
+    gl_Position = u_proj_view_mat * world_pos;
 }
 `;
 
@@ -326,10 +326,16 @@ void main() {
     private vert_buf_pos: WebGLBuffer = null;
     private vert_buf_normal: WebGLBuffer = null;
 
+    private camera_pos = [0, 0, 0];
+    private mouse_captured = false;
+
     //////// Methods ////////
 
     constructor() {
-
+        this.on_mouse_down = this.on_mouse_down.bind(this);
+        this.on_mouse_up = this.on_mouse_up.bind(this);
+        this.on_mouse_leave = this.on_mouse_leave.bind(this);
+        this.on_mouse_move = this.on_mouse_move.bind(this);
     }
 
     public init(gl: WebGLRenderingContext) {
@@ -373,7 +379,7 @@ void main() {
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         // Clear the canvas.
-        gl.clearColor(0, 0, 0, 0);
+        gl.clearColor(0, 0, 0, 0.1);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         // Tell it to use our program (pair of shaders)
@@ -391,19 +397,44 @@ void main() {
         gl.vertexAttribPointer(normal_loc, 3, gl.FLOAT, false, 0, 0);
 
         // Uniforms
-        const identity = create_identity_mat();
         const proj_mat = create_perspective_mat(40, gl.canvas.width / gl.canvas.height, 0.01, 100);
+        const view_mat = create_translate_mat(-this.camera_pos[0], -this.camera_pos[1], -this.camera_pos[2]);
+        const proj_view_mat = proj_mat.multiply(view_mat);
 
         const translate_mat = create_translate_mat(0, 0, -2);
         const rotate_mat = create_rotate_mat(now * 30, 0.2, 1, 0);
         const model_mat = translate_mat.multiply(rotate_mat);
 
         gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "u_model_mat"), false, model_mat.data)
-        gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "u_proj_mat"), false, proj_mat.data)
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "u_proj_view_mat"), false, proj_view_mat.data)
 
-        gl.uniform3f(gl.getUniformLocation(this.program, "u_view_pos"), 0, 0, 0);
+        gl.uniform3f(gl.getUniformLocation(this.program, "u_view_pos"), this.camera_pos[0], this.camera_pos[1], this.camera_pos[2]);
 
         gl.drawArrays(gl.TRIANGLES, 0, 36);
+    }
+
+
+    public on_mouse_down(e: React.MouseEvent) {
+        console.log(`on_mouse_down: ${e.clientX}, ${e.clientX}`);
+        this.mouse_captured = true;
+    }
+
+    public on_mouse_up(e: React.MouseEvent) {
+        console.log(`on_mouse_down: ${e.clientX}, ${e.clientX}`);
+        this.mouse_captured = false;
+    }
+
+    public on_mouse_leave(e: React.MouseEvent) {
+        this.mouse_captured = false;
+    }
+
+    public on_mouse_move(e: React.MouseEvent) {
+        const scalar = 0.003;
+
+        if (this.mouse_captured) {
+            this.camera_pos[1] += e.movementY * scalar;
+            this.camera_pos[0] += -e.movementX * scalar;
+        }
     }
 
 };

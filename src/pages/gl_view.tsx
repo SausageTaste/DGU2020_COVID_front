@@ -2,76 +2,35 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader } from 'semantic-ui-react';
 
-
-const FPS = 10;
-
-
-function glfunc(selectors: string): WebGLRenderingContext {
-    const canvas: any = document.querySelector(selectors);
-    return canvas.getContext("webgl");
-}
+import { GLWidget } from "./../utils/opengl_view"
 
 
-interface GLWidgetProps {
-    id: string
-    width: string
-    height: string
-}
+class MyDataGL {
 
-interface GLWidgetState {
-    interval: any
-}
-
-class GLWidget extends React.Component<GLWidgetProps, GLWidgetState> {
-
-    constructor(props: GLWidgetProps) {
-        super(props);
-
-        this.state = {
-            interval: null,
-        };
-
-        this.draw = this.draw.bind(this);
-    }
-
-    public render() {
-        return <canvas id={this.props.id} width={this.props.width} height={this.props.height}></canvas>;
-    }
-
-    public componentDidMount() {
-        const inter = setInterval(() => this.draw(), 1000 * 1 / FPS);
-        this.setState({interval: inter});
-    }
-
-    public componentWillUnmount() {
-        clearInterval(this.state.interval);
-        this.setState({interval: null});
-    }
-
-    private draw() {
-        const gl = glfunc("#" + this.props.id)
-
-        const now = Date.now();
-        const color = (now / 1000.0) % 1.0;
-
-        gl.clearColor(color, 0, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+    public r: number;
+    public g: number;
+    public b: number;
+    
+    constructor() {
+        this.r = 0.1;
+        this.g = 0.2;
+        this.b = 0.7;
     }
 
 }
 
+function draw_color(gl: WebGLRenderingContext, userdata: MyDataGL) {
+    const now = Date.now();
+    const color = (now / 1000.0) % 1.0;
 
-interface SequenceSearchMatch {
-    channelName: string
+    gl.clearColor(userdata.r * color, userdata.g * color, userdata.b * color, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 }
 
-interface GLViewProps {
-    match: match<SequenceSearchMatch>
-}
 
-interface GLViewState {
+interface GLViewProps { };
 
-}
+interface GLViewState { };
 
 export class GLView extends React.Component<GLViewProps, GLViewState> {
 
@@ -85,10 +44,10 @@ export class GLView extends React.Component<GLViewProps, GLViewState> {
                 <Header as='h1' dividing>OpenGL View</Header>
 
                 <Segment basic textAlign='center'>
-                    <GLWidget id="glCanvas" width="800" height="450" />
+                    <GLWidget id="glCanvas" width="800" height="450" fps={5} draw_func={draw_color} userdata={new MyDataGL()} />
                 </Segment>
             </div>
         );
     }
 
-}
+};

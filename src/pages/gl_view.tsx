@@ -118,7 +118,7 @@ function create_identity_mat() {
 
 class MyDataGL implements GLUserData {
 
-    private vert_shader_src: string = `
+    static vert_shader_src: string = `
 attribute vec4 a_position;
 attribute vec4 a_normal;
 
@@ -139,7 +139,7 @@ void main() {
 }
 `;
 
-    private frag_shader_src: string = `
+    static frag_shader_src: string = `
 precision mediump float;
 
 
@@ -225,7 +225,7 @@ void main() {
 }
 `;
 
-    private default_mesh = new Float32Array([
+    static default_mesh = new Float32Array([
         // Front face
         -1.0, -1.0,  1.0,
         1.0, -1.0,  1.0,
@@ -275,7 +275,7 @@ void main() {
         -1.0,  1.0, -1.0,
     ]);
 
-    private color_buffer_data = new Float32Array([
+    static color_buffer_data = new Float32Array([
         0, 0, 1,
         0, 0, 1,
         0, 0, 1,
@@ -333,23 +333,25 @@ void main() {
     }
 
     public init(gl: WebGLRenderingContext) {
+        // Global configs
         gl.enable(gl.CULL_FACE);
         gl.enable(gl.DEPTH_TEST);
 
-        for ( let i = 0; i < this.default_mesh.length; ++i ) {
-            this.default_mesh[i] = this.default_mesh[i] * 0.3;
-        }
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.clearColor(0, 0, 0, 0.1);
 
+        // Compile shaders
         const vert_shader = gl.createShader(gl.VERTEX_SHADER);
-        gl.shaderSource(vert_shader, this.vert_shader_src);
+        gl.shaderSource(vert_shader, MyDataGL.vert_shader_src);
         gl.compileShader(vert_shader);
         console.log(gl.getShaderInfoLog(vert_shader));
 
         const frag_shader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(frag_shader, this.frag_shader_src);
+        gl.shaderSource(frag_shader, MyDataGL.frag_shader_src);
         gl.compileShader(frag_shader);
         console.log(gl.getShaderInfoLog(frag_shader));
 
+        // Link shaders
         this.program = gl.createProgram();
         gl.attachShader(this.program, vert_shader);
         gl.attachShader(this.program, frag_shader);
@@ -358,28 +360,26 @@ void main() {
         gl.deleteShader(vert_shader);
         gl.deleteShader(frag_shader);
 
+        // Build buffers
         this.vert_buf_pos = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vert_buf_pos);
-        gl.bufferData(gl.ARRAY_BUFFER, this.default_mesh, gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, MyDataGL.default_mesh, gl.STATIC_DRAW);
 
         this.vert_buf_normal = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vert_buf_normal);
-        gl.bufferData(gl.ARRAY_BUFFER, this.color_buffer_data, gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, MyDataGL.color_buffer_data, gl.STATIC_DRAW);
     }
 
     public draw(gl: WebGLRenderingContext) {
         const now = Date.now() / 1000;
 
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
         // Clear the canvas.
-        gl.clearColor(0, 0, 0, 0.1);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        // Tell it to use our program (pair of shaders)
+        // Use program
         gl.useProgram(this.program);
 
-        // Turn on the attribute
+        // Enable attribute buffers
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vert_buf_pos);
         const positionLoc = gl.getAttribLocation(this.program, "a_position");
         gl.enableVertexAttribArray(positionLoc);
@@ -390,20 +390,20 @@ void main() {
         gl.enableVertexAttribArray(normal_loc);
         gl.vertexAttribPointer(normal_loc, 3, gl.FLOAT, false, 0, 0);
 
-        // Uniforms
+        // Send uniforms
         const proj_mat = create_perspective_mat(40, gl.canvas.width / gl.canvas.height, 0.01, 100);
         const view_mat = create_translate_mat(-this.camera_pos[0], -this.camera_pos[1], -this.camera_pos[2]);
         const proj_view_mat = proj_mat.multiply(view_mat);
 
-        const translate_mat = create_translate_mat(0, 0, -2);
+        const translate_mat = create_translate_mat(0, 0, -8);
         const rotate_mat = create_rotate_mat(now * 30, 0.2, 1, 0);
         const model_mat = translate_mat.multiply(rotate_mat);
 
         gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "u_model_mat"), false, model_mat.data)
         gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "u_proj_view_mat"), false, proj_view_mat.data)
-
         gl.uniform3f(gl.getUniformLocation(this.program, "u_view_pos"), this.camera_pos[0], this.camera_pos[1], this.camera_pos[2]);
 
+        // Draw
         gl.drawArrays(gl.TRIANGLES, 0, 36);
     }
 
@@ -421,7 +421,7 @@ void main() {
     }
 
     public on_mouse_move(e: React.MouseEvent) {
-        const scalar = 0.003;
+        const scalar = 0.01;
 
         if (this.mouse_captured) {
             this.camera_pos[1] += e.movementY * scalar;

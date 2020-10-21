@@ -61,6 +61,7 @@ class Mat4 {
 
 };
 
+
 function create_perspective_mat(fov_deg: number, aspect: number, n: number, f: number) {
     const fov_radian = fov_deg / 180 * Math.PI;
     const tan_half_fov = Math.tan(fov_radian / 2)
@@ -119,10 +120,6 @@ function create_identity_mat() {
 
 
 class MyDataGL implements GLUserData {
-
-    public r: number = 0.2;
-    public g: number = 0.3;
-    public b: number = 0.8;
 
     private vert_shader_src: string = `
 attribute vec4 a_position;
@@ -325,9 +322,9 @@ void main() {
         -1, 0, 0,
     ]);
 
-    public program: WebGLProgram = null;
-    public vert_buf_pos: WebGLBuffer = null;
-    public vert_buf_normal: WebGLBuffer = null;
+    private program: WebGLProgram = null;
+    private vert_buf_pos: WebGLBuffer = null;
+    private vert_buf_normal: WebGLBuffer = null;
 
     //////// Methods ////////
 
@@ -335,7 +332,7 @@ void main() {
 
     }
 
-    public init_gl(gl: WebGLRenderingContext) {
+    public init(gl: WebGLRenderingContext) {
         gl.enable(gl.CULL_FACE);
         gl.enable(gl.DEPTH_TEST);
 
@@ -370,48 +367,48 @@ void main() {
         gl.bufferData(gl.ARRAY_BUFFER, this.color_buffer_data, gl.STATIC_DRAW);
     }
 
+    public draw(gl: WebGLRenderingContext) {
+        console.log("draw");
+
+        const now = Date.now() / 1000;
+
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        // Clear the canvas.
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // Tell it to use our program (pair of shaders)
+        gl.useProgram(this.program);
+
+        // Turn on the attribute
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vert_buf_pos);
+        const positionLoc = gl.getAttribLocation(this.program, "a_position");
+        gl.enableVertexAttribArray(positionLoc);
+        gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vert_buf_normal);
+        const normal_loc = gl.getAttribLocation(this.program, "a_normal");
+        gl.enableVertexAttribArray(normal_loc);
+        gl.vertexAttribPointer(normal_loc, 3, gl.FLOAT, false, 0, 0);
+
+        // Uniforms
+        const identity = create_identity_mat();
+        const proj_mat = create_perspective_mat(40, gl.canvas.width / gl.canvas.height, 0.01, 100);
+
+        const translate_mat = create_translate_mat(0, 0, -2);
+        const rotate_mat = create_rotate_mat(now * 30, 0.2, 1, 0);
+        const model_mat = translate_mat.multiply(rotate_mat);
+
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "u_model_mat"), false, model_mat.data)
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "u_proj_mat"), false, proj_mat.data)
+
+        gl.uniform3f(gl.getUniformLocation(this.program, "u_view_pos"), 0, 0, 0);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 36);
+    }
+
 };
-
-function draw_color(gl: WebGLRenderingContext, userdata: MyDataGL) {
-    console.log("draw");
-
-    const now = Date.now() / 1000;
-
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
-    // Clear the canvas.
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // Tell it to use our program (pair of shaders)
-    gl.useProgram(userdata.program);
-
-    // Turn on the attribute
-    gl.bindBuffer(gl.ARRAY_BUFFER, userdata.vert_buf_pos);
-    const positionLoc = gl.getAttribLocation(userdata.program, "a_position");
-    gl.enableVertexAttribArray(positionLoc);
-    gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, userdata.vert_buf_normal);
-    const normal_loc = gl.getAttribLocation(userdata.program, "a_normal");
-    gl.enableVertexAttribArray(normal_loc);
-    gl.vertexAttribPointer(normal_loc, 3, gl.FLOAT, false, 0, 0);
-
-    // Uniforms
-    const identity = create_identity_mat();
-    const proj_mat = create_perspective_mat(40, gl.canvas.width / gl.canvas.height, 0.01, 100);
-
-    const translate_mat = create_translate_mat(0, 0, -2);
-    const rotate_mat = create_rotate_mat(now * 30, 0.2, 1, 0);
-    const model_mat = translate_mat.multiply(rotate_mat);
-
-    gl.uniformMatrix4fv(gl.getUniformLocation(userdata.program, "u_model_mat"), false, model_mat.data)
-    gl.uniformMatrix4fv(gl.getUniformLocation(userdata.program, "u_proj_mat"), false, proj_mat.data)
-
-    gl.uniform3f(gl.getUniformLocation(userdata.program, "u_view_pos"), 0, 0, 0);
-
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
-}
 
 
 interface GLViewProps { };
@@ -430,7 +427,7 @@ export class GLView extends React.Component<GLViewProps, GLViewState> {
                 <Header as='h1' dividing>OpenGL View</Header>
 
                 <Segment basic textAlign='center'>
-                    <GLWidget id="glCanvas" width="800" height="450" fps={24} draw_func={draw_color} userdata={new MyDataGL()} />
+                    <GLWidget id="glCanvas" width="800" height="450" fps={24} userdata={new MyDataGL()} />
                 </Segment>
             </div>
         );

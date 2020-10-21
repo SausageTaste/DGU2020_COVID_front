@@ -368,8 +368,6 @@ void main() {
     }
 
     public draw(gl: WebGLRenderingContext) {
-        console.log("draw");
-
         const now = Date.now() / 1000;
 
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);

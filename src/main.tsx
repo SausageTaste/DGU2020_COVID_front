@@ -26,7 +26,7 @@ const switches = <Switch>
 
 
 const routes = <BrowserRouter>
-    <div id="wrapper">
+    <div id="wrapper" style={{ overflow: "hidden" }}>
         <PageList />
         <main style={{ margin: "1rem 0 1rem 16rem" }}>
             <Container>

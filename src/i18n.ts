@@ -3,7 +3,7 @@ import i18n from "i18next";
 
 i18n
     .init({
-        lng: "kr",
+        lng: "en",
         fallbackLng: "en",
 
         detection: {
@@ -27,7 +27,7 @@ i18n
                     result_will_appear_here: "The result will appear here",
                     send: "Send",
 
-                    opengl_view: "OpenGL View",
+                    opengl_view: "OpenGL Test",
                 },
             },
 
@@ -40,7 +40,7 @@ i18n
                     result_will_appear_here: "결과는 이곳에 출력됩니다",
                     send: "전송",
 
-                    opengl_view: "OpenGL 영상",
+                    opengl_view: "OpenGL 시험",
                 },
             },
 

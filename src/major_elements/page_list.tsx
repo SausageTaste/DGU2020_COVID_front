@@ -34,7 +34,9 @@ export class PageList extends React.Component<PageListProp, {}> {
             to={{ pathname: `/gl_view` }}>
             OpenGL View
         </Menu.Item>,
-    ]
+    ];
+
+    ////////
 
     public render() {
         const page_items: JSX.Element[] = [
@@ -95,8 +97,8 @@ export class PageList extends React.Component<PageListProp, {}> {
 
                 <Dropdown item simple text="Language">
                     <Dropdown.Menu>
-                        <Dropdown.Item text="English" />
-                        <Dropdown.Item text="한국어" />
+                        <Dropdown.Item text="English" onClick={() => this.change_lang("en")} />
+                        <Dropdown.Item text="한국어" onClick={() => this.change_lang("kr")} />
                     </Dropdown.Menu>
                 </Dropdown>
             </Menu>

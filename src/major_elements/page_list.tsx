@@ -2,8 +2,15 @@ import * as React from "react";
 import { Menu, Icon, Header, Dropdown } from "semantic-ui-react";
 import { Link, NavLink } from "react-router-dom";
 
+import "./../i18n";
+import i18n from "./../i18n";
 
-export class PageList extends React.Component<{}, {}> {
+
+interface PageListProp {
+    redraw_func: () => void;
+}
+
+export class PageList extends React.Component<PageListProp, {}> {
 
     channels = ["general", "random"];
 
@@ -28,7 +35,9 @@ export class PageList extends React.Component<{}, {}> {
             to={{ pathname: `/gl_view` }}>
             OpenGL View
         </Menu.Item>,
-    ]
+    ];
+
+    ////////
 
     public render() {
         return (
@@ -39,12 +48,17 @@ export class PageList extends React.Component<{}, {}> {
 
                 <Dropdown item simple text="Language">
                     <Dropdown.Menu>
-                        <Dropdown.Item text="English" />
-                        <Dropdown.Item text="한국어" />
+                        <Dropdown.Item text="English" onClick={() => this.change_lang("en")} />
+                        <Dropdown.Item text="한국어" onClick={() => this.change_lang("kr")} />
                     </Dropdown.Menu>
                 </Dropdown>
             </Menu>
         );
+    }
+
+    private change_lang(lang: string) {
+        i18n.changeLanguage(lang);
+        this.props.redraw_func();
     }
 
 };

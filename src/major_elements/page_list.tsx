@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Menu, Icon, Header, Dropdown, Segment } from "semantic-ui-react";
-import { Link, NavLink } from "react-router-dom";
+import { Menu, Dropdown } from "semantic-ui-react";
+import { NavLink } from "react-router-dom";
 
 import i18n from "./../i18n";
 

@@ -54,7 +54,7 @@ export class PageList extends React.Component<PageListProp, {}> {
 //*/
 
         return (
-            <Menu inverted pointing vertical fixed={"left"}>
+            <Menu pointing secondary vertical fixed={"left"}>
                 <Menu.Item
                     key="home"
                     as={NavLink}

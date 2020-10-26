@@ -33,6 +33,26 @@ export class PageList extends React.Component<PageListProp, {}> {
             </Menu.Item>,
         ];
 
+        // This is something like compiler switch
+        // '//*' enables upper block
+        // '/*' enables lower block
+/*
+        const test_items = [];
+        for (let i = 0; i < 200; ++i) {
+            test_items.push(
+                <Menu.Item
+                    key="gl_view"
+                    as={NavLink}
+                    to={{ pathname: `/no${i}` }}>
+                    Test item {i}
+                </Menu.Item>
+            );
+        }
+        let item_list = page_items.concat(test_items);
+/*/
+        let item_list = page_items;
+//*/
+
         return (
             <Menu inverted pointing vertical fixed={"left"}>
                 <Menu.Item
@@ -50,7 +70,7 @@ export class PageList extends React.Component<PageListProp, {}> {
                 </Dropdown>
 
                 <Menu.Item style={{ maxHeight: "calc(100% - 100px)", overflowY: "auto", overflowX: "hidden" }}>
-                    <Menu.Menu>{page_items}</Menu.Menu>
+                    <Menu.Menu>{item_list}</Menu.Menu>
                 </Menu.Item>
             </Menu>
         );

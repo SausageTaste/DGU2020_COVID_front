@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu, Icon, Header } from "semantic-ui-react";
+import { Menu, Icon, Header, Dropdown } from "semantic-ui-react";
 import { Link, NavLink } from "react-router-dom";
 
 
@@ -21,13 +21,13 @@ export class PageList extends React.Component<{}, {}> {
             to={{ pathname: `/seq_search` }}>
             Sequence Search
         </Menu.Item>,
-        
+
         <Menu.Item
             key="gl_view"
             as={NavLink}
             to={{ pathname: `/gl_view` }}>
             OpenGL View
-        </Menu.Item>
+        </Menu.Item>,
     ]
 
     public render() {
@@ -36,6 +36,13 @@ export class PageList extends React.Component<{}, {}> {
                 <Menu.Item>
                     <Menu.Menu>{this.page_items}</Menu.Menu>
                 </Menu.Item>
+
+                <Dropdown item simple text="Language">
+                    <Dropdown.Menu>
+                        <Dropdown.Item text="English" />
+                        <Dropdown.Item text="한국어" />
+                    </Dropdown.Menu>
+                </Dropdown>
             </Menu>
         );
     }

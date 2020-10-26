@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Menu, Dropdown } from "semantic-ui-react";
-import { NavLink } from "react-router-dom";
+import { Menu, Icon, Header, Dropdown } from "semantic-ui-react";
+import { Link, NavLink } from "react-router-dom";
 
 import i18n from "./../i18n";
 
@@ -13,7 +13,28 @@ export class PageList extends React.Component<PageListProp, {}> {
 
     channels = ["general", "random"];
 
-    ////////
+    page_items = [
+        <Menu.Item
+            key="home"
+            as={NavLink}
+            to={{ pathname: `/` }}>
+            <h1>Home</h1>
+        </Menu.Item>,
+
+        <Menu.Item
+            key="seq_search"
+            as={NavLink}
+            to={{ pathname: `/seq_search` }}>
+            Sequence Search
+        </Menu.Item>,
+
+        <Menu.Item
+            key="gl_view"
+            as={NavLink}
+            to={{ pathname: `/gl_view` }}>
+            OpenGL View
+        </Menu.Item>,
+    ]
 
     public render() {
         const page_items: JSX.Element[] = [
@@ -71,6 +92,13 @@ export class PageList extends React.Component<PageListProp, {}> {
                 <Menu.Item style={{ maxHeight: "calc(100% - 100px)", overflowY: "auto", overflowX: "hidden" }}>
                     <Menu.Menu>{item_list}</Menu.Menu>
                 </Menu.Item>
+
+                <Dropdown item simple text="Language">
+                    <Dropdown.Menu>
+                        <Dropdown.Item text="English" />
+                        <Dropdown.Item text="한국어" />
+                    </Dropdown.Menu>
+                </Dropdown>
             </Menu>
         );
     }

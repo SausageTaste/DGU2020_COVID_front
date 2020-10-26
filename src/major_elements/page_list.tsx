@@ -49,7 +49,7 @@ export class PageList extends React.Component<PageListProp, {}> {
                     </Dropdown.Menu>
                 </Dropdown>
 
-                <Menu.Item>
+                <Menu.Item style={{ maxHeight: "calc(100% - 100px)", overflowY: "auto", overflowX: "hidden" }}>
                     <Menu.Menu>{page_items}</Menu.Menu>
                 </Menu.Item>
             </Menu>

@@ -2,7 +2,9 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader } from 'semantic-ui-react';
 
-import { GLWidget, GLUserData } from "./../utils/opengl_view"
+import "./../i18n";
+import i18n from './../i18n';
+import { GLWidget, GLUserData } from "./../utils/opengl_view";
 
 
 class Mat4 {
@@ -445,7 +447,7 @@ export class GLView extends React.Component<GLViewProps, GLViewState> {
     public render() {
         return (
             <div>
-                <Header as='h1' dividing>OpenGL View</Header>
+                <Header as='h1' dividing>{i18n.t("opengl_view")}</Header>
 
                 <Segment basic textAlign='center'>
                     <GLWidget id="glCanvas" width="800" height="450" fps={30} userdata={new MyDataGL()} />

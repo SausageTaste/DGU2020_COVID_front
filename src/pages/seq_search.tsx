@@ -3,6 +3,7 @@ import { match } from 'react-router-dom';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader } from 'semantic-ui-react';
 
 import * as clt from "./../utils/client";
+import i18n from './../i18n';
 
 
 class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
@@ -60,17 +61,17 @@ export class SequenceSearch extends React.Component<SequenceSearchProps, Sequenc
             <div>
                 <DimmerWidget isActivated={this.state.isLoading} />
 
-                <Header as='h1' dividing>Seach Sequence</Header>
+                <Header as='h1' dividing>{i18n.t("seq_search")}</Header>
 
                 <Segment basic textAlign='center'>
                     <Form onSubmit={this.onBtnClicked}>
                         <Form.Field>
                             <TextArea
-                                placeholder="Put your sequence string here"
+                                placeholder={i18n.t("put_your_seq_here")}
                                 value={this.state.userInput}
                                 onChange={this.handleTextAreaChange} />
                         </Form.Field>
-                        <Button primary type="submit">Send</Button>
+                        <Button primary type="submit">{i18n.t("send")}</Button>
                     </Form>
                 </Segment>
 
@@ -79,7 +80,7 @@ export class SequenceSearch extends React.Component<SequenceSearchProps, Sequenc
                         <TextArea
                             readOnly
                             style={{ minHeight: 500 }}
-                            placeholder="Result may appear here"
+                            placeholder={i18n.t("result_will_appear_here")}
                             value={this.state.resultStr} />
                     </Form>
                 </Segment>

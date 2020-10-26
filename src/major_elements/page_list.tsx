@@ -18,21 +18,21 @@ export class PageList extends React.Component<PageListProp, {}> {
             key="home"
             as={NavLink}
             to={{ pathname: `/` }}>
-            <h1>Home</h1>
+            <h1>{i18n.t("home")}</h1>
         </Menu.Item>,
 
         <Menu.Item
             key="seq_search"
             as={NavLink}
             to={{ pathname: `/seq_search` }}>
-            Sequence Search
+            {i18n.t("seq_search")}
         </Menu.Item>,
 
         <Menu.Item
             key="gl_view"
             as={NavLink}
             to={{ pathname: `/gl_view` }}>
-            OpenGL View
+            {i18n.t("opengl_view")}
         </Menu.Item>,
     ];
 

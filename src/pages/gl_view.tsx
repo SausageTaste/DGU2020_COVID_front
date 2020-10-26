@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { match } from 'react-router-dom';
-import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader } from 'semantic-ui-react';
+import { Header, Segment } from 'semantic-ui-react';
 
-import "./../i18n";
 import i18n from './../i18n';
 import { GLWidget, GLUserData } from "./../utils/opengl_view";
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu, Icon, Header, Dropdown } from "semantic-ui-react";
+import { Menu, Icon, Header, Dropdown, Segment } from "semantic-ui-react";
 import { Link, NavLink } from "react-router-dom";
 
 import "./../i18n";
@@ -14,36 +14,32 @@ export class PageList extends React.Component<PageListProp, {}> {
 
     channels = ["general", "random"];
 
-    page_items = [
-        <Menu.Item
-            key="home"
-            as={NavLink}
-            to={{ pathname: `/` }}>
-            <h1>{i18n.t("home")}</h1>
-        </Menu.Item>,
-
-        <Menu.Item
-            key="seq_search"
-            as={NavLink}
-            to={{ pathname: `/seq_search` }}>
-            {i18n.t("seq_search")}
-        </Menu.Item>,
-
-        <Menu.Item
-            key="gl_view"
-            as={NavLink}
-            to={{ pathname: `/gl_view` }}>
-            {i18n.t("opengl_view")}
-        </Menu.Item>,
-    ];
-
     ////////
 
     public render() {
+        const page_items: JSX.Element[] = [
+            <Menu.Item
+                key="seq_search"
+                as={NavLink}
+                to={{ pathname: `/seq_search` }}>
+                {i18n.t("seq_search")}
+            </Menu.Item>,
+
+            <Menu.Item
+                key="gl_view"
+                as={NavLink}
+                to={{ pathname: `/gl_view` }}>
+                {i18n.t("opengl_view")}
+            </Menu.Item>,
+        ];
+
         return (
             <Menu inverted pointing vertical fixed={"left"}>
-                <Menu.Item>
-                    <Menu.Menu>{this.page_items}</Menu.Menu>
+                <Menu.Item
+                    key="home"
+                    as={NavLink}
+                    to={{ pathname: `/` }}>
+                    <h1>{i18n.t("home")}</h1>
                 </Menu.Item>
 
                 <Dropdown item simple text="Language">
@@ -52,6 +48,10 @@ export class PageList extends React.Component<PageListProp, {}> {
                         <Dropdown.Item text="한국어" onClick={() => this.change_lang("kr")} />
                     </Dropdown.Menu>
                 </Dropdown>
+
+                <Menu.Item>
+                    <Menu.Menu>{page_items}</Menu.Menu>
+                </Menu.Item>
             </Menu>
         );
     }

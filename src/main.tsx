@@ -13,11 +13,11 @@ const switches = <Switch>
         exact={true}
         path="/"
         component={pag.HomePage} />
-    <Route 
+    <Route
         exact={true}
         path="/seq_search"
         component={pag.SequenceSearch} />
-    <Route 
+    <Route
         exact={true}
         path="/gl_view"
         component={pag.GLView} />

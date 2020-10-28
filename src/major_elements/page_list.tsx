@@ -71,17 +71,6 @@ export class PageList extends React.Component<PageListProp, {}> {
                 <Menu.Item style={{ maxHeight: "calc(100% - 100px)", overflowY: "auto", overflowX: "hidden" }}>
                     <Menu.Menu>{item_list}</Menu.Menu>
                 </Menu.Item>
-
-                <Dropdown item simple text="Language">
-                    <Dropdown.Menu>
-                        <Dropdown.Item text="English" onClick={() => this.change_lang("en")} />
-                        <Dropdown.Item text="한국어" onClick={() => this.change_lang("kr")} />
-                    </Dropdown.Menu>
-                </Dropdown>
-
-                <Menu.Item>
-                    <Menu.Menu>{page_items}</Menu.Menu>
-                </Menu.Item>
             </Menu>
         );
     }

@@ -11,6 +11,22 @@ const instance: AxiosInstance = Axios.create({
 });
 
 
+/**
+ * @param sequence looks like 'GCATACACTCGCTATGTCGATAACAACTTCTG...'
+ * @param how_many specifies how many similar sequences you'd like to get
+ *
+ * @returns looks like this
+ * {
+ *     "EPI_ISL_449476": {
+ *         "simil_identity": 98.46424,
+ *         "simil_bit_score": 1234,
+ *     },
+ *     "blah blah": { ... },
+ *     ...
+ * }
+ * For the key strings "simil_identity" and "simil_bit_score" use constant variables
+ * defined in {root}/src/utils/konst.ts, which named KEY_SIMILARITY_IDENTITY, KEY_SIMILARITY_BIT_SCORE
+ */
 export function get_similar_seq_ids(sequence: string, how_many: number, cancelToken: CancelToken = null) {
     return instance.post("get_similar_seq_ids/", {
         [cst.KEY_SEQUENCE]: sequence,
@@ -18,6 +34,23 @@ export function get_similar_seq_ids(sequence: string, how_many: number, cancelTo
     }, {cancelToken});
 }
 
+
+/**
+ * @param acc_id looks like 'EPI_ISL_449476'
+ * @param column_list
+ * use empty list to get all columns of the a sequence.
+ * Or select specific columns by passing in something like ["acc_id", "gebank_accession", "division"]
+ * The whole list of column names can be found in file {backend repo root}/extern/DGU2020_covid_database/database/setting.sql
+ *
+ * @returns dict[string, string]
+ * Which looks like this
+ * {
+ *     "acc_id": "EPI_ISL_449476",
+ *     "gebank_accession": "...",
+ *     "division": "...",
+ *     ...
+ * }
+*/
 export function get_metadata_of_seq(acc_id: string, column_list: string[], cancelToken: CancelToken = null) {
     return instance.post("get_metadata_of_seq/", {
         [cst.KEY_ACC_ID]: acc_id,

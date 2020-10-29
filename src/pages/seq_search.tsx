@@ -101,7 +101,7 @@ export class SequenceSearch extends React.Component<SequenceSearchProps, Sequenc
             resultStr: "",
         });
 
-        clt.similarSeqIDs(this.state.userInput, 5)
+        clt.get_similar_seq_ids(this.state.userInput, 10)
             .then((response) => {
                 this.setState({resultStr: JSON.stringify(response.data, null, '\t')});
                 this.setState({isLoading: false});

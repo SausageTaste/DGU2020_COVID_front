@@ -1,5 +1,7 @@
 import Axios, { AxiosInstance, AxiosResponse, CancelToken } from "axios";
 
+import * as cst from "./konst";
+
 
 const baseURL = "http://localhost:8000/api";
 
@@ -9,31 +11,49 @@ const instance: AxiosInstance = Axios.create({
 });
 
 
-export interface Message {
-    id?: string;
-    body?: string;
-    user?: {
-        id?: string
-        name?: string
-        avatar?: string
-    };
-    date?: string;
-};
-
-export const fetchMessages = (channelName: string, params = {}, cancelToken: CancelToken = null): Promise<AxiosResponse<{ messages: Message[] }>> => {
-    return instance.get(`channels/${channelName}/messages`, {
-        params, cancelToken
-    });
-};
-
-export const postMessage = (channelName: string, payload: Message, cancelToken: CancelToken = null): Promise<AxiosResponse<Message>> => {
-    return instance.post(`/channels/${channelName}/messages`, payload, {cancelToken});
+/**
+ * @param sequence looks like 'GCATACACTCGCTATGTCGATAACAACTTCTG...'
+ * @param how_many specifies how many similar sequences you'd like to get
+ *
+ * @returns looks like this
+ * {
+ *     "EPI_ISL_449476": {
+ *         "simil_identity": 98.46424,
+ *         "simil_bit_score": 1234,
+ *     },
+ *     "blah blah": { ... },
+ *     ...
+ * }
+ * For the key strings "simil_identity" and "simil_bit_score" use constant variables
+ * defined in {root}/src/utils/konst.ts, which named KEY_SIMILARITY_IDENTITY, KEY_SIMILARITY_BIT_SCORE
+ */
+export function get_similar_seq_ids(sequence: string, how_many: number, cancelToken: CancelToken = null) {
+    return instance.post("get_similar_seq_ids/", {
+        [cst.KEY_SEQUENCE]: sequence,
+        [cst.KEY_HOW_MANY]: how_many,
+    }, {cancelToken});
 }
 
-export const requestEcho = (message: string, cancelToken: CancelToken = null): Promise<AxiosResponse> => {
-    return instance.post("echo/", {body: message}, {cancelToken});
-}
 
-export const similarSeqIDs = (sequence: string, how_many: number, cancelToken: CancelToken = null): Promise<AxiosResponse> => {
-    return instance.post("similar_seq_ids/", {seq: sequence, how_many: how_many}, {cancelToken});
-};
+/**
+ * @param acc_id looks like 'EPI_ISL_449476'
+ * @param column_list
+ * use empty list to get all columns of the a sequence.
+ * Or select specific columns by passing in something like ["acc_id", "gebank_accession", "division"]
+ * The whole list of column names can be found in file {backend repo root}/extern/DGU2020_covid_database/database/setting.sql
+ *
+ * @returns dict[string, string]
+ * Which looks like this
+ * {
+ *     "acc_id": "EPI_ISL_449476",
+ *     "gebank_accession": "...",
+ *     "division": "...",
+ *     ...
+ * }
+*/
+export function get_metadata_of_seq(acc_id: string, column_list: string[], cancelToken: CancelToken = null) {
+    return instance.post("get_metadata_of_seq/", {
+        [cst.KEY_ACC_ID]: acc_id,
+        [cst.KEY_COLUMN_LIST]: column_list,
+    }, {cancelToken});
+}

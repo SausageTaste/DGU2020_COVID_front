@@ -21,6 +21,10 @@ const switches = <Switch>
         exact={true}
         path="/gl_view"
         component={pag.GLView} />
+    <Route
+        exact={true}
+        path="/single_seq"
+        component={pag.SingleSequence} />
     <Route component={pag.Page404} />
 </Switch>;
 

@@ -28,6 +28,8 @@ i18n
                     send: "Send",
 
                     opengl_view: "OpenGL Test",
+
+                    single_seq: "Single Sequence Query"
                 },
             },
 
@@ -41,6 +43,8 @@ i18n
                     send: "전송",
 
                     opengl_view: "OpenGL 시험",
+
+                    single_seq: "단일 서열 쿼리"
                 },
             },
 

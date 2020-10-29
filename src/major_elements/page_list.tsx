@@ -30,6 +30,13 @@ export class PageList extends React.Component<PageListProp, {}> {
                 to={{ pathname: `/gl_view` }}>
                 {i18n.t("opengl_view")}
             </Menu.Item>,
+
+            <Menu.Item
+                key="single_seq"
+                as={NavLink}
+                to={{ pathname: `/single_seq` }}>
+                {i18n.t("single_seq")}
+            </Menu.Item>,
         ];
 
         // This is something like compiler switch

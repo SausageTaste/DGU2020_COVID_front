@@ -28,7 +28,13 @@ i18n
                     send: "Send",
 
                     opengl_view: "OpenGL Test",
+
                     two_seq_comp: "Two Sequence Comparison",
+                    result: "Result",
+                    similarity: "Similarity",
+                    simi_bit_score: "Bit score",
+                    simi_identity: "Identity",
+                    mutation_list: "Mutataion List",
                 },
             },
 
@@ -42,7 +48,11 @@ i18n
                     send: "전송",
 
                     opengl_view: "OpenGL 시험",
+
                     two_seq_comp: "두 시퀸스 비교",
+                    result: "결과",
+                    similarity: "유사도",
+                    mutation_list: "돌연변의 목록",
                 },
             },
 

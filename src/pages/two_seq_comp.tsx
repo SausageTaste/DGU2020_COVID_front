@@ -79,7 +79,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     <Form onSubmit={this.on_submit_btn_clicked}>
                         <Form.Field>
                             <TextArea
-                                placeholder={i18n.t("put_your_seq_here")}
+                                placeholder={i18n.t("put_your_seq_or_fasta_here")}
                                 value={this.state.user_input_1}
                                 onChange={this.handle_text_area_change_1}
                                 style={{fontFamily: "consolas"}}
@@ -87,7 +87,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         </Form.Field>
                         <Form.Field>
                             <TextArea
-                                placeholder={i18n.t("put_your_seq_here")}
+                                placeholder={i18n.t("put_your_seq_or_fasta_here")}
                                 value={this.state.user_input_2}
                                 onChange={this.handle_text_area_change_2}
                                 style={{fontFamily: "consolas"}}

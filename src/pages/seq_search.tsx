@@ -86,6 +86,7 @@ class BuildDynamicTable extends React.Component<RouteComponentProps<any>, IState
     }
 }
 
+
 class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
 
     constructor(props: { isActivated: boolean }) {

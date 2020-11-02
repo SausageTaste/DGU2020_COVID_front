@@ -35,6 +35,7 @@ i18n
                     simi_bit_score: "Bit score",
                     simi_identity: "Identity",
                     mutation_list: "Mutataion List",
+                    au_err_occured: "An error occured while processing sequences",
                 },
             },
 
@@ -53,6 +54,7 @@ i18n
                     result: "결과",
                     similarity: "유사도",
                     mutation_list: "돌연변의 목록",
+                    au_err_occured: "시퀸스를 처리하는 중 오류가 발생했습니다",
                 },
             },
 

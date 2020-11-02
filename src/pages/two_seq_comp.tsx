@@ -9,6 +9,7 @@ import i18n from '../i18n';
 interface ErrorPromptProps {
     show_err_prompt: boolean;
     err_message: string;
+    msg_header: string;
 }
 
 class ErrorPrompt extends React.Component<ErrorPromptProps, {}> {
@@ -17,7 +18,7 @@ class ErrorPrompt extends React.Component<ErrorPromptProps, {}> {
         if (this.props.show_err_prompt) {
             return (
                 <Message warning>
-                    <Message.Header>Error occured duing processing the sequences</Message.Header>
+                    <Message.Header>{this.props.msg_header}</Message.Header>
                     <p>{this.props.err_message}</p>
                 </Message>
             );
@@ -95,7 +96,11 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         <Button primary disabled={this.state.is_loading} loading={this.state.is_loading} type="submit">{i18n.t("send")}</Button>
                     </Form>
 
-                    <ErrorPrompt show_err_prompt={this.state.show_err_prompt} err_message={this.state.err_message} />
+                    <ErrorPrompt
+                        show_err_prompt={this.state.show_err_prompt}
+                        err_message={this.state.err_message}
+                        msg_header={i18n.t("au_err_occured")}
+                    />
                 </Segment>
 
                 <Segment basic loading={this.state.is_loading} style={{maxWidth: 600}}>

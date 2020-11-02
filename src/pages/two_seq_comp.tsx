@@ -158,9 +158,19 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     private on_submit_btn_clicked = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        this.setState({
-            is_loading: true,
-        });
+        const seq_1 = this.state.user_input_1;
+        const seq_2 = this.state.user_input_2;
+
+        if (seq_1.length <= 0 || seq_2.length <= 0) {
+            this.setState({
+                is_loading: false,
+
+                show_err_prompt: true,
+                err_message: i18n.t("plz_fill_in_blanks"),
+            });
+
+            return;
+        }
 
         this.setState({
             is_loading: true,
@@ -170,9 +180,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
             show_err_prompt: false,
         });
-
-        const seq_1 = this.state.user_input_1;
-        const seq_2 = this.state.user_input_2;
 
         clt.calc_similarity_of_two_seq(seq_1, seq_2)
             .then((response) => {

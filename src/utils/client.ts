@@ -57,3 +57,26 @@ export function get_metadata_of_seq(acc_id: string, column_list: string[], cance
         [cst.KEY_COLUMN_LIST]: column_list,
     }, {cancelToken});
 }
+
+
+/**
+ * I haven't test it yet.
+ *
+ * @param sequence_1 A DNA sequence of a covid19 to compare
+ * @param sequence_2 Same
+ * @returns
+ * A dictionary that has
+ * * error_code: int
+ * * simil_identity: number
+ * * simil_bit_score: number
+ *
+ * Use constant variables for the key
+ * * cst.KEY_ERROR_CODE
+ * * cst.KEY_SIMILARITY_IDENTITY
+ * * cst.KEY_SIMILARITY_BIT_SCORE
+ */
+export function calc_similarity_of_two_seq(sequence_1: string, sequence_2: string, cancelToken: CancelToken = null) {
+    return instance.post("calc_similarity_of_two_seq/", {
+        [cst.KEY_SEQUENCE_LIST]: [sequence_1, sequence_2],
+    }, {cancelToken});
+}

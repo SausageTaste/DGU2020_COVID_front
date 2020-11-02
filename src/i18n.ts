@@ -28,6 +28,7 @@ i18n
                     send: "Send",
 
                     opengl_view: "OpenGL Test",
+                    two_seq_comp: "Two Sequence Comparison",
                 },
             },
 
@@ -41,6 +42,7 @@ i18n
                     send: "전송",
 
                     opengl_view: "OpenGL 시험",
+                    two_seq_comp: "두 시퀸스 비교",
                 },
             },
 

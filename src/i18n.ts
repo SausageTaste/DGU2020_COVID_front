@@ -30,9 +30,6 @@ i18n
 
                     opengl_view: "OpenGL Test",
 
-<<<<<<< HEAD
-                    single_seq: "Single Sequence Query"
-=======
                     two_seq_comp: "Two Sequence Comparison",
                     result: "Result",
                     similarity: "Similarity",
@@ -41,7 +38,6 @@ i18n
                     mutation_list: "Mutataion List",
                     au_err_occured: "An error occured while processing sequences",
                     plz_fill_in_blanks: "Please provide with all needed data",
->>>>>>> 3e0834bd5addbce819741a58445d34e187562837
                 },
             },
 
@@ -57,16 +53,12 @@ i18n
 
                     opengl_view: "OpenGL 시험",
 
-<<<<<<< HEAD
-                    single_seq: "단일 서열 쿼리"
-=======
                     two_seq_comp: "두 시퀸스 비교",
                     result: "결과",
                     similarity: "유사도",
                     mutation_list: "돌연변의 목록",
                     au_err_occured: "시퀸스를 처리하는 중 오류가 발생했습니다",
                     plz_fill_in_blanks: "모든 빈칸에 데이터를 입력해 주세요",
->>>>>>> 3e0834bd5addbce819741a58445d34e187562837
                 },
             },
 

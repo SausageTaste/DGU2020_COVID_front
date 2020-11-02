@@ -157,6 +157,15 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             is_loading: true,
         });
 
+        this.setState({
+            is_loading: true,
+
+            result_cell_texts_1: "",
+            result_cell_texts_2: "",
+
+            show_err_prompt: false,
+        });
+
         const seq_1 = this.state.user_input_1;
         const seq_2 = this.state.user_input_2;
 
@@ -183,9 +192,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     this.setState({
                         is_loading: false,
 
-                        result_cell_texts_1: "",
-                        result_cell_texts_2: "",
-
                         show_err_prompt: true,
                         err_message: err_msg,
                     });
@@ -195,9 +201,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                 console.log(err);
                 this.setState({
                     is_loading: false,
-
-                    result_cell_texts_1: "",
-                    result_cell_texts_2: "",
 
                     show_err_prompt: true,
                     err_message: err,

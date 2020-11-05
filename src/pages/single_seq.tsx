@@ -147,7 +147,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                             value={this.state.resultStr} />
                     </Form> */}
 
-                    <Table celled>
+                    <Table striped celled>
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell textAlign="center">{i18n.t("sequence_id")}</Table.HeaderCell>
@@ -198,6 +198,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 const payload = response.data
                 const error_code = payload[cst.KEY_ERROR_CODE];
                 if (0 == error_code) {
+                    
                     this.setState({
                         isLoading: false,
 

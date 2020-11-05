@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table } from 'semantic-ui-react';
 import _ from 'lodash';
 
@@ -7,6 +6,30 @@ import * as cst from "../utils/konst";
 import * as clt from "./../utils/client";
 import i18n from './../i18n';
 
+
+interface ErrorPromptProps {
+    show_err_prompt: boolean;
+    err_message: string;
+    msg_header: string;
+}
+
+class ErrorPrompt extends React.Component<ErrorPromptProps, {}> {
+
+    public render() {
+        if (this.props.show_err_prompt) {
+            return (
+                <Message warning>
+                    <Message.Header>{this.props.msg_header}</Message.Header>
+                    <p>{this.props.err_message}</p>
+                </Message>
+            );
+        }
+        else {
+            return null;
+        }
+    }
+
+}
 
 class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
 
@@ -40,18 +63,12 @@ interface SequenceSearchState {
 
     userInput: string;
     acc_id_list: any;
+
+    show_err_prompt: boolean;
+    err_message: string;
 }
 
 export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState> {
-
-    id_list = ["Identity", "BitScore"];
-
-    ///
-    // function List({id_list})(int:any) {
-    //     return(
-    //         <div>{id_list.Identity} {id_list.Bitscore}</div>
-    //     )
-    // }:void
 
     constructor(props: SequenceSearchProps) {
         super(props);
@@ -61,6 +78,9 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             isLoading: false,
             userInput: "",
             acc_id_list: [],
+
+            show_err_prompt: false,
+            err_message: "",
         };
 
         this.onBtnClicked = this.onBtnClicked.bind(this);
@@ -98,10 +118,16 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                                 placeholder={i18n.t("put_your_seq_here")}
                                 value={this.state.userInput}
                                 onChange={this.handleTextAreaChange}
-                                style={{fontFamily: "consolas"}} />
+                                style={{fontFamily: "consolas", whiteSpace: "normal"}} />
                         </Form.Field>
                         <Button primary type="submit">{i18n.t("send")}</Button>
                     </Form>
+
+                    <ErrorPrompt
+                        show_err_prompt={this.state.show_err_prompt}
+                        err_message={this.state.err_message}
+                        msg_header={i18n.t("au_err_occured")}
+                    />
                 </Segment>
 
                 <Segment basic textAlign='center'>
@@ -139,20 +165,57 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     private onBtnClicked = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        const seq = this.state.userInput
+
+        if (seq.length <= 0){
+            this.setState({
+                isLoading: false,
+
+                show_err_prompt: true,
+                err_message: i18n.t("plz_fill_in_blanks"),
+            });
+
+            return;
+        }
+
         this.setState({
             isLoading: true,
         });
 
-        clt.get_similar_seq_ids(this.state.userInput, 10)
+        clt.get_similar_seq_ids(seq, 10)
             .then((response) => {
                 const payload = response.data
-                // this.setState({resultStr: JSON.stringify(response.data, null, '\t')});
-                this.setState({acc_id_list: payload[cst.KEY_ACC_ID_LIST]})
-                this.setState({isLoading: false});
+                const error_code = payload[cst.KEY_ERROR_CODE];
+                if (0 == error_code) {
+                    this.setState({
+                        isLoading: false,
+                        show_err_prompt: false,
+
+                        acc_id_list: payload[cst.KEY_ACC_ID_LIST],
+                    })
+                }
+                else {
+                    const err_msg = payload[cst.KEY_ERROR_TEXT];
+                    //switch
+
+                    this.setState({
+                        isLoading: false,
+
+                        show_err_prompt: true,
+                        err_message: err_msg,
+                    });
+                }
             })
             .catch(err => {
-                console.log(err);
-                this.setState({isLoading: false});
+                // console.log(err);
+                // this.setState({isLoading: false});
+                this.setState({
+                    
+                    isLoading: false,
+
+                    show_err_prompt: true,
+                    err_message: err,
+                });
             })
     };
 

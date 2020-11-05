@@ -42,6 +42,7 @@ interface TwoSeqCompState {
 
     result_cell_texts_1: string;
     result_cell_texts_2: string;
+    mutation_list_texts: string[];
 
     show_err_prompt: boolean;
     err_message: string;
@@ -59,6 +60,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
             result_cell_texts_1: "",
             result_cell_texts_2: "",
+            mutation_list_texts: [],
 
             show_err_prompt: false,
             err_message: "",
@@ -70,6 +72,24 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     }
 
     public render() {
+        const mutation_element_list = [];
+        for (const i in this.state.mutation_list_texts) {
+            const value = this.state.mutation_list_texts[i];
+
+            mutation_element_list.push(
+                <Table.Row>
+                    <Table.Cell textAlign="center">{value}</Table.Cell>
+                </Table.Row>
+            );
+        }
+        if (0 == mutation_element_list.length) {
+            mutation_element_list.push(
+                <Table.Row>
+                    <Table.Cell textAlign="center">No data</Table.Cell>
+                </Table.Row>
+            );
+        }
+
         return (
             <div>
 
@@ -128,15 +148,13 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     </Table>
 
                     <Table celled>
-                    <Table.Header>
+                        <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell textAlign="center">{i18n.t("mutation_list")}</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            <Table.Row>
-                                <Table.Cell textAlign="center"></Table.Cell>
-                            </Table.Row>
+                            {mutation_element_list}
                         </Table.Body>
                     </Table>
                 </Segment>
@@ -218,6 +236,48 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     err_message: err,
                 });
             })
+
+        clt.find_mutations(seq_1, seq_2)
+            .then((response) => {
+                const payload = response.data;
+                const error_code = payload[cst.KEY_ERROR_CODE];
+                if (0 == error_code) {
+                    const result = payload[cst.KEY_RESULT];
+                    const result_str_list: string[] = [];
+
+                    for (let i = 0; i < result.length; ++i) {
+                        result_str_list.push(`${result[i][0]} - ${result[i][1]} - ${result[i][2]}`);
+                    }
+
+                    this.setState({
+                        is_loading: false,
+
+                        mutation_list_texts: result_str_list,
+
+                        show_err_prompt: false,
+                    })
+                }
+                else {
+                    const err_msg = payload[cst.KEY_ERROR_TEXT];
+
+                    this.setState({
+                        is_loading: false,
+
+                        show_err_prompt: true,
+                        err_message: err_msg,
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({
+                    is_loading: false,
+
+                    show_err_prompt: true,
+                    err_message: err,
+                });
+            })
+
     }
 
 }

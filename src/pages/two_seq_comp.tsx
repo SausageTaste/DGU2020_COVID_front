@@ -87,7 +87,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
         if (0 == mutation_element_list.length) {
             mutation_element_list.push(
                 <Table.Row>
-                    <Table.Cell textAlign="center">No data</Table.Cell>
+                    <Table.Cell textAlign="center">{i18n.t("no_data")}</Table.Cell>
                 </Table.Row>
             );
         }

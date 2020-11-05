@@ -64,8 +64,7 @@ interface SequenceSearchState {
     userInput: string;
     acc_id_list: any;
 
-    show_err_prompt: boolean;
-    err_message: string;
+    err_message_list: string[];
 }
 
 export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState> {
@@ -79,8 +78,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             userInput: "",
             acc_id_list: [],
 
-            show_err_prompt: false,
-            err_message: "",
+            err_message_list: [],
         };
 
         this.onBtnClicked = this.onBtnClicked.bind(this);
@@ -105,6 +103,19 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             );
         }
 
+        const error_prompt_list = [];
+        for (const i in this.state.err_message_list) {
+            const value = this.state.err_message_list[i];
+
+            error_prompt_list.push(
+                <ErrorPrompt
+                    show_err_prompt={true}
+                    err_message={value}
+                    msg_header={i18n.t("au_err_occured")}
+                />
+            );
+        }
+
         return (
             <div>
                 <DimmerWidget isActivated={this.state.isLoading} />
@@ -123,11 +134,8 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         <Button primary type="submit">{i18n.t("send")}</Button>
                     </Form>
 
-                    <ErrorPrompt
-                        show_err_prompt={this.state.show_err_prompt}
-                        err_message={this.state.err_message}
-                        msg_header={i18n.t("au_err_occured")}
-                    />
+                    {error_prompt_list}
+
                 </Segment>
 
                 <Segment basic textAlign='center'>
@@ -165,14 +173,17 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     private onBtnClicked = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        this.setState({
+            err_message_list: [],
+        })
+
         const seq = this.state.userInput
 
         if (seq.length <= 0){
             this.setState({
                 isLoading: false,
 
-                show_err_prompt: true,
-                err_message: i18n.t("plz_fill_in_blanks"),
+                err_message_list: [i18n.t("plz_fill_in_blanks")],
             });
 
             return;
@@ -189,34 +200,34 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 if (0 == error_code) {
                     this.setState({
                         isLoading: false,
-                        show_err_prompt: false,
 
                         acc_id_list: payload[cst.KEY_ACC_ID_LIST],
                     })
                 }
                 else {
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
-                    //switch
+                    const new_err_list = this.state.err_message_list.slice();
+                    new_err_list.push(err_msg);
 
                     this.setState({
                         isLoading: false,
 
-                        show_err_prompt: true,
-                        err_message: err_msg,
+                        err_message_list: new_err_list,
                     });
                 }
             })
             .catch(err => {
-                // console.log(err);
-                // this.setState({isLoading: false});
+                console.log(err);
+                const new_err_list = this.state.err_message_list.slice();
+                new_err_list.push(err);
+
                 this.setState({
-                    
                     isLoading: false,
 
-                    show_err_prompt: true,
-                    err_message: err,
+                    err_message_list: new_err_list,
                 });
             })
+
     };
 
 }

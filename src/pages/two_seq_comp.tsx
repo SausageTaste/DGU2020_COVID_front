@@ -46,8 +46,7 @@ interface TwoSeqCompState {
     result_cell_texts_2: string;
     mutation_list_texts: string[];
 
-    show_err_prompt: boolean;
-    err_message: string;
+    err_message_list: string[];
 }
 
 export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState> {
@@ -66,8 +65,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             result_cell_texts_2: "",
             mutation_list_texts: [],
 
-            show_err_prompt: false,
-            err_message: "",
+            err_message_list: [],
         };
 
         this.on_submit_btn_clicked = this.on_submit_btn_clicked.bind(this);
@@ -91,6 +89,19 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                 <Table.Row>
                     <Table.Cell textAlign="center">No data</Table.Cell>
                 </Table.Row>
+            );
+        }
+
+        const error_prompt_list = [];
+        for (const i in this.state.err_message_list) {
+            const value = this.state.err_message_list[i];
+
+            error_prompt_list.push(
+                <ErrorPrompt
+                    show_err_prompt={true}
+                    err_message={value}
+                    msg_header={i18n.t("au_err_occured")}
+                />
             );
         }
 
@@ -122,11 +133,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         <Button primary disabled={is_anything_loading} loading={is_anything_loading} type="submit">{i18n.t("send")}</Button>
                     </Form>
 
-                    <ErrorPrompt
-                        show_err_prompt={this.state.show_err_prompt}
-                        err_message={this.state.err_message}
-                        msg_header={i18n.t("au_err_occured")}
-                    />
+                    {error_prompt_list}
                 </Segment>
 
                 <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 600}}>
@@ -184,6 +191,10 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     private on_submit_btn_clicked = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        this.setState({
+            err_message_list: [],
+        })
+
         const seq_1 = this.state.user_input_1;
         const seq_2 = this.state.user_input_2;
 
@@ -192,8 +203,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                 is_loading_simil: false,
                 is_loading_mutations: false,
 
-                show_err_prompt: true,
-                err_message: i18n.t("plz_fill_in_blanks"),
+                err_message_list: [i18n.t("plz_fill_in_blanks")],
             });
 
             return;
@@ -205,8 +215,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
             result_cell_texts_1: "",
             result_cell_texts_2: "",
-
-            show_err_prompt: false,
         });
 
         clt.calc_similarity_of_two_seq(seq_1, seq_2)
@@ -221,24 +229,25 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     this.setState({
                         result_cell_texts_1: simi_bit_score,
                         result_cell_texts_2: simi_identity,
-
-                        show_err_prompt: false,
                     })
                 }
                 else {
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
+                    const new_err_list = this.state.err_message_list.slice();
+                    new_err_list.push(err_msg);
 
                     this.setState({
-                        show_err_prompt: true,
-                        err_message: err_msg,
+                        err_message_list: new_err_list,
                     });
                 }
             })
             .catch(err => {
                 console.log(err);
+                const new_err_list = this.state.err_message_list.slice();
+                new_err_list.push(err);
+
                 this.setState({
-                    show_err_prompt: true,
-                    err_message: err,
+                    err_message_list: new_err_list,
                 });
             })
             .then(() => {  // This is technically 'finally'
@@ -262,24 +271,25 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
                     this.setState({
                         mutation_list_texts: result_str_list,
-
-                        show_err_prompt: false,
                     })
                 }
                 else {
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
+                    const new_err_list = this.state.err_message_list.slice();
+                    new_err_list.push(err_msg);
 
                     this.setState({
-                        show_err_prompt: true,
-                        err_message: err_msg,
+                        err_message_list: new_err_list,
                     });
                 }
             })
             .catch(err => {
                 console.log(err);
+                const new_err_list = this.state.err_message_list.slice();
+                new_err_list.push(err);
+
                 this.setState({
-                    show_err_prompt: true,
-                    err_message: err,
+                    err_message_list: new_err_list,
                 });
             })
             .then(() => {  // This is technically 'finally'

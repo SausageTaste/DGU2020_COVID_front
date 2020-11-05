@@ -262,11 +262,19 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                 const error_code = payload[cst.KEY_ERROR_CODE];
 
                 if (0 == error_code) {
-                    const result = payload[cst.KEY_RESULT];
+                    const change_list = payload[cst.KEY_MUT_CHANGE_LIST];
+                    const indel_list = payload[cst.KEY_MUT_INDEL_LIST];
+
                     const result_str_list: string[] = [];
 
-                    for (let i = 0; i < result.length; ++i) {
-                        result_str_list.push(`${result[i][0]} - ${result[i][1]} - ${result[i][2]}`);
+                    for (const i in indel_list) {
+                        const value = indel_list[i];
+                        result_str_list.push(`${value[0]} - ${value[1]}`);
+                    }
+
+                    for (const i in change_list) {
+                        const value = change_list[i];
+                        result_str_list.push(`${value[0]} - ${value[1]} - ${value[2]}`);
                     }
 
                     this.setState({

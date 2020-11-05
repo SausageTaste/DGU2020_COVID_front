@@ -30,6 +30,8 @@ i18n
 
                     opengl_view: "OpenGL Test",
 
+                    single_seq: "Single Sequence Query",
+
                     two_seq_comp: "Two Sequence Comparison",
                     result: "Result",
                     similarity: "Similarity",
@@ -52,6 +54,8 @@ i18n
                     send: "전송",
 
                     opengl_view: "OpenGL 시험",
+
+                    single_seq: "유사 시퀀스 조회",
 
                     two_seq_comp: "두 시퀸스 비교",
                     result: "결과",

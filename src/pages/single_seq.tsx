@@ -7,86 +7,6 @@ import * as cst from "../utils/konst";
 import * as clt from "./../utils/client";
 import i18n from './../i18n';
 
-export interface IState {
-    datarecords: any[];
-    datacolumns: any[];
-    // schema: any[];
-}
-
-class BuildDynamicTable extends React.Component<RouteComponentProps<any>, IState> {
-    //Constructor
-    constructor(props: RouteComponentProps) {
-        super(props);
-        this.state = { 
-            datarecords: [], 
-            datacolumns: [],
-        }
-    }
-
-    //Methods
-    public componentWillMount(): void {
-        response => {
-            this.setState({datarecords: response.data});
-            this.extractColumnNames(); 
-            }
-    }
-
-    private extractColumnNames() 
-    {
-        const firstrecord = _.keys(this.state.datarecords[0]);
-        this.setState({datacolumns: firstrecord,});
-    }
-
-    private displayRecords(key: number) {
-        const datacolumns= this.state.datacolumns;
-        return datacolumns.map((each_col) =>
-        this.displayRecordName(each_col,key))
-    }
-
-    private displayRecordName(colname:string, key:number){
-        const record = this.state.datarecords[key];
-        return <th>{record[colname]}</th>
-    }
-
-    private Capitalize(str: string){
-        const str_t = str.toUpperCase();
-        const str_tt = str_t.replace("_", " ");
-        return str_tt;
-    }
-
-    public render(){
-        const datarecords = this.state.datarecords;
-        const table_headers = this.state.datacolumns;
-        return (
-            <div>
-                {datarecords.length === 0 && (
-                    <div className="text-center">
-                        <h2>No datarecords found at the moment</h2>
-                    </div>
-                )}
-                <div className="container"><div className="row">
-                    <table className="table table-bordered">
-                        <thead className="thead-light">
-                            <tr>
-                                {table_headers && table_headers.map(each_table_header => <th scope="col">{this.Capitalize(each_table_header)}</th>
-                                )}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {datarecords && datarecords.map(
-                                (each_datarecord, recordindex) =>
-                                <tr key={each_datarecord.id}>
-                                    {this.displayRecords(recordindex)}
-                                </tr>
-                            ) }
-                        </tbody>
-                    </table> 
-                </div> </div> 
-            </div>
-        )
-    }
-}
-  
 
 class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
 
@@ -119,8 +39,6 @@ interface SequenceSearchState {
     isLoading: boolean
 
     userInput: string;
-    result_Idty: [];
-    result_score: [];
     acc_id_list: any;
 }
 
@@ -142,8 +60,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             shouldReload: false,
             isLoading: false,
             userInput: "",
-            result_Idty: [],
-            result_score: [],
             acc_id_list: [],
         };
 
@@ -162,9 +78,9 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
             seq_list.push(
                 <Table.Row>
-                    <Table.Cell collapsing>{acc_id}</Table.Cell>
-                    <Table.Cell>{simil_identity}</Table.Cell>
-                    <Table.Cell>{simil_bit_score}</Table.Cell>
+                    <Table.Cell collapsing textAlign="center">{acc_id}</Table.Cell>
+                    <Table.Cell collapsing textAlign="center">{Number.isInteger(simil_identity) ? simil_identity : simil_identity.toFixed(4)}</Table.Cell>
+                    <Table.Cell collapsing textAlign="center">{simil_bit_score}</Table.Cell>
                 </Table.Row>
             );
         }
@@ -200,9 +116,9 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell textAlign="center">{1}</Table.HeaderCell>
-                                <Table.HeaderCell textAlign="center">{2}</Table.HeaderCell>
-                                <Table.HeaderCell textAlign="center">{3}</Table.HeaderCell>
+                                <Table.HeaderCell textAlign="center">{i18n.t("sequence_id")}</Table.HeaderCell>
+                                <Table.HeaderCell textAlign="center">{i18n.t("similarity")}</Table.HeaderCell>
+                                <Table.HeaderCell textAlign="center">{i18n.t("bit_score")}</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -225,8 +141,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
         this.setState({
             isLoading: true,
-            result_Idty: [],
-            result_score: [],
         });
 
         clt.get_similar_seq_ids(this.state.userInput, 10)

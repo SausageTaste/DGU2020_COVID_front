@@ -31,6 +31,9 @@ i18n
                     opengl_view: "OpenGL Test",
 
                     single_seq: "Single Sequence Query",
+                    sequence_id: "Sequence ID",
+                    bit_score: "Bitscore",
+
 
                     two_seq_comp: "Two Sequence Comparison",
                     result: "Result",
@@ -56,7 +59,9 @@ i18n
                     opengl_view: "OpenGL 시험",
 
                     single_seq: "유사 시퀀스 조회",
-
+                    sequence_id: "시퀀스 ID",
+                    bit_score: "비트스코어",
+                    
                     two_seq_comp: "두 시퀸스 비교",
                     result: "결과",
                     similarity: "유사도",

@@ -36,7 +36,9 @@ interface TwoSeqCompProps {
 }
 
 interface TwoSeqCompState {
-    is_loading: boolean;
+    is_loading_simil: boolean,
+    is_loading_mutations: boolean,
+
     user_input_1: string;
     user_input_2: string;
 
@@ -54,7 +56,9 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
         super(props);
 
         this.state = {
-            is_loading: false,
+            is_loading_simil: false,
+            is_loading_mutations: false,
+
             user_input_1: "",
             user_input_2: "",
 
@@ -90,6 +94,8 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             );
         }
 
+        const is_anything_loading = this.is_loading_any();
+
         return (
             <div>
 
@@ -113,7 +119,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                                 style={{fontFamily: "consolas"}}
                             />
                         </Form.Field>
-                        <Button primary disabled={this.state.is_loading} loading={this.state.is_loading} type="submit">{i18n.t("send")}</Button>
+                        <Button primary disabled={is_anything_loading} loading={is_anything_loading} type="submit">{i18n.t("send")}</Button>
                     </Form>
 
                     <ErrorPrompt
@@ -123,7 +129,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     />
                 </Segment>
 
-                <Segment basic loading={this.state.is_loading} style={{maxWidth: 600}}>
+                <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 600}}>
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
@@ -146,7 +152,9 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                             </Table.Row>
                         </Table.Body>
                     </Table>
+                </Segment>
 
+                <Segment basic loading={this.state.is_loading_mutations} style={{maxWidth: 600}}>
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
@@ -181,7 +189,8 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
         if (seq_1.length <= 0 || seq_2.length <= 0) {
             this.setState({
-                is_loading: false,
+                is_loading_simil: false,
+                is_loading_mutations: false,
 
                 show_err_prompt: true,
                 err_message: i18n.t("plz_fill_in_blanks"),
@@ -191,7 +200,8 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
         }
 
         this.setState({
-            is_loading: true,
+            is_loading_simil: true,
+            is_loading_mutations: true,
 
             result_cell_texts_1: "",
             result_cell_texts_2: "",
@@ -203,13 +213,12 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             .then((response) => {
                 const payload = response.data;
                 const error_code = payload[cst.KEY_ERROR_CODE];
+
                 if (0 == error_code) {
                     const simi_bit_score = payload[cst.KEY_SIMILARITY_BIT_SCORE];
                     const simi_identity = payload[cst.KEY_SIMILARITY_IDENTITY];
 
                     this.setState({
-                        is_loading: false,
-
                         result_cell_texts_1: simi_bit_score,
                         result_cell_texts_2: simi_identity,
 
@@ -220,8 +229,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
 
                     this.setState({
-                        is_loading: false,
-
                         show_err_prompt: true,
                         err_message: err_msg,
                     });
@@ -230,17 +237,21 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             .catch(err => {
                 console.log(err);
                 this.setState({
-                    is_loading: false,
-
                     show_err_prompt: true,
                     err_message: err,
                 });
             })
+            .then(() => {  // This is technically 'finally'
+                this.setState({
+                    is_loading_simil: false,
+                });
+            });
 
         clt.find_mutations(seq_1, seq_2)
             .then((response) => {
                 const payload = response.data;
                 const error_code = payload[cst.KEY_ERROR_CODE];
+
                 if (0 == error_code) {
                     const result = payload[cst.KEY_RESULT];
                     const result_str_list: string[] = [];
@@ -250,8 +261,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     }
 
                     this.setState({
-                        is_loading: false,
-
                         mutation_list_texts: result_str_list,
 
                         show_err_prompt: false,
@@ -261,8 +270,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
 
                     this.setState({
-                        is_loading: false,
-
                         show_err_prompt: true,
                         err_message: err_msg,
                     });
@@ -271,13 +278,25 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             .catch(err => {
                 console.log(err);
                 this.setState({
-                    is_loading: false,
-
                     show_err_prompt: true,
                     err_message: err,
                 });
             })
+            .then(() => {  // This is technically 'finally'
+                this.setState({
+                    is_loading_mutations: false,
+                });
+            });
 
+    }
+
+    private is_loading_any() {
+        if (this.state.is_loading_mutations)
+            return true;
+        if (this.state.is_loading_simil)
+            return true;
+
+        return false;
     }
 
 }

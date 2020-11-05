@@ -80,3 +80,26 @@ export function calc_similarity_of_two_seq(sequence_1: string, sequence_2: strin
         [cst.KEY_SEQUENCE_LIST]: [sequence_1, sequence_2],
     }, {cancelToken});
 }
+
+
+/**
+ *
+ * @returns List of acc_id
+ */
+export function get_all_acc_ids(cancelToken: CancelToken = null) {
+    return instance.get("get_all_acc_ids/", {cancelToken});
+}
+
+
+/**
+ * I haven't test it yet.
+ *
+ * @param sequence_1 A DNA sequence of a covid19 to compare
+ * @param sequence_2 Same
+ * @returns The structure of result values would be change
+ */
+export function find_mutations(sequence_1: string, sequence_2: string, cancelToken: CancelToken = null) {
+    return instance.post("find_mutations/", {
+        [cst.KEY_SEQUENCE_LIST]: [sequence_1, sequence_2],
+    }, {cancelToken});
+}

@@ -100,7 +100,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                 <ErrorPrompt
                     show_err_prompt={true}
                     err_message={value}
-                    msg_header={i18n.t("au_err_occured")}
+                    msg_header={i18n.t("an_err_occured")}
                 />
             );
         }

@@ -3,7 +3,7 @@ import i18n from "i18next";
 
 i18n
     .init({
-        lng: "en",
+        lng: "kr",
         fallbackLng: "en",
 
         detection: {
@@ -27,6 +27,7 @@ i18n
                     put_your_seq_or_fasta_here: "Put your sequence or fasta string here",
                     result_will_appear_here: "The result will appear here",
                     send: "Send",
+                    no_data: "No data",
 
                     opengl_view: "OpenGL Test",
 
@@ -41,7 +42,7 @@ i18n
                     simi_bit_score: "Bit score",
                     simi_identity: "Identity",
                     mutation_list: "Mutataion List",
-                    au_err_occured: "An error occured while processing sequences",
+                    an_err_occured: "An error occured while processing sequences",
                     plz_fill_in_blanks: "Please provide with all needed data",
                 },
             },
@@ -55,6 +56,7 @@ i18n
                     put_your_seq_or_fasta_here: "시퀸스나 fasta 문자열을 이곳에 입력하세요",
                     result_will_appear_here: "결과는 이곳에 출력됩니다",
                     send: "전송",
+                    no_data: "데이터 없음",
 
                     opengl_view: "OpenGL 시험",
 
@@ -65,8 +67,8 @@ i18n
                     two_seq_comp: "두 시퀸스 비교",
                     result: "결과",
                     similarity: "유사도",
-                    mutation_list: "돌연변의 목록",
-                    au_err_occured: "시퀸스를 처리하는 중 오류가 발생했습니다",
+                    mutation_list: "돌연변이 목록",
+                    an_err_occured: "시퀸스를 처리하는 중 오류가 발생했습니다",
                     plz_fill_in_blanks: "모든 빈칸에 데이터를 입력해 주세요",
                 },
             },

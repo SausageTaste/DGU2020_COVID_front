@@ -60,8 +60,6 @@ export function get_metadata_of_seq(acc_id: string, column_list: string[], cance
 
 
 /**
- * I haven't test it yet.
- *
  * @param sequence_1 A DNA sequence of a covid19 to compare
  * @param sequence_2 Same
  * @returns
@@ -77,6 +75,39 @@ export function get_metadata_of_seq(acc_id: string, column_list: string[], cance
  */
 export function calc_similarity_of_two_seq(sequence_1: string, sequence_2: string, cancelToken: CancelToken = null) {
     return instance.post("calc_similarity_of_two_seq/", {
+        [cst.KEY_SEQUENCE_LIST]: [sequence_1, sequence_2],
+    }, {cancelToken});
+}
+
+
+/**
+ *
+ * @returns List of acc_id
+ */
+export function get_all_acc_ids(cancelToken: CancelToken = null) {
+    return instance.get("get_all_acc_ids/", {cancelToken});
+}
+
+
+/**
+ * @param sequence_1 A DNA sequence of a covid19 to compare
+ * @param sequence_2 Same
+ * @returns The structure of result values may change
+ * A dictionary that has
+ * * error_code: int
+ * * mut_change_list: List[string, string, number]
+ * * mut_indel_list: List[string, string]
+ *
+ * An element of 'mut_change_list' looks like `['A', 'G', 4]`.
+ * The meanings of those are that first and second ones are amino acid
+ * and the third one is location of the change, using 1 as the first index.
+ *
+ * An element of 'mut_indel_list' looks like `['19_20_INS', 'GTTGAAA']`.
+ * The first element is composed like `{index of first seq}_{index of second seq}_{ins which means insert, or del which means delete}`.
+ * The second one is obviously a string of the amino acid.
+ */
+export function find_mutations(sequence_1: string, sequence_2: string, cancelToken: CancelToken = null) {
+    return instance.post("find_mutations/", {
         [cst.KEY_SEQUENCE_LIST]: [sequence_1, sequence_2],
     }, {cancelToken});
 }

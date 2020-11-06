@@ -36,15 +36,17 @@ interface TwoSeqCompProps {
 }
 
 interface TwoSeqCompState {
-    is_loading: boolean;
+    is_loading_simil: boolean,
+    is_loading_mutations: boolean,
+
     user_input_1: string;
     user_input_2: string;
 
     result_cell_texts_1: string;
     result_cell_texts_2: string;
+    mutation_list_texts: string[];
 
-    show_err_prompt: boolean;
-    err_message: string;
+    err_message_list: string[];
 }
 
 export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState> {
@@ -53,15 +55,17 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
         super(props);
 
         this.state = {
-            is_loading: false,
+            is_loading_simil: false,
+            is_loading_mutations: false,
+
             user_input_1: "",
             user_input_2: "",
 
             result_cell_texts_1: "",
             result_cell_texts_2: "",
+            mutation_list_texts: [],
 
-            show_err_prompt: false,
-            err_message: "",
+            err_message_list: [],
         };
 
         this.on_submit_btn_clicked = this.on_submit_btn_clicked.bind(this);
@@ -70,6 +74,39 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     }
 
     public render() {
+        const mutation_element_list = [];
+        for (const i in this.state.mutation_list_texts) {
+            const value = this.state.mutation_list_texts[i];
+
+            mutation_element_list.push(
+                <Table.Row>
+                    <Table.Cell textAlign="center">{value}</Table.Cell>
+                </Table.Row>
+            );
+        }
+        if (0 == mutation_element_list.length) {
+            mutation_element_list.push(
+                <Table.Row>
+                    <Table.Cell textAlign="center">{i18n.t("no_data")}</Table.Cell>
+                </Table.Row>
+            );
+        }
+
+        const error_prompt_list = [];
+        for (const i in this.state.err_message_list) {
+            const value = this.state.err_message_list[i];
+
+            error_prompt_list.push(
+                <ErrorPrompt
+                    show_err_prompt={true}
+                    err_message={value}
+                    msg_header={i18n.t("an_err_occured")}
+                />
+            );
+        }
+
+        const is_anything_loading = this.is_loading_any();
+
         return (
             <div>
 
@@ -93,17 +130,13 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                                 style={{fontFamily: "consolas"}}
                             />
                         </Form.Field>
-                        <Button primary disabled={this.state.is_loading} loading={this.state.is_loading} type="submit">{i18n.t("send")}</Button>
+                        <Button primary disabled={is_anything_loading} loading={is_anything_loading} type="submit">{i18n.t("send")}</Button>
                     </Form>
 
-                    <ErrorPrompt
-                        show_err_prompt={this.state.show_err_prompt}
-                        err_message={this.state.err_message}
-                        msg_header={i18n.t("au_err_occured")}
-                    />
+                    {error_prompt_list}
                 </Segment>
 
-                <Segment basic loading={this.state.is_loading} style={{maxWidth: 600}}>
+                <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 600}}>
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
@@ -126,17 +159,17 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                             </Table.Row>
                         </Table.Body>
                     </Table>
+                </Segment>
 
+                <Segment basic loading={this.state.is_loading_mutations} style={{maxWidth: 600}}>
                     <Table celled>
-                    <Table.Header>
+                        <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell textAlign="center">{i18n.t("mutation_list")}</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            <Table.Row>
-                                <Table.Cell textAlign="center"></Table.Cell>
-                            </Table.Row>
+                            {mutation_element_list}
                         </Table.Body>
                     </Table>
                 </Segment>
@@ -158,66 +191,130 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     private on_submit_btn_clicked = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        this.setState({
+            err_message_list: [],
+        })
+
         const seq_1 = this.state.user_input_1;
         const seq_2 = this.state.user_input_2;
 
         if (seq_1.length <= 0 || seq_2.length <= 0) {
             this.setState({
-                is_loading: false,
+                is_loading_simil: false,
+                is_loading_mutations: false,
 
-                show_err_prompt: true,
-                err_message: i18n.t("plz_fill_in_blanks"),
+                err_message_list: [i18n.t("plz_fill_in_blanks")],
             });
 
             return;
         }
 
         this.setState({
-            is_loading: true,
+            is_loading_simil: true,
+            is_loading_mutations: true,
 
             result_cell_texts_1: "",
             result_cell_texts_2: "",
-
-            show_err_prompt: false,
         });
 
         clt.calc_similarity_of_two_seq(seq_1, seq_2)
             .then((response) => {
                 const payload = response.data;
                 const error_code = payload[cst.KEY_ERROR_CODE];
+
                 if (0 == error_code) {
                     const simi_bit_score = payload[cst.KEY_SIMILARITY_BIT_SCORE];
                     const simi_identity = payload[cst.KEY_SIMILARITY_IDENTITY];
 
                     this.setState({
-                        is_loading: false,
-
                         result_cell_texts_1: simi_bit_score,
                         result_cell_texts_2: simi_identity,
-
-                        show_err_prompt: false,
                     })
                 }
                 else {
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
+                    const new_err_list = this.state.err_message_list.slice();
+                    new_err_list.push(err_msg);
 
                     this.setState({
-                        is_loading: false,
-
-                        show_err_prompt: true,
-                        err_message: err_msg,
+                        err_message_list: new_err_list,
                     });
                 }
             })
             .catch(err => {
                 console.log(err);
-                this.setState({
-                    is_loading: false,
+                const new_err_list = this.state.err_message_list.slice();
+                new_err_list.push(err);
 
-                    show_err_prompt: true,
-                    err_message: err,
+                this.setState({
+                    err_message_list: new_err_list,
                 });
             })
+            .then(() => {  // This is technically 'finally'
+                this.setState({
+                    is_loading_simil: false,
+                });
+            });
+
+        clt.find_mutations(seq_1, seq_2)
+            .then((response) => {
+                const payload = response.data;
+                const error_code = payload[cst.KEY_ERROR_CODE];
+
+                if (0 == error_code) {
+                    const change_list = payload[cst.KEY_MUT_CHANGE_LIST];
+                    const indel_list = payload[cst.KEY_MUT_INDEL_LIST];
+
+                    const result_str_list: string[] = [];
+
+                    for (const i in indel_list) {
+                        const value = indel_list[i];
+                        result_str_list.push(`${value[0]} - ${value[1]}`);
+                    }
+
+                    for (const i in change_list) {
+                        const value = change_list[i];
+                        result_str_list.push(`${value[0]} - ${value[1]} - ${value[2]}`);
+                    }
+
+                    this.setState({
+                        mutation_list_texts: result_str_list,
+                    })
+                }
+                else {
+                    const err_msg = payload[cst.KEY_ERROR_TEXT];
+                    const new_err_list = this.state.err_message_list.slice();
+                    new_err_list.push(err_msg);
+
+                    this.setState({
+                        err_message_list: new_err_list,
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                const new_err_list = this.state.err_message_list.slice();
+                new_err_list.push(err);
+
+                this.setState({
+                    err_message_list: new_err_list,
+                });
+            })
+            .then(() => {  // This is technically 'finally'
+                this.setState({
+                    is_loading_mutations: false,
+                });
+            });
+
+    }
+
+    private is_loading_any() {
+        if (this.state.is_loading_mutations)
+            return true;
+        if (this.state.is_loading_simil)
+            return true;
+
+        return false;
     }
 
 }

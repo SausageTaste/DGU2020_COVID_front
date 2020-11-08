@@ -90,7 +90,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     }
 
     public render() {
-        const max_num = 50;
+        const max_seq_num = 50;
         const seq_list: JSX.Element[] = [];
         const num_of_rows = Object.keys(this.state.acc_id_list).length;
         let i=1;
@@ -132,14 +132,14 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
                 <Header as='h1' dividing>{i18n.t("single_seq_query")}</Header>
 
-                <Segment basic textAlign='center'>
+                <Segment basic>
                     <Form onSubmit={this.onBtnClicked}>
-                        <Form.Field>
+                        <Form.Field> 
                             <label>{i18n.t("put_your_seq_count")}</label>
                             <NumericInput type="text" 
                                 placeholder={i18n.t("howmany")}
                                 min={1} 
-	                            max={max_num} 
+	                            max={max_seq_num} 
 	                            step={1}
                                 initValue={this.state.howmany}
                                 value={this.state.howmany}
@@ -153,7 +153,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                                 onChange={this.handleTextAreaChange}
                                 style={{fontFamily: "consolas", whiteSpace: "normal"}} />
                         </Form.Field>
-                        <Button primary type="submit" style={{textAlign: 'center'}}>{i18n.t("send")}</Button>
+                        <Button primary type="submit" style={{textAlign: 'center'}}>{i18n.t("send")}</Button> {/* 이 버튼을 가운데정렬 하고 싶은데 아직 해결 못함 */}
                     </Form>
 
                     {error_prompt_list}

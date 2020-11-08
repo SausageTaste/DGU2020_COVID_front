@@ -11,5 +11,8 @@ export const KEY_SIMILARITY_IDENTITY = "simil_identity";
 export const KEY_SIMILARITY_BIT_SCORE = "simil_bit_score";
 export const KEY_HOW_MANY = "how_many";
 
+export const KEY_MUT_CHANGE_LIST = "mut_change_list";
+export const KEY_MUT_INDEL_LIST = "mut_indel_list";
+
 export const KEY_ERROR_CODE = "error_code";
 export const KEY_ERROR_TEXT = "error_text";

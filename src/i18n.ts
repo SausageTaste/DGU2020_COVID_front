@@ -31,13 +31,18 @@ i18n
 
                     opengl_view: "OpenGL Test",
 
+                    single_seq: "Single Sequence Query",
+                    sequence_id: "Sequence ID",
+                    bit_score: "Bitscore",
+
+
                     two_seq_comp: "Two Sequence Comparison",
                     result: "Result",
                     similarity: "Similarity",
                     simi_bit_score: "Bit score",
                     simi_identity: "Identity",
                     mutation_list: "Mutataion List",
-                    au_err_occured: "An error occured while processing sequences",
+                    an_err_occured: "An error occured while processing sequences",
                     plz_fill_in_blanks: "Please provide with all needed data",
 
                     seq_list_in_db: "Sequences in Server Database",
@@ -57,11 +62,15 @@ i18n
 
                     opengl_view: "OpenGL 시험",
 
+                    single_seq: "유사 시퀀스 조회",
+                    sequence_id: "시퀀스 ID",
+                    bit_score: "비트스코어",
+                    
                     two_seq_comp: "두 시퀸스 비교",
                     result: "결과",
                     similarity: "유사도",
-                    mutation_list: "돌연변의 목록",
-                    au_err_occured: "시퀸스를 처리하는 중 오류가 발생했습니다",
+                    mutation_list: "돌연변이 목록",
+                    an_err_occured: "시퀸스를 처리하는 중 오류가 발생했습니다",
                     plz_fill_in_blanks: "모든 빈칸에 데이터를 입력해 주세요",
 
                     seq_list_in_db: "서버 데이터베이스에 있는 시퀸스",

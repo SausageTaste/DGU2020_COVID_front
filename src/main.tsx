@@ -27,6 +27,10 @@ const switches = <Switch>
         component={pag.SeqListInDB} />
     <Route
         exact={true}
+        path="/single_seq"
+        component={pag.SingleSeq} />
+    <Route
+        exact={true}
         path="/two_seq_comp"
         component={pag.TwoSeqComp} />
     <Route component={pag.Page404} />

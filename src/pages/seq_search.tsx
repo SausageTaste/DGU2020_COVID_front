@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { match } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader } from 'semantic-ui-react';
+import _ from 'lodash';
 
 import * as clt from "./../utils/client";
 import i18n from './../i18n';
@@ -84,6 +85,7 @@ export class SequenceSearch extends React.Component<SequenceSearchProps, Sequenc
                             value={this.state.resultStr} />
                     </Form>
                 </Segment>
+                
             </div>
         );
     }

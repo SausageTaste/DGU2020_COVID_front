@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table } from 'semantic-ui-react';
 import _ from 'lodash';
+import * as NumericInput from "react-numeric-input";
 
 import * as cst from "../utils/konst";
 import * as clt from "./../utils/client";
@@ -61,6 +62,7 @@ interface SequenceSearchState {
     shouldReload: boolean
     isLoading: boolean
 
+    howmany: number;
     userInput: string;
     acc_id_list: any;
 
@@ -75,6 +77,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         this.state = {
             shouldReload: false,
             isLoading: false,
+            howmany: 10,
             userInput: "",
             acc_id_list: [],
 
@@ -83,11 +86,14 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
         this.onBtnClicked = this.onBtnClicked.bind(this);
         this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
+
     }
 
     public render() {
+        const max_num = 50;
         const seq_list: JSX.Element[] = [];
         const num_of_rows = Object.keys(this.state.acc_id_list).length;
+        let i=1;
 
         for (let acc_id in this.state.acc_id_list) {
             const simil_data = this.state.acc_id_list[acc_id];
@@ -96,11 +102,14 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
             seq_list.push(
                 <Table.Row>
-                    <Table.Cell collapsing textAlign="center">{acc_id}</Table.Cell>
-                    <Table.Cell collapsing textAlign="center">{Number.isInteger(simil_identity) ? simil_identity : simil_identity.toFixed(4)}</Table.Cell>
-                    <Table.Cell collapsing textAlign="center">{simil_bit_score}</Table.Cell>
+                    <Table.Cell collapsing textAlign="center">{i}</Table.Cell>
+                    <Table.Cell textAlign="center">{acc_id}</Table.Cell>
+                    <Table.Cell textAlign="center">{Number.isInteger(simil_identity) ? simil_identity : simil_identity.toFixed(4)}</Table.Cell>
+                    <Table.Cell textAlign="center">{simil_bit_score}</Table.Cell>
                 </Table.Row>
             );
+
+            i++;
         }
 
         const error_prompt_list = [];
@@ -111,27 +120,40 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 <ErrorPrompt
                     show_err_prompt={true}
                     err_message={value}
-                    msg_header={i18n.t("au_err_occured")}
+                    msg_header={i18n.t("an_err_occured")}
                 />
             );
         }
 
+        
         return (
             <div>
                 <DimmerWidget isActivated={this.state.isLoading} />
 
-                <Header as='h1' dividing>{i18n.t("single_seq")}</Header>
+                <Header as='h1' dividing>{i18n.t("single_seq_query")}</Header>
 
                 <Segment basic textAlign='center'>
                     <Form onSubmit={this.onBtnClicked}>
                         <Form.Field>
+                            <label>{i18n.t("put_your_seq_count")}</label>
+                            <NumericInput type="text" 
+                                placeholder={i18n.t("howmany")}
+                                min={1} 
+	                            max={max_num} 
+	                            step={1}
+                                initValue={this.state.howmany}
+                                value={this.state.howmany}
+                                onChange={value => this.setState({howmany: value})}
+                                />
+                        </Form.Field>
+                        <Form.Field>    
                             <TextArea
                                 placeholder={i18n.t("put_your_seq_here")}
                                 value={this.state.userInput}
                                 onChange={this.handleTextAreaChange}
                                 style={{fontFamily: "consolas", whiteSpace: "normal"}} />
                         </Form.Field>
-                        <Button primary type="submit">{i18n.t("send")}</Button>
+                        <Button primary type="submit" style={{textAlign: 'center'}}>{i18n.t("send")}</Button>
                     </Form>
 
                     {error_prompt_list}
@@ -139,17 +161,10 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 </Segment>
 
                 <Segment basic textAlign='center'>
-                    {/* <Form>
-                        <TextArea
-                            readOnly
-                            style={{ minHeight: 500 }}
-                            placeholder={i18n.t("result_will_appear_here")}
-                            value={this.state.resultStr} />
-                    </Form> */}
-
                     <Table striped celled>
                         <Table.Header>
                             <Table.Row>
+                                <Table.HeaderCell textAlign="center" collapsing>{i18n.t("index")}</Table.HeaderCell>
                                 <Table.HeaderCell textAlign="center">{i18n.t("sequence_id")}</Table.HeaderCell>
                                 <Table.HeaderCell textAlign="center">{i18n.t("similarity")}</Table.HeaderCell>
                                 <Table.HeaderCell textAlign="center">{i18n.t("bit_score")}</Table.HeaderCell>
@@ -165,8 +180,8 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         );
     }
 
-    private handleTextAreaChange(event: React.FormEvent<HTMLTextAreaElement>) {
-        event.preventDefault();
+    private handleTextAreaChange(event) {
+        // event.preventDefault();
         this.setState({ userInput: event.currentTarget.value });
     }
 
@@ -176,8 +191,9 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         this.setState({
             err_message_list: [],
         })
-
+        
         const seq = this.state.userInput
+        const hm = Number(this.state.howmany)
 
         if (seq.length <= 0){
             this.setState({
@@ -193,7 +209,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             isLoading: true,
         });
 
-        clt.get_similar_seq_ids(seq, 10)
+        clt.get_similar_seq_ids(seq, hm)
             .then((response) => {
                 const payload = response.data
                 const error_code = payload[cst.KEY_ERROR_CODE];

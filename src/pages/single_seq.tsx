@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table } from 'semantic-ui-react';
+import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid } from 'semantic-ui-react';
 import _ from 'lodash';
 import * as NumericInput from "react-numeric-input";
+
+// import { BootstrapTable } from 'react-bootstrap-table-next';
 
 import * as cst from "../utils/konst";
 import * as clt from "./../utils/client";
@@ -69,7 +71,19 @@ interface SequenceSearchState {
     err_message_list: string[];
 }
 
-export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState> {
+class AccordionExampleFluid extends React.Component {
+    state = { activeIndex: 0 }
+  
+    handleClick = (e, titleProps) => {
+      const { index } = titleProps
+      const { activeIndex } = this.state
+      const newIndex = activeIndex === index ? -1 : index
+  
+      this.setState({ activeIndex: newIndex })
+    }
+}
+
+export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState, AccordionExampleFluid> {
 
     constructor(props: SequenceSearchProps) {
         super(props);
@@ -80,7 +94,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             howmany: 10,
             userInput: "",
             acc_id_list: [],
-
+            
             err_message_list: [],
         };
 
@@ -90,10 +104,43 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     }
 
     public render() {
-        const max_seq_num = 50;
+        const max_seq_num = 100;
         const seq_list: JSX.Element[] = [];
         const num_of_rows = Object.keys(this.state.acc_id_list).length;
         let i=1;
+        
+        
+        // const lists = this.state.acc_id_list
+        // // const listKeys = Object.keys(lists);
+
+        // for (let id in lists) {
+        //     const simil_data = this.state.acc_id_list[id];
+        //     const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
+        //     const simil_bit_score = simil_data[cst.KEY_SIMILARITY_BIT_SCORE];
+        //     // seq_list[id] = {id: {id}, similarity: {simil_identity}, bitscore: {simil_bit_score}}
+        // }
+        
+        // const columns = [
+        //     // { dataField: 'index', text: 'Index' },
+        //     { dataField: 'id', text: 'ID' },
+        //     { dataField: 'similarity', text: 'Similarity' },
+        //     { dataField: 'bitscore', text: 'Bitscore' },
+        // ]
+           
+        // for (let acc_id in this.state.acc_id_list) {
+        //     const simil_data = this.state.acc_id_list[acc_id];
+        //     const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
+        //     const simil_bit_score = simil_data[cst.KEY_SIMILARITY_BIT_SCORE];
+        //     // var b = {index: i, id: acc_id, similarity: simil_identity, bitscore: simil_bit_score}
+            
+            // seq_list.push({id: {acc_id}, similarity: {simil_identity}, bitscore: {simil_bit_score}})
+        //     // Object.keys(this.state.acc_id_list).forEach(key=>seq_list.push({index: i, id: acc_id, similarity: simil_identity, bitscore: simil_bit_score}))
+    
+        //     i++
+        // }
+        
+
+        // this.state.acc_id_list.map
 
         for (let acc_id in this.state.acc_id_list) {
             const simil_data = this.state.acc_id_list[acc_id];
@@ -135,7 +182,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 <Segment basic>
                     <Form onSubmit={this.onBtnClicked}>
                         <Form.Field> 
-                            <label>{i18n.t("put_your_seq_count")}</label>
+                            <label >{i18n.t("put_your_seq_count")}</label>
                             <NumericInput type="text" 
                                 placeholder={i18n.t("howmany")}
                                 min={1} 
@@ -143,8 +190,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 	                            step={1}
                                 initValue={this.state.howmany}
                                 value={this.state.howmany}
-                                onChange={value => this.setState({howmany: value})}
-                                />
+                                onChange={value => this.setState({howmany: value})} />
                         </Form.Field>
                         <Form.Field>    
                             <TextArea
@@ -153,7 +199,11 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                                 onChange={this.handleTextAreaChange}
                                 style={{fontFamily: "consolas", whiteSpace: "normal"}} />
                         </Form.Field>
-                        <Button primary type="submit" style={{textAlign: 'center'}}>{i18n.t("send")}</Button> {/* 이 버튼을 가운데정렬 하고 싶은데 아직 해결 못함 */}
+                        <Grid>
+                            <Grid.Column textAlign="center">
+                                <Button primary type="submit">{i18n.t("send")}</Button>
+                            </Grid.Column>
+                        </Grid>
                     </Form>
 
                     {error_prompt_list}
@@ -161,9 +211,10 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 </Segment>
 
                 <Segment basic textAlign='center'>
+                    {/* <BootstrapTable keyField='id' data={ seq_list } columns={ columns } /> */}
                     <Table striped celled>
                         <Table.Header>
-                            <Table.Row>
+                            <Table.Row>                                
                                 <Table.HeaderCell textAlign="center" collapsing>{i18n.t("index")}</Table.HeaderCell>
                                 <Table.HeaderCell textAlign="center">{i18n.t("sequence_id")}</Table.HeaderCell>
                                 <Table.HeaderCell textAlign="center">{i18n.t("similarity")}</Table.HeaderCell>
@@ -173,12 +224,16 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         <Table.Body>
                             {seq_list}
                         </Table.Body>
+                        
                     </Table>
+                    
                 </Segment>
                 
             </div>
         );
     }
+
+    
 
     private handleTextAreaChange(event) {
         // event.preventDefault();
@@ -220,6 +275,13 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
                         acc_id_list: payload[cst.KEY_ACC_ID_LIST],
                     })
+                    // for (let acc_id in payload.acc_id_list){
+                    //     clt.get_metadata_of_seq(acc_id, [])
+                                                
+
+
+                    // }
+                    
                 }
                 else {
                     const err_msg = payload[cst.KEY_ERROR_TEXT];

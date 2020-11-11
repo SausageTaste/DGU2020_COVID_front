@@ -3,7 +3,11 @@ import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table
 import _ from 'lodash';
 import * as NumericInput from "react-numeric-input";
 
-// import { BootstrapTable } from 'react-bootstrap-table-next';
+import BootstrapTable from 'react-bootstrap-table-next';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+// import paginationFactory from 'react-bootstrap-table-next';
+// import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
 import * as cst from "../utils/konst";
 import * as clt from "./../utils/client";
@@ -104,13 +108,27 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     }
 
     public render() {
-        const max_seq_num = 100;
-        const seq_list: JSX.Element[] = [];
+        const max_seq_num = 250;
+        // const seq_list: JSX.Element[] = [];
         const num_of_rows = Object.keys(this.state.acc_id_list).length;
-        let i=1;
+        
+
+        // function modify_data_struct(src: any) {
+        //     const result = [];
+        
+        //     for (const acc_id in src) {
+        //         result.push({
+        //             acc_id: acc_id,
+        //             simil_identity: src["acc_id"]["simil_identity"],
+        //             simil_bit_score: src["acc_id"]["simil_bit_score"],
+        //         });
+        //     }
+        
+        //     return result;
+        // }
         
         
-        // const lists = this.state.acc_id_list
+        
         // // const listKeys = Object.keys(lists);
 
         // for (let id in lists) {
@@ -120,13 +138,42 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         //     // seq_list[id] = {id: {id}, similarity: {simil_identity}, bitscore: {simil_bit_score}}
         // }
         
-        // const columns = [
-        //     // { dataField: 'index', text: 'Index' },
-        //     { dataField: 'id', text: 'ID' },
-        //     { dataField: 'similarity', text: 'Similarity' },
-        //     { dataField: 'bitscore', text: 'Bitscore' },
-        // ]
-           
+        const columns = [
+            { dataField: 'index', text: i18n.t("index"), sort: true, width:'10%' },
+            { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
+            { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
+            { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true },
+        ]
+
+        const data=[{id:"merong", similarity: 99.9, bitscore: 100},
+                    {id:"merong2", similarity: 99.9, bitscore: 80},
+                    {id:"merong3", similarity: 9.9, bitscore: 10},
+        ]
+
+        let i=1;
+        const lists = this.state.acc_id_list
+        const seq_list = [];
+
+        for (const acc_id in lists) {
+            seq_list.push({
+                index: i,
+                acc_id: acc_id,
+                simil_identity: lists[acc_id][cst.KEY_SIMILARITY_IDENTITY],
+                simil_bit_score: lists[acc_id][cst.KEY_SIMILARITY_BIT_SCORE],
+            });
+            i++
+        }
+        
+        const expandRow = {
+            renderer: row => (
+              <div>
+                <p>This Expand row is belong to rowKey ${row.id} </p>
+                <p>You can render anything here, also you can add additional data on every row object</p>
+                <p>expandRow.renderer callback will pass the origin row object to you</p>
+              </div>
+            )
+          };
+        
         // for (let acc_id in this.state.acc_id_list) {
         //     const simil_data = this.state.acc_id_list[acc_id];
         //     const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
@@ -142,22 +189,23 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
         // this.state.acc_id_list.map
 
-        for (let acc_id in this.state.acc_id_list) {
-            const simil_data = this.state.acc_id_list[acc_id];
-            const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
-            const simil_bit_score = simil_data[cst.KEY_SIMILARITY_BIT_SCORE];
+        // 이게원래꺼!
+        // for (let acc_id in this.state.acc_id_list) {
+        //     const simil_data = this.state.acc_id_list[acc_id];
+        //     const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
+        //     const simil_bit_score = simil_data[cst.KEY_SIMILARITY_BIT_SCORE];
 
-            seq_list.push(
-                <Table.Row>
-                    <Table.Cell collapsing textAlign="center">{i}</Table.Cell>
-                    <Table.Cell textAlign="center">{acc_id}</Table.Cell>
-                    <Table.Cell textAlign="center">{Number.isInteger(simil_identity) ? simil_identity : simil_identity.toFixed(4)}</Table.Cell>
-                    <Table.Cell textAlign="center">{simil_bit_score}</Table.Cell>
-                </Table.Row>
-            );
+        //     seq_list.push(
+        //         <Table.Row>
+        //             <Table.Cell collapsing textAlign="center">{i}</Table.Cell>
+        //             <Table.Cell textAlign="center">{acc_id}</Table.Cell>
+        //             <Table.Cell textAlign="center">{Number.isInteger(simil_identity) ? simil_identity : simil_identity.toFixed(4)}</Table.Cell>
+        //             <Table.Cell textAlign="center">{simil_bit_score}</Table.Cell>
+        //         </Table.Row>
+        //     );
 
-            i++;
-        }
+        //     i++;
+        // }
 
         const error_prompt_list = [];
         for (const i in this.state.err_message_list) {
@@ -172,6 +220,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             );
         }
 
+        
         
         return (
             <div>
@@ -211,8 +260,17 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 </Segment>
 
                 <Segment basic textAlign='center'>
-                    {/* <BootstrapTable keyField='id' data={ seq_list } columns={ columns } /> */}
-                    <Table striped celled>
+                    <BootstrapTable 
+                        bootstrap4
+                        keyField='acc_id' 
+                        data={ seq_list } 
+                        columns={ columns } 
+                        striped
+                        noDataIndication={i18n.t("no_data")}
+                        expandRow={ expandRow }
+                        // pagination={ paginationFactory() }
+                        />
+                    {/* <Table striped celled>
                         <Table.Header>
                             <Table.Row>                                
                                 <Table.HeaderCell textAlign="center" collapsing>{i18n.t("index")}</Table.HeaderCell>
@@ -225,7 +283,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                             {seq_list}
                         </Table.Body>
                         
-                    </Table>
+                    </Table> */}
                     
                 </Segment>
                 

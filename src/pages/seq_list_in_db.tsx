@@ -58,41 +58,32 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
     public render() {
         const acc_id_element_list: JSX.Element[] = [];
-        if (!this.state.is_loading_metadata) {
-            for (const i in this.state.acc_id_list) {
-                if (Number(i) > 100)
-                    break;
 
-                const acc_id = this.state.acc_id_list[i];
+        for (const i in this.state.acc_id_list) {
+            if (Number(i) > 100)
+                break;
 
-                acc_id_element_list.push(
-                    <Table.Row>
-                        <Table.Cell>
-                            <Label as="a" onClick={(e) => {this.on_label_click(e, acc_id)}}>
-                                {acc_id}
-                            </Label>
-                        </Table.Cell>
-                    </Table.Row>
+            const acc_id = this.state.acc_id_list[i];
+            let label: JSX.Element = null;
+
+            if (!this.state.is_loading_metadata) {
+                label = (
+                    <Label as="a" onClick={(e) => {this.on_label_click(e, acc_id)}}>
+                        {acc_id}
+                    </Label>
                 );
             }
-        }
-        else {
-            for (const i in this.state.acc_id_list) {
-                if (Number(i) > 100)
-                    break;
-
-                const acc_id = this.state.acc_id_list[i];
-
-                acc_id_element_list.push(
-                    <Table.Row>
-                        <Table.Cell>
-                            <Label>
-                                {acc_id}
-                            </Label>
-                        </Table.Cell>
-                    </Table.Row>
-                );
+            else {
+                label = (<Label>{acc_id}</Label>);
             }
+
+            acc_id_element_list.push(
+                <Table.Row key={`acc_id_list_${acc_id}`}>
+                    <Table.Cell>
+                        {label}
+                    </Table.Cell>
+                </Table.Row>
+            );
         }
 
         const metadata_element_list = [];

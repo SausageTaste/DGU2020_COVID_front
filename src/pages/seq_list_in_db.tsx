@@ -57,7 +57,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
     }
 
     public render() {
-        const acc_id_element_list = [];
+        const acc_id_element_list: JSX.Element[] = [];
         if (!this.state.is_loading_metadata) {
             for (const i in this.state.acc_id_list) {
                 if (Number(i) > 100)

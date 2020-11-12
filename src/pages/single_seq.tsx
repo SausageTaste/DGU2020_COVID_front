@@ -139,7 +139,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         // }
         
         const columns = [
-            { dataField: 'index', text: i18n.t("index"), sort: true, width:'10%' },
+            { dataField: 'index', text: i18n.t("index"), sort: true, style:{width:'10%'} },
             { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
             { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
             { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true },
@@ -165,9 +165,9 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         }
         
         const expandRow = {
-            renderer: row => (
+            renderer: (row, rowIndex) => (
               <div>
-                <p>This Expand row is belong to rowKey ${row.id} </p>
+                <p>{'This Expand row is belong to rowKey {row.id} '}</p>
                 <p>You can render anything here, also you can add additional data on every row object</p>
                 <p>expandRow.renderer callback will pass the origin row object to you</p>
               </div>
@@ -265,7 +265,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         keyField='acc_id' 
                         data={ seq_list } 
                         columns={ columns } 
-                        striped
+                        // striped
                         noDataIndication={i18n.t("no_data")}
                         expandRow={ expandRow }
                         // pagination={ paginationFactory() }

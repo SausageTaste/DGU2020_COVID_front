@@ -74,25 +74,25 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     }
 
     public render() {
-        const mutation_element_list = [];
+        const mutation_element_list: JSX.Element[] = [];
         for (const i in this.state.mutation_list_texts) {
             const value = this.state.mutation_list_texts[i];
 
             mutation_element_list.push(
-                <Table.Row>
+                <Table.Row key={value}>
                     <Table.Cell textAlign="center">{value}</Table.Cell>
                 </Table.Row>
             );
         }
         if (0 == mutation_element_list.length) {
             mutation_element_list.push(
-                <Table.Row>
+                <Table.Row key={"mutation_list_no_data"}>
                     <Table.Cell textAlign="center">{i18n.t("no_data")}</Table.Cell>
                 </Table.Row>
             );
         }
 
-        const error_prompt_list = [];
+        const error_prompt_list: JSX.Element[] = [];
         for (const i in this.state.err_message_list) {
             const value = this.state.err_message_list[i];
 
@@ -101,6 +101,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     show_err_prompt={true}
                     err_message={value}
                     msg_header={i18n.t("an_err_occured")}
+                    key={`two_seq_comp_err_prompt_${i}`}
                 />
             );
         }
@@ -244,7 +245,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             .catch(err => {
                 console.log(err);
                 const new_err_list = this.state.err_message_list.slice();
-                new_err_list.push(err);
+                new_err_list.push(err.message);
 
                 this.setState({
                     err_message_list: new_err_list,
@@ -294,7 +295,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             .catch(err => {
                 console.log(err);
                 const new_err_list = this.state.err_message_list.slice();
-                new_err_list.push(err);
+                new_err_list.push(err.message);
 
                 this.setState({
                     err_message_list: new_err_list,

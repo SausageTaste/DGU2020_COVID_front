@@ -117,14 +117,14 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                 <Grid columns='equal' textAlign="center">
 
                     <Grid.Row>
-                        <Grid columns='equal' textAlign="center" verticalAlign="middle">
-                            <Grid.Column>
+                        <Grid columns={3}>
+                            <Grid.Column textAlign="right">
                                 <Button compact onClick={() => {this.add_cur_page(-1)}}>{i18n.t("btn_prev")}</Button>
                             </Grid.Column>
                             <Grid.Column>
                                 {`${this.state.current_page + 1} / ${this.count_acc_id_pages()}`}
                             </Grid.Column>
-                            <Grid.Column>
+                            <Grid.Column textAlign="left">
                                 <Button compact onClick={() => {this.add_cur_page(1)}}>{i18n.t("btn_next")}</Button>
                             </Grid.Column>
                         </Grid>

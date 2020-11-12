@@ -23,6 +23,10 @@ interface SeqListInDBState {
 
 export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState> {
 
+    private META_KEYS_TO_SKIP = new Set([
+        "sequence",
+    ]);
+
     constructor(props: SeqListInDBProps) {
         super(props);
 
@@ -95,6 +99,9 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         const metadata_element_list = [];
         for (const key in this.state.metadata_dict) {
             const value = this.state.metadata_dict[key];
+
+            if (this.META_KEYS_TO_SKIP.has(key))
+                continue;
 
             metadata_element_list.push(
                 <Table.Row key={`metadata ${key} of ${value.acc_id}`}>

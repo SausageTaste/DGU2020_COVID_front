@@ -71,6 +71,7 @@ interface SequenceSearchState {
     howmany: number;
     userInput: string;
     acc_id_list: any;
+    metadata_dict: object;
 
     err_message_list: string[];
 }
@@ -98,6 +99,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             howmany: 10,
             userInput: "",
             acc_id_list: [],
+            metadata_dict: {},
             
             err_message_list: [],
         };
@@ -112,62 +114,32 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         // const seq_list: JSX.Element[] = [];
         const num_of_rows = Object.keys(this.state.acc_id_list).length;
         
-
-        // function modify_data_struct(src: any) {
-        //     const result = [];
-        
-        //     for (const acc_id in src) {
-        //         result.push({
-        //             acc_id: acc_id,
-        //             simil_identity: src["acc_id"]["simil_identity"],
-        //             simil_bit_score: src["acc_id"]["simil_bit_score"],
-        //         });
-        //     }
-        
-        //     return result;
-        // }
-        
-        
-        
-        // // const listKeys = Object.keys(lists);
-
-        // for (let id in lists) {
-        //     const simil_data = this.state.acc_id_list[id];
-        //     const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
-        //     const simil_bit_score = simil_data[cst.KEY_SIMILARITY_BIT_SCORE];
-        //     // seq_list[id] = {id: {id}, similarity: {simil_identity}, bitscore: {simil_bit_score}}
-        // }
-        
         const columns = [
-            { dataField: 'index', text: i18n.t("index"), sort: true, style:{width:'10%'} },
+            // { dataField: 'index', text: i18n.t("index"), sort: true, style:{width:'10%'} },
             { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
             { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
             { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true },
         ]
 
-        const data=[{id:"merong", similarity: 99.9, bitscore: 100},
-                    {id:"merong2", similarity: 99.9, bitscore: 80},
-                    {id:"merong3", similarity: 9.9, bitscore: 10},
-        ]
-
-        let i=1;
+        // let i=1;
         const lists = this.state.acc_id_list
         const seq_list = [];
 
         for (const acc_id in lists) {
             seq_list.push({
-                index: i,
+                // index: i,
                 acc_id: acc_id,
                 simil_identity: lists[acc_id][cst.KEY_SIMILARITY_IDENTITY],
                 simil_bit_score: lists[acc_id][cst.KEY_SIMILARITY_BIT_SCORE],
             });
-            i++
+            // i++
         }
         
         const expandRow = {
-            renderer: (row, rowIndex) => (
+            onlyOneExpanding: true,
+            renderer: row => (
               <div>
-                <p>{'This Expand row is belong to rowKey {row.id} '}</p>
+                <p>{`This Expand row is belong to rowKey ${row.acc_id} `}</p>
                 <p>You can render anything here, also you can add additional data on every row object</p>
                 <p>expandRow.renderer callback will pass the origin row object to you</p>
               </div>
@@ -270,21 +242,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         expandRow={ expandRow }
                         // pagination={ paginationFactory() }
                         />
-                    {/* <Table striped celled>
-                        <Table.Header>
-                            <Table.Row>                                
-                                <Table.HeaderCell textAlign="center" collapsing>{i18n.t("index")}</Table.HeaderCell>
-                                <Table.HeaderCell textAlign="center">{i18n.t("sequence_id")}</Table.HeaderCell>
-                                <Table.HeaderCell textAlign="center">{i18n.t("similarity")}</Table.HeaderCell>
-                                <Table.HeaderCell textAlign="center">{i18n.t("bit_score")}</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {seq_list}
-                        </Table.Body>
-                        
-                    </Table> */}
-                    
                 </Segment>
                 
             </div>
@@ -327,19 +284,11 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 const payload = response.data
                 const error_code = payload[cst.KEY_ERROR_CODE];
                 if (0 == error_code) {
-                    
                     this.setState({
                         isLoading: false,
 
                         acc_id_list: payload[cst.KEY_ACC_ID_LIST],
                     })
-                    // for (let acc_id in payload.acc_id_list){
-                    //     clt.get_metadata_of_seq(acc_id, [])
-                                                
-
-
-                    // }
-                    
                 }
                 else {
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
@@ -364,7 +313,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     err_message_list: new_err_list,
                 });
             })
-
-    };
+        };
+    
 
 }

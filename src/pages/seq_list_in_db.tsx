@@ -91,7 +91,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             const value = this.state.metadata_dict[key];
 
             metadata_element_list.push(
-                <Table.Row>
+                <Table.Row key={`metadata ${key} of ${value.acc_id}`}>
                     <Table.Cell>{key}</Table.Cell>
                     <Table.Cell>{value}</Table.Cell>
                 </Table.Row>

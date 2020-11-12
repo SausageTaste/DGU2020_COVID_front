@@ -6,8 +6,8 @@ import * as NumericInput from "react-numeric-input";
 import BootstrapTable from 'react-bootstrap-table-next';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-// import paginationFactory from 'react-bootstrap-table-next';
-// import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
 import * as cst from "../utils/konst";
 import * as clt from "./../utils/client";
@@ -67,6 +67,7 @@ interface SequenceSearchProps {
 interface SequenceSearchState {
     shouldReload: boolean
     isLoading: boolean
+    isLoading_metadata: boolean
 
     howmany: number;
     userInput: string;
@@ -76,19 +77,12 @@ interface SequenceSearchState {
     err_message_list: string[];
 }
 
-class AccordionExampleFluid extends React.Component {
-    state = { activeIndex: 0 }
-  
-    handleClick = (e, titleProps) => {
-      const { index } = titleProps
-      const { activeIndex } = this.state
-      const newIndex = activeIndex === index ? -1 : index
-  
-      this.setState({ activeIndex: newIndex })
-    }
-}
 
-export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState, AccordionExampleFluid> {
+export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState> {
+
+    private META_KEYS_TO_SKIP = new Set([
+        "sequence",
+    ]);
 
     constructor(props: SequenceSearchProps) {
         super(props);
@@ -96,6 +90,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         this.state = {
             shouldReload: false,
             isLoading: false,
+            isLoading_metadata: false,
             howmany: 10,
             userInput: "",
             acc_id_list: [],
@@ -105,79 +100,54 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         };
 
         this.onBtnClicked = this.onBtnClicked.bind(this);
+        // this.onCellClicked = this.onCellClicked.bind(this);
         this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
 
     }
 
     public render() {
         const max_seq_num = 250;
-        // const seq_list: JSX.Element[] = [];
-        const num_of_rows = Object.keys(this.state.acc_id_list).length;
         
         const columns = [
-            // { dataField: 'index', text: i18n.t("index"), sort: true, style:{width:'10%'} },
             { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
             { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
             { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true },
         ]
 
-        // let i=1;
         const lists = this.state.acc_id_list
         const seq_list = [];
-
         for (const acc_id in lists) {
             seq_list.push({
-                // index: i,
                 acc_id: acc_id,
                 simil_identity: lists[acc_id][cst.KEY_SIMILARITY_IDENTITY],
                 simil_bit_score: lists[acc_id][cst.KEY_SIMILARITY_BIT_SCORE],
             });
-            // i++
         }
         
+        const metadata_element_list = [];
+        for (const key in this.state.metadata_dict) {
+            const value = this.state.metadata_dict[key];
+
+            if (this.META_KEYS_TO_SKIP.has(key))
+                continue;
+
+            metadata_element_list.push(
+                <Table.Row key={`metadata ${key} of ${value.acc_id}`}>
+                    <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
+                    <Table.Cell>{value}</Table.Cell>
+                </Table.Row>
+            )
+        }
+
         const expandRow = {
             onlyOneExpanding: true,
-            renderer: row => (
-              <div>
-                <p>{`This Expand row is belong to rowKey ${row.acc_id} `}</p>
-                <p>You can render anything here, also you can add additional data on every row object</p>
-                <p>expandRow.renderer callback will pass the origin row object to you</p>
-              </div>
+            renderer: (row) => (
+                <div>
+                    <p>{`This Expand row is belong to rowKey ${row.acc_id} `}</p>
+                </div>
             )
-          };
+        };
         
-        // for (let acc_id in this.state.acc_id_list) {
-        //     const simil_data = this.state.acc_id_list[acc_id];
-        //     const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
-        //     const simil_bit_score = simil_data[cst.KEY_SIMILARITY_BIT_SCORE];
-        //     // var b = {index: i, id: acc_id, similarity: simil_identity, bitscore: simil_bit_score}
-            
-            // seq_list.push({id: {acc_id}, similarity: {simil_identity}, bitscore: {simil_bit_score}})
-        //     // Object.keys(this.state.acc_id_list).forEach(key=>seq_list.push({index: i, id: acc_id, similarity: simil_identity, bitscore: simil_bit_score}))
-    
-        //     i++
-        // }
-        
-
-        // this.state.acc_id_list.map
-
-        // 이게원래꺼!
-        // for (let acc_id in this.state.acc_id_list) {
-        //     const simil_data = this.state.acc_id_list[acc_id];
-        //     const simil_identity = simil_data[cst.KEY_SIMILARITY_IDENTITY];
-        //     const simil_bit_score = simil_data[cst.KEY_SIMILARITY_BIT_SCORE];
-
-        //     seq_list.push(
-        //         <Table.Row>
-        //             <Table.Cell collapsing textAlign="center">{i}</Table.Cell>
-        //             <Table.Cell textAlign="center">{acc_id}</Table.Cell>
-        //             <Table.Cell textAlign="center">{Number.isInteger(simil_identity) ? simil_identity : simil_identity.toFixed(4)}</Table.Cell>
-        //             <Table.Cell textAlign="center">{simil_bit_score}</Table.Cell>
-        //         </Table.Row>
-        //     );
-
-        //     i++;
-        // }
 
         const error_prompt_list = [];
         for (const i in this.state.err_message_list) {
@@ -192,7 +162,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             );
         }
 
-        
         
         return (
             <div>
@@ -228,7 +197,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     </Form>
 
                     {error_prompt_list}
-
                 </Segment>
 
                 <Segment basic textAlign='center'>
@@ -240,8 +208,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         // striped
                         noDataIndication={i18n.t("no_data")}
                         expandRow={ expandRow }
-                        // pagination={ paginationFactory() }
-                        />
+                        pagination={ paginationFactory() }/>
                 </Segment>
                 
             </div>
@@ -249,7 +216,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     }
 
     
-
     private handleTextAreaChange(event) {
         // event.preventDefault();
         this.setState({ userInput: event.currentTarget.value });
@@ -314,6 +280,18 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 });
             })
         };
-    
+
+    // private onCellClicked(event) {
+    //     event.preventDefault();
+
+    //     if (this.state.isLoading_metadata)
+    //         return;
+
+    //     this.setState({
+    //         isLoading_metadata: true,
+    //     });
+    //     console.log(acc_id);
+        
+    // }
 
 }

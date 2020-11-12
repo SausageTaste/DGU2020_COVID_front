@@ -98,7 +98,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
             metadata_element_list.push(
                 <Table.Row key={`metadata ${key} of ${value.acc_id}`}>
-                    <Table.Cell>{key}</Table.Cell>
+                    <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
                     <Table.Cell>{value}</Table.Cell>
                 </Table.Row>
             )
@@ -112,13 +112,13 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     <Grid.Row>
                         <Grid columns='equal' textAlign="center" verticalAlign="middle">
                             <Grid.Column>
-                                <Button onClick={() => {this.add_cur_page(-1)}}>Prev</Button>
+                                <Button compact onClick={() => {this.add_cur_page(-1)}}>{i18n.t("btn_prev")}</Button>
                             </Grid.Column>
                             <Grid.Column>
                                 {`${this.state.current_page + 1} / ${this.count_acc_id_pages()}`}
                             </Grid.Column>
                             <Grid.Column>
-                                <Button onClick={() => {this.add_cur_page(1)}}>Next</Button>
+                                <Button compact onClick={() => {this.add_cur_page(1)}}>{i18n.t("btn_next")}</Button>
                             </Grid.Column>
                         </Grid>
                     </Grid.Row>
@@ -144,7 +144,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                                 <Table celled>
                                     <Table.Header>
                                         <Table.Row>
-                                            <Table.HeaderCell colSpan={2} textAlign="center">Metadata</Table.HeaderCell>
+                                            <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
                                         </Table.Row>
                                     </Table.Header>
 

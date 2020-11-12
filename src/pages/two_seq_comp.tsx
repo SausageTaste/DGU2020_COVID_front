@@ -79,14 +79,14 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             const value = this.state.mutation_list_texts[i];
 
             mutation_element_list.push(
-                <Table.Row>
+                <Table.Row key={value}>
                     <Table.Cell textAlign="center">{value}</Table.Cell>
                 </Table.Row>
             );
         }
         if (0 == mutation_element_list.length) {
             mutation_element_list.push(
-                <Table.Row>
+                <Table.Row key={"mutation_list_no_data"}>
                     <Table.Cell textAlign="center">{i18n.t("no_data")}</Table.Cell>
                 </Table.Row>
             );
@@ -101,6 +101,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     show_err_prompt={true}
                     err_message={value}
                     msg_header={i18n.t("an_err_occured")}
+                    key={`two_seq_comp_err_prompt_${i}`}
                 />
             );
         }

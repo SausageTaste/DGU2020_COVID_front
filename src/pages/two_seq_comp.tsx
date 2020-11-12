@@ -244,7 +244,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             .catch(err => {
                 console.log(err);
                 const new_err_list = this.state.err_message_list.slice();
-                new_err_list.push(err);
+                new_err_list.push(err.message);
 
                 this.setState({
                     err_message_list: new_err_list,
@@ -294,7 +294,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             .catch(err => {
                 console.log(err);
                 const new_err_list = this.state.err_message_list.slice();
-                new_err_list.push(err);
+                new_err_list.push(err.message);
 
                 this.setState({
                     err_message_list: new_err_list,

@@ -74,7 +74,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     }
 
     public render() {
-        const mutation_element_list = [];
+        const mutation_element_list: JSX.Element[] = [];
         for (const i in this.state.mutation_list_texts) {
             const value = this.state.mutation_list_texts[i];
 
@@ -92,7 +92,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             );
         }
 
-        const error_prompt_list = [];
+        const error_prompt_list: JSX.Element[] = [];
         for (const i in this.state.err_message_list) {
             const value = this.state.err_message_list[i];
 

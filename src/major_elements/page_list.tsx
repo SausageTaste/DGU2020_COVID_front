@@ -42,7 +42,7 @@ export class PageList extends React.Component<PageListProp, {}> {
                 key="single_seq"
                 as={NavLink}
                 to={{ pathname: `/single_seq` }}>
-                {i18n.t("single_seq")}
+                {i18n.t("single_seq_query")}
             </Menu.Item>,
 
             <Menu.Item

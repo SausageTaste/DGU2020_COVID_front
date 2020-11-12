@@ -31,9 +31,12 @@ i18n
 
                     opengl_view: "OpenGL Test",
 
-                    single_seq: "Single Sequence Query",
+                    single_seq_query: "Single Sequence Query",
                     sequence_id: "Sequence ID",
                     bit_score: "Bitscore",
+                    put_your_seq_count: "Input the number of sequences to search. (less than 100)",
+                    howmany: "number of sequences",
+                    index: "index",
 
                     two_seq_comp: "Two Sequence Comparison",
                     result: "Result",
@@ -92,9 +95,12 @@ i18n
 
                     opengl_view: "OpenGL 시험",
 
-                    single_seq: "유사 시퀀스 조회",
+                    single_seq_query: "유사 시퀀스 조회",
                     sequence_id: "시퀀스 ID",
                     bit_score: "비트스코어",
+                    put_your_seq_count: "조회할 시퀀스의 개수를 입력해주세요. (100 미만)",
+                    howmany: "시퀀스의 개수",
+                    index: "구분",
 
                     two_seq_comp: "두 시퀸스 비교",
                     result: "결과",

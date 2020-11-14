@@ -294,7 +294,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             .catch(err => {
                 console.log(err);
                 const new_err_list = this.state.err_message_list.slice();
-                new_err_list.push(err);
+                new_err_list.push(err.message);
 
                 this.setState({
                     isLoading: false,

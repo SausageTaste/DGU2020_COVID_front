@@ -32,6 +32,13 @@ export class PageList extends React.Component<PageListProp, {}> {
             </Menu.Item>,
 
             <Menu.Item
+                key="seq_list_in_db"
+                as={NavLink}
+                to={{ pathname: `/seq_list_in_db` }}>
+                {i18n.t("seq_list_in_db")}
+            </Menu.Item>,
+
+            <Menu.Item
                 key="single_seq"
                 as={NavLink}
                 to={{ pathname: `/single_seq` }}>

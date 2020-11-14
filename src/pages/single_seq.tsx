@@ -3,15 +3,13 @@ import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table
 import _ from 'lodash';
 import * as NumericInput from "react-numeric-input";
 
+import '../major_elements/index.js';
 import BootstrapTable from 'react-bootstrap-table-next';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
 
 import * as cst from "../utils/konst";
-import * as clt from "./../utils/client";
-import i18n from './../i18n';
+import * as clt from "../utils/client";
+import i18n from '../i18n';
 
 
 interface ErrorPromptProps {
@@ -100,7 +98,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         };
 
         this.onBtnClicked = this.onBtnClicked.bind(this);
-        // this.onCellClicked = this.onCellClicked.bind(this);
+        this.onCellClicked = this.onCellClicked.bind(this);
         this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
 
     }
@@ -108,12 +106,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     public render() {
         const max_seq_num = 250;
         
-        const columns = [
-            { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
-            { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
-            { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true },
-        ]
-
         const lists = this.state.acc_id_list
         const seq_list = [];
         for (const acc_id in lists) {
@@ -127,27 +119,17 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         const metadata_element_list = [];
         for (const key in this.state.metadata_dict) {
             const value = this.state.metadata_dict[key];
-
+            
             if (this.META_KEYS_TO_SKIP.has(key))
-                continue;
-
+            continue;
+            
             metadata_element_list.push(
-                <Table.Row key={`metadata ${key} of ${value.acc_id}`}>
+                <Table.Row key={`metadata ${key} of ${value.acc_id}` }>
                     <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
                     <Table.Cell>{value}</Table.Cell>
                 </Table.Row>
             )
         }
-
-        const expandRow = {
-            onlyOneExpanding: true,
-            renderer: (row) => (
-                <div>
-                    <p>{`This Expand row is belong to rowKey ${row.acc_id} `}</p>
-                </div>
-            )
-        };
-        
 
         const error_prompt_list = [];
         for (const i in this.state.err_message_list) {
@@ -161,8 +143,33 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 />
             );
         }
-
         
+        //About Bootstrap Table/////////////////////////////////////////////////////
+        const columns = [
+            { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
+            { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
+            { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true },
+        ]
+
+        const rowEvents = {
+            onClick: (e, row) => {
+                {this.onCellClicked(e, `${row.acc_id}`)}
+            }
+        };
+
+        // const options = {
+        //     sizePerPageList: [{ text: '25', value: 25 }] 
+        // };
+            
+        // const expandRow = {
+        //     onlyOneExpanding: true,
+        //     renderer: (row) => (
+        //             <p>{ `This Expand row is belong to rowKey ${row.acc_id}` }</p>
+        //     )
+        // };
+        /////////////////////////////////////////////////////////////////////////////
+
+
         return (
             <div>
                 <DimmerWidget isActivated={this.state.isLoading} />
@@ -195,22 +202,38 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                             </Grid.Column>
                         </Grid>
                     </Form>
-
                     {error_prompt_list}
                 </Segment>
 
-                <Segment basic textAlign='center'>
-                    <BootstrapTable 
-                        bootstrap4
-                        keyField='acc_id' 
-                        data={ seq_list } 
-                        columns={ columns } 
-                        // striped
-                        noDataIndication={i18n.t("no_data")}
-                        expandRow={ expandRow }
-                        pagination={ paginationFactory() }/>
-                </Segment>
-                
+                <Grid columns='equal' textAlign="center">
+                    <Grid.Column>
+                        <Segment basic textAlign='center'>
+                            <BootstrapTable 
+                                bootstrap4
+                                keyField='acc_id' 
+                                data={ seq_list } 
+                                columns={ columns } 
+                                noDataIndication={i18n.t("no_data")}
+                                // expandRow={ expandRow }
+                                rowEvents={ rowEvents }
+                                pagination={ paginationFactory() }/>   
+                        </Segment>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Segment basic loading={this.state.isLoading_metadata}>
+                        <Table celled>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {metadata_element_list}
+                            </Table.Body>
+                        </Table>
+                        </Segment>
+                    </Grid.Column>
+                </Grid>
             </div>
         );
     }
@@ -281,17 +304,40 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             })
         };
 
-    // private onCellClicked(event) {
-    //     event.preventDefault();
+    private onCellClicked(event: React.MouseEvent<HTMLElement>, acc_id: string) {
+        event.preventDefault();
 
-    //     if (this.state.isLoading_metadata)
-    //         return;
+        if (this.state.isLoading_metadata)
+            return;
 
-    //     this.setState({
-    //         isLoading_metadata: true,
-    //     });
-    //     console.log(acc_id);
+        this.setState({
+            isLoading_metadata: true,
+        });
+        console.log(acc_id);
         
-    // }
+        clt.get_metadata_of_seq(acc_id, [])
+            .then(response => {
+                const payload = response.data
+                const error_code = payload[cst.KEY_ERROR_CODE]
+
+                if (0 == error_code) {
+                    this.setState({
+                        metadata_dict: payload[cst.KEY_METADATA],
+                    })
+                }
+                else {
+                    const err_msg = payload[cst.KEY_ERROR_TEXT];
+                    console.log(err_msg);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            .then(() => {
+                this.setState({
+                    isLoading_metadata: false,
+                })
+            });
+    }
 
 }

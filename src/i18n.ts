@@ -34,7 +34,7 @@ i18n
                     single_seq_query: "Single Sequence Query",
                     sequence_id: "Sequence ID",
                     bit_score: "Bitscore",
-                    put_your_seq_count: "Input the number of sequences to search. (less than 100)",
+                    put_your_seq_count: "Input the number of sequences to search. (250 or less)",
                     howmany: "number of sequences",
                     index: "index",
 
@@ -98,7 +98,7 @@ i18n
                     single_seq_query: "유사 시퀀스 조회",
                     sequence_id: "시퀀스 ID",
                     bit_score: "비트스코어",
-                    put_your_seq_count: "조회할 시퀀스의 개수를 입력해주세요. (100 미만)",
+                    put_your_seq_count: "조회할 시퀀스의 개수를 입력해주세요. (250 이하)",
                     howmany: "시퀀스의 개수",
                     index: "구분",
 

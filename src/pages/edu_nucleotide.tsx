@@ -77,13 +77,21 @@ function copy_string(src: string) {
     return (' ' + src).slice(1);
 }
 
+function get_mouse_pos_in_element(e: any) {
+    const bounds = e.target.getBoundingClientRect();
+    const x = e.clientX - bounds.left;
+    const y = e.clientY - bounds.top;
+
+    return new Vec2(x, y);
+}
+
 
 class MyCanvas2DUserData implements Canvas2DUserData {
 
     private mouse_captured: boolean = false;
 
     private cam_pos = new Vec2(0, 0);
-    private cam_scale: number = 2;
+    private cam_scale: number = 1;
 
     private sequence: string = "";
 
@@ -154,6 +162,10 @@ class MyCanvas2DUserData implements Canvas2DUserData {
         return Math.ceil(canvas_width / this.cell_step_dist() / this.cam_scale + 0.1);
     }
 
+    private convert_pos_element_to_world(pos_x: number, pos_y: number) {
+        return new Vec2(this.cam_pos.x + pos_x / this.cam_scale, this.cam_pos.y + pos_y / this.cam_scale);
+    }
+
 
     public on_mouse_down(e: React.MouseEvent) {
         this.mouse_captured = true;
@@ -176,13 +188,25 @@ class MyCanvas2DUserData implements Canvas2DUserData {
         }
     }
 
-    public on_wheel(e: React.WheelEvent) {
+    public on_wheel(e: any) {
+        if (0 == e.deltaY) {
+            return;
+        }
+
+        const mouse_pos_element = get_mouse_pos_in_element(e);
+        const mouse_pos_world_before = this.convert_pos_element_to_world(mouse_pos_element.x, mouse_pos_element.y);
+
         if (e.deltaY < 0) {
             this.cam_scale *= 2;
         }
-        else if (e.deltaY > 0) {
+        else {
             this.cam_scale *= 0.5;
         }
+
+        const mouse_pos_world_after = this.convert_pos_element_to_world(mouse_pos_element.x, mouse_pos_element.y);
+
+        this.cam_pos.x += mouse_pos_world_before.x - mouse_pos_world_after.x;
+        this.cam_pos.y += mouse_pos_world_before.y - mouse_pos_world_after.y;
     }
 
 }

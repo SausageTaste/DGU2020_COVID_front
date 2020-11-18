@@ -33,6 +33,10 @@ const switches = <Switch>
         exact={true}
         path="/two_seq_comp"
         component={pag.TwoSeqComp} />
+    <Route
+        exact={true}
+        path="/edu_nucleotide"
+        component={pag.EduNucleotide} />
     <Route component={pag.Page404} />
 </Switch>;
 

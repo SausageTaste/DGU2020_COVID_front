@@ -159,7 +159,7 @@ class MyCanvas2DUserData implements Canvas2DUserData {
     }
 
     private calc_visible_cell_count(canvas_width: number) {
-        return Math.ceil(canvas_width / this.cell_step_dist() / this.cam_scale + 0.1);
+        return Math.ceil(canvas_width / this.cell_step_dist() / this.cam_scale) + 1;
     }
 
     private convert_pos_element_to_world(pos_x: number, pos_y: number) {

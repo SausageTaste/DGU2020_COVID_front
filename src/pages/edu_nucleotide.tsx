@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Header, Segment } from 'semantic-ui-react';
 
 import i18n from './../i18n';
+import * as clt from "../utils/client";
+import * as cst from "../utils/konst";
 import { Canvas2D, Canvas2DUserData } from "./../utils/canvas_2d";
 
 
@@ -34,12 +36,45 @@ class RectArea {
     }
 
     public transform(pos_x: number, pos_y: number, scale: number) {
-        this.x = (this.x + pos_x) * scale;
-        this.y = (this.y + pos_y) * scale;
+        this.x = (this.x - pos_x) * scale;
+        this.y = (this.y - pos_y) * scale;
         this.w = this.w * scale;
         this.h = this.h * scale;
     }
 
+    public is_inside_canvas(canv_width: number, canv_height: number) {
+        if (this.x > canv_width) {
+            return false;
+        }
+        if (this.y > canv_height) {
+            return false;
+        }
+
+        const p1 = this.lower_right();
+
+        if (p1.x < 0) {
+            return false;
+        }
+        if (p1.y < 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public upper_left() {
+        return new Vec2(this.x, this.y);
+    }
+
+    public lower_right() {
+        return new Vec2(this.x + this.w, this.y + this.h);
+    }
+
+}
+
+
+function copy_string(src: string) {
+    return (' ' + src).slice(1);
 }
 
 
@@ -47,11 +82,15 @@ class MyCanvas2DUserData implements Canvas2DUserData {
 
     private mouse_captured: boolean = false;
 
-    private cam_pos = new Vec2(35, 40);
+    private cam_pos = new Vec2(0, 0);
     private cam_scale: number = 2;
+
+    private sequence: string = "";
 
     private FONT_SIZE: number = 30;
     private CELL_SIZE: Vec2 = new Vec2(35, 40);
+    private CELL_SEQ_OFFSET: Vec2 = new Vec2(0, 0);
+    private CELL_DISTANCE: number = 5;
 
     ////
 
@@ -66,8 +105,13 @@ class MyCanvas2DUserData implements Canvas2DUserData {
         ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        this.draw_a_cell(ctx, 0, "A");
-        this.draw_a_cell(ctx, 1, "B");
+        const fisrt_cell_index = this.calc_first_visible_cell_index_in_world();
+        const visible_cell_count = this.calc_visible_cell_count(canvas.width);
+
+        for (let i = 0; i < visible_cell_count; i++) {
+            const c = this.sequence.charAt(fisrt_cell_index + i);
+            this.draw_a_cell(ctx, fisrt_cell_index + i, c);
+        }
     }
 
     private draw_a_rect_char(ctx: CanvasRenderingContext2D, pos_x: number, pos_y: number, char: string) {
@@ -89,7 +133,25 @@ class MyCanvas2DUserData implements Canvas2DUserData {
     }
 
     private draw_a_cell(ctx: CanvasRenderingContext2D, index: number, char: string) {
-        this.draw_a_rect_char(ctx, 40 * index, 0, char);
+        this.draw_a_rect_char(ctx, this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index, this.CELL_SEQ_OFFSET.y, char);
+    }
+
+    public set_seq(seq: string) {
+        this.sequence = seq;
+    }
+
+    private cell_step_dist() {
+        return this.CELL_SIZE.x + this.CELL_DISTANCE;
+    }
+
+    private calc_first_visible_cell_index_in_world() {
+        const numerator = this.cam_pos.x - this.CELL_SEQ_OFFSET.x - this.CELL_SIZE.x;
+        const result = Math.ceil(numerator / this.cell_step_dist());
+        return Math.max(result, 0);
+    }
+
+    private calc_visible_cell_count(canvas_width: number) {
+        return Math.ceil(canvas_width / this.cell_step_dist() / this.cam_scale + 0.1);
     }
 
 
@@ -109,11 +171,19 @@ class MyCanvas2DUserData implements Canvas2DUserData {
         const scalar = 1 / this.cam_scale;
 
         if (this.mouse_captured) {
-            this.cam_pos.x += e.movementX * scalar;
-            this.cam_pos.y += e.movementY * scalar;
+            this.cam_pos.x -= e.movementX * scalar;
+            this.cam_pos.y -= e.movementY * scalar;
         }
     }
 
+    public on_wheel(e: React.WheelEvent) {
+        if (e.deltaY < 0) {
+            this.cam_scale *= 2;
+        }
+        else if (e.deltaY > 0) {
+            this.cam_scale *= 0.5;
+        }
+    }
 
 }
 
@@ -124,6 +194,7 @@ interface EduNucleotideProps {
 
 interface EduNucleotideState {
     interval: NodeJS.Timeout;
+    userdata: MyCanvas2DUserData;
 }
 
 export class EduNucleotide extends React.Component<EduNucleotideProps, EduNucleotideState> {
@@ -137,7 +208,26 @@ export class EduNucleotide extends React.Component<EduNucleotideProps, EduNucleo
 
         this.state = {
             interval: null,
+            userdata: new MyCanvas2DUserData(),
         };
+
+        clt.get_metadata_of_seq("Argentina/C121/2020", [cst.KEY_SEQUENCE])
+            .then(response => {
+                const payload = response.data
+                const error_code = payload[cst.KEY_ERROR_CODE]
+
+                if (0 == error_code) {
+                    const sequence = payload[cst.KEY_METADATA][cst.KEY_SEQUENCE];
+                    this.state.userdata.set_seq(sequence);
+                }
+                else {
+                    const err_msg = payload[cst.KEY_ERROR_TEXT];
+                    console.log(err_msg);
+                }
+            })
+            .catch(err => {
+                console.log(err.message);
+            })
     }
 
     public render() {
@@ -146,7 +236,7 @@ export class EduNucleotide extends React.Component<EduNucleotideProps, EduNucleo
                 <Header as='h1' dividing>{i18n.t("title_edu_nucleotide")}</Header>
 
                 <Segment basic textAlign='center'>
-                    <Canvas2D id={this.canvas_id} width="800" height="450" fps={60} userdata={new MyCanvas2DUserData()} />
+                    <Canvas2D id={this.canvas_id} width="800" height="450" fps={60} userdata={this.state.userdata} />
                 </Segment>
             </div>
         );

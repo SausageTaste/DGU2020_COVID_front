@@ -11,6 +11,7 @@ export interface Canvas2DUserData {
     on_mouse_up?: React.MouseEventHandler<HTMLCanvasElement>;
     on_mouse_move?: React.MouseEventHandler<HTMLCanvasElement>;
     on_click?: React.MouseEventHandler<HTMLCanvasElement>;
+    on_wheel?: React.WheelEventHandler<HTMLCanvasElement>;
 }
 
 
@@ -83,6 +84,11 @@ export class Canvas2D extends React.Component<Canvas2DProps, Canvas2DState> {
             onClick={(e) => {
                 if (ud.on_click) {
                     ud.on_click(e);
+                }
+            }}
+            onWheel={(e) => {
+                if (ud.on_wheel) {
+                    ud.on_wheel(e);
                 }
             }}
         />;

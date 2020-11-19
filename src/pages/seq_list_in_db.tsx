@@ -102,19 +102,18 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             );
         }
 
-        const metadata_element_list = [];
+        const metadata_element_list: JSX.Element[] = [];
         for (const key in this.state.metadata_dict) {
-            const value = this.state.metadata_dict[key];
-
-            if (this.META_KEYS_TO_SKIP.has(key))
+            if (this.META_KEYS_TO_SKIP.has(key)) {
                 continue;
+            }
 
             metadata_element_list.push(
-                <Table.Row key={`metadata ${key} of ${value.strain}`}>
+                <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}`}>
                     <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
-                    <Table.Cell>{value}</Table.Cell>
+                    <Table.Cell>{this.state.metadata_dict[key]}</Table.Cell>
                 </Table.Row>
-            )
+            );
         }
 
         return (
@@ -217,7 +216,6 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         this.setState({
             is_loading_metadata: true,
         });
-        console.log(acc_id);
 
         clt.get_metadata_of_seq(acc_id, [])
             .then(response => {

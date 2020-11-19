@@ -109,8 +109,6 @@ i18n
                     an_err_occured: "시퀸스를 처리하는 중 오류가 발생했습니다",
                     plz_fill_in_blanks: "모든 빈칸에 데이터를 입력해 주세요",
 
-                    title_edu_nucleotide: "뉴클레오타이드",
-
                     seq_list_in_db: "서버 데이터베이스에 있는 시퀸스",
                     btn_next: "다음",
                     btn_prev: "이전",

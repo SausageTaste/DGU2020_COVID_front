@@ -154,7 +154,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
                     <Grid.Column>
                         <Segment basic textAlign='center'>
-                            <Canvas2D id={"seq_canvas"} width="640" height="280" fps={60} userdata={this.state.userdata} />
+                            <Canvas2D id={"seq_canvas"} width="600" height="250" fps={60} userdata={this.state.userdata} />
                         </Segment>
 
                         <Segment basic loading={this.state.is_loading_metadata} style={{maxHeight: "10", overflowY: "auto"}}>

@@ -178,7 +178,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         }
     }
 
-    public on_wheel(e: any) {
+    public on_wheel(e: React.WheelEvent) {
         if (0 == e.deltaY) {
             return;
         }

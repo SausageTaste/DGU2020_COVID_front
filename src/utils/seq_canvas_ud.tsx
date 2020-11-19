@@ -129,7 +129,6 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     public init(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         ctx.font = `${this.FONT_SIZE}px '${this.FONT_FAMILY}'`;
-        ctx.textAlign = "center";
     }
 
     public draw(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
@@ -166,26 +165,39 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         }
     }
 
-    private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, w: number, h: number) {
+    private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, font_size: number, x: number, y: number, w: number, h: number) {
         ctx.fillStyle = "rgba(0, 0, 0, 1)";
 
         const rect_rect = new RectArea(x, y, w, h);
         rect_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
         ctx.strokeRect(rect_rect.x, rect_rect.y, rect_rect.w, rect_rect.h);
 
-        const text_rect = new RectArea(x + w / 2, y + (h + this.FONT_SIZE) / 2, 0, this.FONT_SIZE);
+        const text_rect = new RectArea(x + w / 2, y + (h + font_size) / 2, 0, font_size);
         text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
         ctx.font = `${text_rect.h}px '${this.FONT_FAMILY}'`;
+        ctx.textAlign = "center";
         ctx.fillText(text, text_rect.x, text_rect.y);
     }
 
     private draw_a_cell(ctx: CanvasRenderingContext2D, index: number, char: string) {
-        this.stroke_rect_str(ctx, char,
+        this.stroke_rect_str(ctx, char, this.FONT_SIZE,
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
             this.CELL_SEQ_OFFSET.y,
             this.CELL_SIZE.x,
             this.CELL_SIZE.y
         );
+
+        if (index % 6 == 0) {
+            const text_rect = new RectArea(
+                this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
+                this.CELL_SEQ_OFFSET.y + this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST + this.FONT_SIZE,
+                0, this.FONT_SIZE
+            );
+            text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
+            ctx.font = `${text_rect.h}px '${this.FONT_FAMILY}'`;
+            ctx.textAlign = "left";
+            ctx.fillText("" + index, text_rect.x, text_rect.y);
+        }
     }
 
     private draw_a_triplet_info_box(ctx: CanvasRenderingContext2D, index: number, elevation: number = 0) {
@@ -197,7 +209,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         }
         const text = ncl.translate_standard_code(triplet);
 
-        this.stroke_rect_str(ctx, text,
+        this.stroke_rect_str(ctx, text, this.FONT_SIZE,
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
             this.CELL_SEQ_OFFSET.y - (this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST) * (elevation + 1),
             3 * this.CELL_SIZE.x + 2 * this.CELL_DISTANCE,

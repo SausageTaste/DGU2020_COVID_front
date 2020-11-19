@@ -49,19 +49,19 @@ export class Canvas2D extends React.Component<Canvas2DProps, Canvas2DState> {
             height={this.props.height}
             style={{
                 borderColor: "red",
-                borderWidth: 2,
+                borderWidth: 1,
                 borderTopLeftRadius: 1,
                 borderStyle: this.state.border_style,
             }}
 
             onMouseEnter={(e) => {
-                //this.setState({border_style: "solid"});
+                this.setState({border_style: "solid"});
                 if (ud.on_mouse_enter) {
                     ud.on_mouse_enter(e);
                 }
             }}
             onMouseLeave={(e) => {
-                //this.setState({border_style: "hidden"});
+                this.setState({border_style: "hidden"});
                 if (ud.on_mouse_leave) {
                     ud.on_mouse_leave(e);
                 }

@@ -47,8 +47,6 @@ i18n
                     an_err_occured: "An error occured while processing sequences",
                     plz_fill_in_blanks: "Please provide with all needed data",
 
-                    title_edu_nucleotide: "Nucleotide",
-
                     seq_list_in_db: "Sequences in Server Database",
                     btn_next: "Next",
                     btn_prev: "Previous",

@@ -1,5 +1,7 @@
 import { Canvas2D, Canvas2DUserData } from "./../utils/canvas_2d";
 
+import * as ncl from "./../utils/nucleotide_analyze";
+
 
 class Vec2 {
 
@@ -170,12 +172,11 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private draw_a_triplet_info_box(ctx: CanvasRenderingContext2D, index: number, elevation: number = 0) {
         index = Math.floor(index);
 
-        const text = `${this.sequence[index]}-${this.sequence[index + 1]}-${this.sequence[index + 2]}`;
-
-        this.stroke_rect_str(ctx, text,
+        this.stroke_rect_str(ctx,
+            ncl.translate_standard_code(this.sequence.substr(index, 3)),
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
             this.CELL_SEQ_OFFSET.y - this.CELL_SIZE.y * (elevation + 1) - 10,
-            3*this.CELL_SIZE.x + 2*this.CELL_DISTANCE,
+            3 * this.CELL_SIZE.x + 2 * this.CELL_DISTANCE,
             this.CELL_SIZE.y
         );
     }

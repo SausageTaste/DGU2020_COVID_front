@@ -121,26 +121,26 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         }
     }
 
-    private draw_a_rect_char(ctx: CanvasRenderingContext2D, pos_x: number, pos_y: number, char: string) {
+    private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, w: number, h: number) {
         ctx.fillStyle = "rgba(0, 0, 0, 1)";
 
-        const rect_rect = new RectArea(pos_x, pos_y, this.CELL_SIZE.x, this.CELL_SIZE.y);
+        const rect_rect = new RectArea(x, y, w, h);
         rect_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
         ctx.strokeRect(rect_rect.x, rect_rect.y, rect_rect.w, rect_rect.h);
 
-        const text_rect = new RectArea(
-            pos_x + this.CELL_SIZE.x / 2,
-            pos_y + (this.CELL_SIZE.y + this.FONT_SIZE) / 2,
-            0,
-            this.FONT_SIZE
-        );
+        const text_rect = new RectArea(x + w / 2, y + (h + this.FONT_SIZE) / 2, 0, this.FONT_SIZE);
         text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
         ctx.font = `${text_rect.h}px 'Malgun Gothic'`;
-        ctx.fillText(char, text_rect.x, text_rect.y);
+        ctx.fillText(text, text_rect.x, text_rect.y);
     }
 
     private draw_a_cell(ctx: CanvasRenderingContext2D, index: number, char: string) {
-        this.draw_a_rect_char(ctx, this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index, this.CELL_SEQ_OFFSET.y, char);
+        this.stroke_rect_str(ctx, char,
+            this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
+            this.CELL_SEQ_OFFSET.y,
+            this.CELL_SIZE.x,
+            this.CELL_SIZE.y
+        );
     }
 
     public set_seq(seq: string) {

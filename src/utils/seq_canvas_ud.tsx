@@ -80,6 +80,10 @@ function set_scroll_state(is_enable: boolean) {
     document.body.style.overflow = is_enable ? 'auto':'hidden';
 }
 
+function clamp(x: number, min_val: number, max_val: number) {
+    return Math.min(Math.max(x, min_val), max_val);
+}
+
 
 export class MyCanvas2DUserData implements Canvas2DUserData {
 
@@ -196,12 +200,14 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         const mouse_pos_element = get_mouse_pos_in_element(e);
         const mouse_pos_world_before = this.convert_pos_element_to_world(mouse_pos_element.x, mouse_pos_element.y);
 
+        const SCALE_FACTOR = 1.3;
         if (e.deltaY < 0) {
-            this.cam_scale *= 2;
+            this.cam_scale *= SCALE_FACTOR;
         }
         else {
-            this.cam_scale *= 0.5;
+            this.cam_scale *= 1 / SCALE_FACTOR;
         }
+        this.cam_scale = clamp(this.cam_scale, 1 / 4, 4);
 
         const mouse_pos_world_after = this.convert_pos_element_to_world(mouse_pos_element.x, mouse_pos_element.y);
 

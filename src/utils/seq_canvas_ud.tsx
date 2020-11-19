@@ -84,6 +84,16 @@ function clamp(x: number, min_val: number, max_val: number) {
     return Math.min(Math.max(x, min_val), max_val);
 }
 
+function calc_fisrt_visible_horizontal_rect(cam_pos_x: number, series_offset: number, rect_width: number, rect_gap: number) {
+    const numer = cam_pos_x - series_offset - rect_width;
+    const denom = rect_width + rect_gap;
+    return Math.max(0, Math.ceil(numer / denom));
+}
+
+function calc_visible_cell_count(canvas_width: number, cell_step_dist: number, cam_scale: number) {
+    return Math.ceil(canvas_width / cell_step_dist / cam_scale) + 1;
+}
+
 
 export class MyCanvas2DUserData implements Canvas2DUserData {
 
@@ -112,12 +122,26 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        const fisrt_cell_index = this.calc_first_visible_cell_index_in_world();
-        const visible_cell_count = this.calc_visible_cell_count(canvas.width);
+        const fisrt_cell_index = calc_fisrt_visible_horizontal_rect(
+            this.cam_pos.x, this.CELL_SEQ_OFFSET.x, this.CELL_SIZE.x, this.CELL_DISTANCE
+        );
+        const visible_cell_count = calc_visible_cell_count(canvas.width, this.cell_step_dist(), this.cam_scale);
 
         for (let i = 0; i < visible_cell_count; i++) {
             const c = this.sequence.charAt(fisrt_cell_index + i);
             this.draw_a_cell(ctx, fisrt_cell_index + i, c);
+        }
+
+        const first_triplet_cell_index = calc_fisrt_visible_horizontal_rect(
+            this.cam_pos.x, this.CELL_SEQ_OFFSET.x, 3*this.CELL_SIZE.x + 2*this.CELL_DISTANCE, this.CELL_DISTANCE
+        );
+        const visible_triplet_cell_count = calc_visible_cell_count(
+            canvas.width, 3*this.CELL_SIZE.x + 3*this.CELL_DISTANCE, this.cam_scale
+        );
+
+        for (let i = 0; i < visible_triplet_cell_count; ++i) {
+            const index = (first_triplet_cell_index + i) * 3;
+            this.draw_a_triplet_info_box(ctx, index);
         }
     }
 
@@ -143,22 +167,25 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         );
     }
 
+    private draw_a_triplet_info_box(ctx: CanvasRenderingContext2D, index: number, elevation: number = 0) {
+        index = Math.floor(index);
+
+        const text = `${this.sequence[index]}-${this.sequence[index + 1]}-${this.sequence[index + 2]}`;
+
+        this.stroke_rect_str(ctx, text,
+            this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
+            this.CELL_SEQ_OFFSET.y - this.CELL_SIZE.y * (elevation + 1) - 10,
+            3*this.CELL_SIZE.x + 2*this.CELL_DISTANCE,
+            this.CELL_SIZE.y
+        );
+    }
+
     public set_seq(seq: string) {
         this.sequence = seq;
     }
 
     private cell_step_dist() {
         return this.CELL_SIZE.x + this.CELL_DISTANCE;
-    }
-
-    private calc_first_visible_cell_index_in_world() {
-        const numerator = this.cam_pos.x - this.CELL_SEQ_OFFSET.x - this.CELL_SIZE.x;
-        const result = Math.ceil(numerator / this.cell_step_dist());
-        return Math.max(result, 0);
-    }
-
-    private calc_visible_cell_count(canvas_width: number) {
-        return Math.ceil(canvas_width / this.cell_step_dist() / this.cam_scale) + 1;
     }
 
     private convert_pos_element_to_world(pos_x: number, pos_y: number) {

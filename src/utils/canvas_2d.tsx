@@ -55,13 +55,13 @@ export class Canvas2D extends React.Component<Canvas2DProps, Canvas2DState> {
             }}
 
             onMouseEnter={(e) => {
-                this.setState({border_style: "solid"});
+                //this.setState({border_style: "solid"});
                 if (ud.on_mouse_enter) {
                     ud.on_mouse_enter(e);
                 }
             }}
             onMouseLeave={(e) => {
-                this.setState({border_style: "hidden"});
+                //this.setState({border_style: "hidden"});
                 if (ud.on_mouse_leave) {
                     ud.on_mouse_leave(e);
                 }

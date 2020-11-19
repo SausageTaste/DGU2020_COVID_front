@@ -86,6 +86,17 @@ function clamp(x: number, min_val: number, max_val: number) {
     return Math.min(Math.max(x, min_val), max_val);
 }
 
+function positive_mod(x: number, denom: number) {
+    for (let i = 0; i < 99999; ++i) {
+        x += denom;
+        if (x >= 0) {
+            break;
+        }
+    }
+
+    return x % denom;
+}
+
 function calc_fisrt_visible_horizontal_rect(cam_pos_x: number, series_offset: number, rect_width: number, rect_gap: number) {
     const numer = cam_pos_x - series_offset - rect_width;
     const denom = rect_width + rect_gap;
@@ -110,6 +121,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private CELL_SIZE: Vec2 = new Vec2(35, 40);
     private CELL_SEQ_OFFSET: Vec2 = new Vec2(0, 0);
     private CELL_DISTANCE: number = 5;
+    private TRIPLET_CELL_ELEVATION_DIST = 10;
+    private TRIPLET_CELL_INDEX_OFFSET = 0;
 
     ////
 
@@ -119,6 +132,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     }
 
     public draw(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+        this.bind_cam_near_drawn_area(canvas);
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
@@ -131,6 +146,9 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
         for (let i = 0; i < visible_cell_count; i++) {
             const c = this.sequence.charAt(fisrt_cell_index + i);
+            if ("" === c) {
+                continue;
+            }
             this.draw_a_cell(ctx, fisrt_cell_index + i, c);
         }
 
@@ -142,7 +160,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         );
 
         for (let i = 0; i < visible_triplet_cell_count; ++i) {
-            const index = (first_triplet_cell_index + i) * 3;
+            const index = (first_triplet_cell_index + i) * 3 + positive_mod(this.TRIPLET_CELL_INDEX_OFFSET, 3);
             this.draw_a_triplet_info_box(ctx, index);
         }
     }
@@ -172,10 +190,15 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private draw_a_triplet_info_box(ctx: CanvasRenderingContext2D, index: number, elevation: number = 0) {
         index = Math.floor(index);
 
-        this.stroke_rect_str(ctx,
-            ncl.translate_standard_code(this.sequence.substr(index, 3)),
+        const triplet = this.sequence.substr(index, 3);
+        if (3 != triplet.length) {
+            return;
+        }
+        const text = ncl.translate_standard_code(triplet);
+
+        this.stroke_rect_str(ctx, text,
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
-            this.CELL_SEQ_OFFSET.y - this.CELL_SIZE.y * (elevation + 1) - 10,
+            this.CELL_SEQ_OFFSET.y - (this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST) * (elevation + 1),
             3 * this.CELL_SIZE.x + 2 * this.CELL_DISTANCE,
             this.CELL_SIZE.y
         );
@@ -191,6 +214,33 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     private convert_pos_element_to_world(pos_x: number, pos_y: number) {
         return new Vec2(this.cam_pos.x + pos_x / this.cam_scale, this.cam_pos.y + pos_y / this.cam_scale);
+    }
+
+    private calc_drawn_area() {
+        return new RectArea(
+            0,
+            -(this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST),
+            this.cell_step_dist() * this.sequence.length,
+            2 * this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST
+        );
+    }
+
+    private bind_cam_near_drawn_area(canvas: HTMLCanvasElement) {
+        const drawn_area = this.calc_drawn_area();
+
+        if (this.cam_pos.x < drawn_area.x - canvas.width * 0.5) {
+            this.cam_pos.x = drawn_area.x - canvas.width * 0.5;
+        }
+        if (this.cam_pos.x > drawn_area.x + drawn_area.w - canvas.width * 0.5) {
+            this.cam_pos.x = drawn_area.x + drawn_area.w - canvas.width * 0.5;
+        }
+
+        if (this.cam_pos.y < drawn_area.y - canvas.height * 0.5) {
+            this.cam_pos.y = drawn_area.y - canvas.height * 0.5;
+        }
+        if (this.cam_pos.y > drawn_area.y + drawn_area.h - canvas.height * 0.5) {
+            this.cam_pos.y = drawn_area.y + drawn_area.h - canvas.height * 0.5;
+        }
     }
 
 

@@ -61,6 +61,9 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
                     console.log(err_msg);
                 }
+
+                const first_acc_id = payload[cst.KEY_ACC_ID_LIST][0];
+                this.select_a_data(first_acc_id);
             })
             .catch(err => {
                 console.log(err.message);
@@ -207,9 +210,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         }
     }
 
-    private on_label_click(event: React.MouseEvent<HTMLElement>, acc_id: string) {
-        event.preventDefault();
-
+    private select_a_data(acc_id: string) {
         if (this.state.is_loading_metadata)
             return;
 
@@ -241,6 +242,11 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     is_loading_metadata: false,
                 })
             });
+    }
+
+    private on_label_click(event: React.MouseEvent<HTMLElement>, acc_id: string) {
+        event.preventDefault();
+        this.select_a_data(acc_id);
     }
 
 }

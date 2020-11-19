@@ -1,7 +1,7 @@
 
 // https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG1
 
-export function translate_standard_code(a_triplet: string) {
+export function translate_standard_code(a_triplet: string): string {
     const MAP = {
         "TTT": "F Phe",      "TCT": "S Ser",      "TAT": "Y Tyr",      "TGT": "C Cys",
         "TTC": "F Phe",      "TCC": "S Ser",      "TAC": "Y Tyr",      "TGC": "C Cys",

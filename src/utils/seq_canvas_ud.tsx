@@ -118,7 +118,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private sequence: string = "";
 
     private FONT_SIZE: number = 30;
-    private CELL_SIZE: Vec2 = new Vec2(35, 40);
+    private CELL_SIZE: Vec2 = new Vec2(40, 45);
     private CELL_SEQ_OFFSET: Vec2 = new Vec2(0, 0);
     private CELL_DISTANCE: number = 5;
     private TRIPLET_CELL_ELEVATION_DIST = 10;

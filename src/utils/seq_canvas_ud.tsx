@@ -75,6 +75,11 @@ function get_mouse_pos_in_element(e: any) {
     return new Vec2(x, y);
 }
 
+function set_scroll_state(is_enable: boolean) {
+    //const style = document.body.style.overflow;
+    document.body.style.overflow = is_enable ? 'auto':'hidden';
+}
+
 
 export class MyCanvas2DUserData implements Canvas2DUserData {
 
@@ -165,8 +170,13 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         this.mouse_captured = false;
     }
 
+    public on_mouse_enter(e: React.MouseEvent) {
+        set_scroll_state(false);
+    }
+
     public on_mouse_leave(e: React.MouseEvent) {
         this.mouse_captured = false;
+        set_scroll_state(true);
     }
 
     public on_mouse_move(e: React.MouseEvent) {

@@ -226,20 +226,27 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     }
 
     private bind_cam_near_drawn_area(canvas: HTMLCanvasElement) {
+        const MARGIN = 100;
+
         const drawn_area = this.calc_drawn_area();
+        drawn_area.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
 
-        if (this.cam_pos.x < drawn_area.x - canvas.width * 0.5) {
-            this.cam_pos.x = drawn_area.x - canvas.width * 0.5;
+        if (drawn_area.x > canvas.width - MARGIN) {
+            const diff = canvas.width - MARGIN - drawn_area.x;
+            this.cam_pos.x -= diff / this.cam_scale;
         }
-        if (this.cam_pos.x > drawn_area.x + drawn_area.w - canvas.width * 0.5) {
-            this.cam_pos.x = drawn_area.x + drawn_area.w - canvas.width * 0.5;
+        else if (drawn_area.x + drawn_area.w < MARGIN) {
+            const diff = MARGIN - (drawn_area.x + drawn_area.w);
+            this.cam_pos.x -= diff / this.cam_scale;
         }
 
-        if (this.cam_pos.y < drawn_area.y - canvas.height * 0.5) {
-            this.cam_pos.y = drawn_area.y - canvas.height * 0.5;
+        if (drawn_area.y > canvas.height - MARGIN) {
+            const diff = canvas.height - MARGIN - drawn_area.y;
+            this.cam_pos.y -= diff / this.cam_scale;
         }
-        if (this.cam_pos.y > drawn_area.y + drawn_area.h - canvas.height * 0.5) {
-            this.cam_pos.y = drawn_area.y + drawn_area.h - canvas.height * 0.5;
+        else if (drawn_area.y + drawn_area.h < MARGIN) {
+            const diff = MARGIN - (drawn_area.y + drawn_area.h);
+            this.cam_pos.y -= diff / this.cam_scale;
         }
     }
 

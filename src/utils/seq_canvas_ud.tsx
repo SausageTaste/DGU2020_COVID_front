@@ -123,11 +123,12 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private CELL_DISTANCE: number = 5;
     private TRIPLET_CELL_ELEVATION_DIST = 10;
     private TRIPLET_CELL_INDEX_OFFSET = 0;
+    private FONT_FAMILY = "Consolas"
 
     ////
 
     public init(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-        ctx.font = `${this.FONT_SIZE}px 'Malgun Gothic'`;
+        ctx.font = `${this.FONT_SIZE}px '${this.FONT_FAMILY}'`;
         ctx.textAlign = "center";
     }
 
@@ -174,7 +175,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
         const text_rect = new RectArea(x + w / 2, y + (h + this.FONT_SIZE) / 2, 0, this.FONT_SIZE);
         text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
-        ctx.font = `${text_rect.h}px 'Malgun Gothic'`;
+        ctx.font = `${text_rect.h}px '${this.FONT_FAMILY}'`;
         ctx.fillText(text, text_rect.x, text_rect.y);
     }
 

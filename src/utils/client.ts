@@ -7,7 +7,7 @@ const baseURL = "http://3.35.191.32:8000/api";
 
 const instance: AxiosInstance = Axios.create({
     baseURL,
-    timeout: 1000000,
+    timeout: 100_000,
 });
 
 

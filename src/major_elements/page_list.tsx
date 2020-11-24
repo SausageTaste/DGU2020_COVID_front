@@ -51,6 +51,13 @@ export class PageList extends React.Component<PageListProp, {}> {
                 to={{ pathname: `/two_seq_comp` }}>
                 {i18n.t("two_seq_comp")}
             </Menu.Item>,
+
+            <Menu.Item
+                key="map"
+                as={NavLink}
+                to={{ pathname: `/map` }}>
+                {i18n.t("map")}
+            </Menu.Item>,
         ];
 
         // This is something like compiler switch

@@ -116,6 +116,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private cam_scale: number = 1;
 
     private sequence: string = "";
+    private last_mouse_pose: Vec2 = null;
 
     private FONT_SIZE: number = 30;
     private CELL_SIZE: Vec2 = new Vec2(40, 45);
@@ -139,6 +140,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Draw nucleic acid cells
+
         const fisrt_cell_index = calc_fisrt_visible_horizontal_rect(
             this.cam_pos.x, this.CELL_SEQ_OFFSET.x, this.CELL_SIZE.x, this.CELL_DISTANCE
         );
@@ -152,6 +155,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
             this.draw_a_cell(ctx, fisrt_cell_index + i, c);
         }
 
+        // Draw triplet cells
+
         const first_triplet_cell_index = calc_fisrt_visible_horizontal_rect(
             this.cam_pos.x, this.CELL_SEQ_OFFSET.x, 3*this.CELL_SIZE.x + 2*this.CELL_DISTANCE, this.CELL_DISTANCE
         );
@@ -162,6 +167,15 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         for (let i = 0; i < visible_triplet_cell_count; ++i) {
             const index = (first_triplet_cell_index + i) * 3 + positive_mod(this.TRIPLET_CELL_INDEX_OFFSET, 3);
             this.draw_a_triplet_info_box(ctx, index);
+        }
+
+        // Draw triplet detail info
+
+        if (null != this.last_mouse_pose) {
+            const triplet_index = this.get_current_pointed_triplet_cell();
+            if (triplet_index >= 0) {
+                this.draw_detail_info_box_for_triplet_cell(ctx, triplet_index);
+            }
         }
     }
 
@@ -263,6 +277,44 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         }
     }
 
+    private get_current_pointed_triplet_cell(): number {
+        if (null === this.last_mouse_pose) {
+            return -1;
+        }
+
+        const mouse_pos_world = this.convert_pos_element_to_world(this.last_mouse_pose.x, this.last_mouse_pose.y);
+
+        const y_min = this.CELL_SEQ_OFFSET.y - (this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST);
+        const y_max = y_min + this.CELL_SIZE.y;
+        if (mouse_pos_world.y < y_min || mouse_pos_world.y > y_max) {
+            return -1;
+        }
+
+        const one_element_width = this.CELL_SIZE.x * 3 + this.CELL_DISTANCE * 3;
+        const index_float = mouse_pos_world.x / one_element_width;
+        if (index_float < 0) {
+            return -1
+        }
+
+        return Math.floor(index_float);
+    }
+
+    private draw_detail_info_box_for_triplet_cell(ctx: CanvasRenderingContext2D, triplet_index: number) {
+        const x_pos_of_triplet = this.CELL_SEQ_OFFSET.x + (3 * this.CELL_SIZE.x + 3 * this.CELL_DISTANCE) * triplet_index;
+        const width_of_triplet = 3 * this.CELL_SIZE.x + 2 * this.CELL_DISTANCE;
+
+        const text_rect = new RectArea(
+            x_pos_of_triplet + width_of_triplet * 0.5,
+            -(2 * this.TRIPLET_CELL_ELEVATION_DIST + this.CELL_SIZE.y),
+            0,
+            this.FONT_SIZE * 0.7,
+        );
+        text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
+        ctx.font = `${text_rect.h}px '${this.FONT_FAMILY}'`;
+        ctx.textAlign = "center";
+        ctx.fillText("test text", text_rect.x, text_rect.y);
+    }
+
 
     public on_mouse_down(e: React.MouseEvent) {
         this.mouse_captured = true;
@@ -278,6 +330,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     public on_mouse_leave(e: React.MouseEvent) {
         this.mouse_captured = false;
+        this.last_mouse_pose = null;
         set_scroll_state(true);
     }
 
@@ -288,6 +341,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
             this.cam_pos.x -= e.movementX * scalar;
             this.cam_pos.y -= e.movementY * scalar;
         }
+
+        this.last_mouse_pose = get_mouse_pos_in_element(e);
     }
 
     public on_wheel(e: React.WheelEvent) {

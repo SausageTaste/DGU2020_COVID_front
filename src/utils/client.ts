@@ -3,7 +3,7 @@ import Axios, { AxiosInstance, AxiosResponse, CancelToken } from "axios";
 import * as cst from "./konst";
 
 
-const baseURL = "http://3.35.191.32:8000/api";
+const baseURL = "http://192.168.0.101:8000/api";
 
 const instance: AxiosInstance = Axios.create({
     baseURL,

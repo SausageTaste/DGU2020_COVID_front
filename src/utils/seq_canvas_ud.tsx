@@ -309,10 +309,19 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
             0,
             this.FONT_SIZE * 0.7,
         );
+
+        const nucleic_acid_triplet = this.sequence.substr(triplet_index * 3, 3);
+        const amino_acid_triple_name = ncl.translate_standard_code(nucleic_acid_triplet);
+        const amino_acid_info = ncl.get_amino_acid_info_with_triplet_name(amino_acid_triple_name);
+        let amino_acid_text = "unknown";
+        if (null != amino_acid_info) {
+            amino_acid_text = amino_acid_info.full_name;
+        }
+
         text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
         ctx.font = `${text_rect.h}px '${this.FONT_FAMILY}'`;
         ctx.textAlign = "center";
-        ctx.fillText("test text", text_rect.x, text_rect.y);
+        ctx.fillText(amino_acid_text, text_rect.x, text_rect.y);
     }
 
 

@@ -159,6 +159,11 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                             <Canvas2D id={"seq_canvas"} width="600" height="250" fps={60} userdata={this.state.userdata} />
                         </Segment>
 
+                        <Button
+                            compact
+                            onClick={() => this.copy_seq_to_clipboard()}
+                        >{i18n.t("copy_seq_clipboard")}</Button>
+
                         <Segment basic loading={this.state.is_loading_metadata} style={{maxHeight: "10", overflowY: "auto"}}>
                             <Table celled>
                                 <Table.Header>
@@ -208,6 +213,10 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                 current_page: new_index,
             });
         }
+    }
+
+    private copy_seq_to_clipboard() {
+        navigator.clipboard.writeText(this.state.metadata_dict[cst.KEY_SEQUENCE]);
     }
 
     private select_a_data(acc_id: string) {

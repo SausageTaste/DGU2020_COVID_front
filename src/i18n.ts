@@ -51,6 +51,7 @@ i18n
                     btn_next: "Next",
                     btn_prev: "Previous",
                     label_metadata: "Metadata",
+                    copy_seq_clipboard: "Copy sequence to clipboard",
 
                     meta_acc_id: "ACC ID",
                     meta_strain: "Strain",
@@ -113,6 +114,7 @@ i18n
                     btn_next: "다음",
                     btn_prev: "이전",
                     label_metadata: "메타데이터",
+                    copy_seq_clipboard: "시퀸스를 클립보드로 복사",
 
                     //meta_acc_id: "ACC ID",
                     //meta_strain: "Strain",

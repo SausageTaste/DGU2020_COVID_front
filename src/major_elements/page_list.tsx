@@ -17,26 +17,19 @@ export class PageList extends React.Component<PageListProp, {}> {
 
     public render() {
         const page_items: JSX.Element[] = [
-            <Menu.Item
-                key="seq_search"
-                as={NavLink}
-                to={{ pathname: `/seq_search` }}>
-                {i18n.t("seq_search")}
-            </Menu.Item>,
+            // <Menu.Item
+            //     key="seq_search"
+            //     as={NavLink}
+            //     to={{ pathname: `/seq_search` }}>
+            //     {i18n.t("seq_search")}
+            // </Menu.Item>,
 
-            <Menu.Item
-                key="gl_view"
-                as={NavLink}
-                to={{ pathname: `/gl_view` }}>
-                {i18n.t("opengl_view")}
-            </Menu.Item>,
-
-            <Menu.Item
-                key="seq_list_in_db"
-                as={NavLink}
-                to={{ pathname: `/seq_list_in_db` }}>
-                {i18n.t("seq_list_in_db")}
-            </Menu.Item>,
+            // <Menu.Item
+            //     key="gl_view"
+            //     as={NavLink}
+            //     to={{ pathname: `/gl_view` }}>
+            //     {i18n.t("opengl_view")}
+            // </Menu.Item>,
 
             <Menu.Item
                 key="single_seq"
@@ -50,6 +43,13 @@ export class PageList extends React.Component<PageListProp, {}> {
                 as={NavLink}
                 to={{ pathname: `/two_seq_comp` }}>
                 {i18n.t("two_seq_comp")}
+            </Menu.Item>,
+
+            <Menu.Item
+                key="seq_list_in_db"
+                as={NavLink}
+                to={{ pathname: `/seq_list_in_db` }}>
+                {i18n.t("seq_list_in_db")}
             </Menu.Item>,
 
             <Menu.Item

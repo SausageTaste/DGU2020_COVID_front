@@ -4,6 +4,8 @@ import { Header, Table, Segment, Grid, Label, Button } from 'semantic-ui-react';
 import * as clt from "../utils/client";
 import * as cst from "../utils/konst";
 import i18n from '../i18n';
+import { Canvas2D } from "./../utils/canvas_2d";
+import { MyCanvas2DUserData } from "./../utils/seq_canvas_ud";
 
 
 interface SeqListInDBProps {
@@ -19,6 +21,8 @@ interface SeqListInDBState {
 
     acc_id_list: string[];
     metadata_dict: object;
+
+    userdata: MyCanvas2DUserData;
 }
 
 export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState> {
@@ -39,6 +43,8 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
             acc_id_list: [],
             metadata_dict: {},
+
+            userdata: new MyCanvas2DUserData(),
         };
 
         clt.get_all_acc_ids()
@@ -55,6 +61,9 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     const err_msg = payload[cst.KEY_ERROR_TEXT];
                     console.log(err_msg);
                 }
+
+                const first_acc_id = payload[cst.KEY_ACC_ID_LIST][0];
+                this.select_a_data(first_acc_id);
             })
             .catch(err => {
                 console.log(err.message);
@@ -96,19 +105,18 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             );
         }
 
-        const metadata_element_list = [];
+        const metadata_element_list: JSX.Element[] = [];
         for (const key in this.state.metadata_dict) {
-            const value = this.state.metadata_dict[key];
-
-            if (this.META_KEYS_TO_SKIP.has(key))
+            if (this.META_KEYS_TO_SKIP.has(key)) {
                 continue;
+            }
 
             metadata_element_list.push(
-                <Table.Row key={`metadata ${key} of ${value.acc_id}`}>
+                <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}`}>
                     <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
-                    <Table.Cell>{value}</Table.Cell>
+                    <Table.Cell>{this.state.metadata_dict[key]}</Table.Cell>
                 </Table.Row>
-            )
+            );
         }
 
         return (
@@ -130,7 +138,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                         </Grid>
                     </Grid.Row>
 
-                    <Grid.Column width={4}>
+                    <Grid.Column width={5}>
                         <Segment basic loading={this.state.is_loading_list} style={{maxHeight: "10", overflowY: "auto"}}>
                             <Table celled>
                                 <Table.Header>
@@ -147,19 +155,28 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     </Grid.Column>
 
                     <Grid.Column>
-                            <Segment basic loading={this.state.is_loading_metadata} style={{maxHeight: "10", overflowY: "auto"}}>
-                                <Table celled>
-                                    <Table.Header>
-                                        <Table.Row>
-                                            <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
-                                        </Table.Row>
-                                    </Table.Header>
+                        <Segment basic textAlign='center'>
+                            <Canvas2D id={"seq_canvas"} width="600" height="250" fps={60} userdata={this.state.userdata} />
+                        </Segment>
 
-                                    <Table.Body>
-                                        {metadata_element_list}
-                                    </Table.Body>
-                                </Table>
-                            </Segment>
+                        <Button
+                            compact
+                            onClick={() => this.copy_seq_to_clipboard()}
+                        >{i18n.t("copy_seq_clipboard")}</Button>
+
+                        <Segment basic loading={this.state.is_loading_metadata} style={{maxHeight: "10", overflowY: "auto"}}>
+                            <Table celled>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+
+                                <Table.Body>
+                                    {metadata_element_list}
+                                </Table.Body>
+                            </Table>
+                        </Segment>
                     </Grid.Column>
                 </Grid>
             </div>
@@ -198,16 +215,17 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         }
     }
 
-    private on_label_click(event: React.MouseEvent<HTMLElement>, acc_id: string) {
-        event.preventDefault();
+    private copy_seq_to_clipboard() {
+        navigator.clipboard.writeText(this.state.metadata_dict[cst.KEY_SEQUENCE]);
+    }
 
+    private select_a_data(acc_id: string) {
         if (this.state.is_loading_metadata)
             return;
 
         this.setState({
             is_loading_metadata: true,
         });
-        console.log(acc_id);
 
         clt.get_metadata_of_seq(acc_id, [])
             .then(response => {
@@ -215,6 +233,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                 const error_code = payload[cst.KEY_ERROR_CODE]
 
                 if (0 == error_code) {
+                    this.state.userdata.set_seq(payload[cst.KEY_METADATA][cst.KEY_SEQUENCE]);
                     this.setState({
                         metadata_dict: payload[cst.KEY_METADATA],
                     })
@@ -232,6 +251,11 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     is_loading_metadata: false,
                 })
             });
+    }
+
+    private on_label_click(event: React.MouseEvent<HTMLElement>, acc_id: string) {
+        event.preventDefault();
+        this.select_a_data(acc_id);
     }
 
 }

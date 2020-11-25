@@ -3,11 +3,11 @@ import Axios, { AxiosInstance, AxiosResponse, CancelToken } from "axios";
 import * as cst from "./konst";
 
 
-const baseURL = "http://localhost:8000/api";
+const baseURL = "http://58.145.3.213:8000/api";
 
 const instance: AxiosInstance = Axios.create({
     baseURL,
-    timeout: 1000000,
+    timeout: 100_000,
 });
 
 

@@ -7,6 +7,7 @@ module.exports = [{
     devtool: "source-map",
     devServer: {
         historyApiFallback: true,
+        port: 3000,
     },
     context: path.resolve(__dirname, "src"),
     entry: "./main.tsx",

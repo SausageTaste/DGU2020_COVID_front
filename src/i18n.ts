@@ -19,8 +19,8 @@ i18n
 
             en: {
                 translation: {
-                    home: "Home",
-                    home_page: "Home Page",
+                    home: "COVIDGU",
+                    home_page: "COVIDGU",
 
                     seq_search: "Sequence Search",
                     put_your_seq_here: "Put your sequence string here",
@@ -80,12 +80,15 @@ i18n
                     meta_paper_url: "Paper URL",
                     meta_date_submitted: "Submitted date",
                     meta_sequence: "Sequence",
+
+                    map: 'Map',
                 },
             },
 
             kr: {
                 translation: {
-                    home_page: "홈페이지",
+                    home: "COVIDGU",
+                    home_page: "COVIDGU",
 
                     seq_search: "시퀸스 검색",
                     put_your_seq_here: "시퀸스 문자열을 이곳에 입력하세요",
@@ -143,6 +146,8 @@ i18n
                     meta_paper_url: "논문 URL",
                     meta_date_submitted: "제출 날짜",
                     meta_sequence: "서열",
+
+                    map: '지도',
                 },
             },
 

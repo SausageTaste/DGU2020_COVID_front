@@ -25,10 +25,11 @@ i18n
                     service_description: 'COVIDGU is a COVID19 sequence analysis service that can be easily used by the general public.',
                     function_description: 'We offer the following features:',
                     single_seq_query_description: 'You can look up the sequences that are similar to the ones you have, and check the detailed information.',
-                    two_seq_comp_description: `It shows the similarity of the two sequences and a list of mutations. 
-                    You can check detailed information of the nucleotide sequence.`,
-                    seq_list_in_db_description: `You can see the list of sequences in the server database. Canvas to help you understand nucleotide sequences are shown together. ${'\n'}
-                    You can also copy sequence strings and use it for other functions.`,
+                    two_seq_comp_description: 'It shows the similarity of the two sequences and a list of mutations.',
+                    two_seq_comp_description_2: 'You can check detailed information of the nucleotide sequence.',
+                    seq_list_in_db_description: `You can see the list of sequences in the server database. 
+                    Canvas to help you understand nucleotide sequences are shown together.`,
+                    seq_list_in_db_description_2: 'You can also copy sequence strings and use it for other functions.',
                     map_description: 'You can easily check the maps around the world.',
 
                     seq_search: "Sequence Search",
@@ -102,8 +103,11 @@ i18n
                     service_description: 'COVIDGU는 일반인들도 쉽게 이용할 수 있는 COVID19 염기서열 분석 서비스입니다.',
                     function_description: 'COVIDGU는 다음과 같은 기능을 제공합니다.',
                     single_seq_query_description: '보유하고 있는 염기서열과 유사한 서열들을 조회하고, 자세한 정보를 확인할 수 있습니다.',
-                    two_seq_comp_description: '두 염기서열의 유사도와 돌연변이 목록을 출력합니다.\n염기서열의 자세한 정보를 확인할 수 있습니다.',
-                    seq_list_in_db_description: '서버 데이터베이스가 보유하고 있는 염기서열들의 리스트를 확인해보세요. 뉴클레오타이드 서열의 이해를 돕는 캔버스가 함께 보여집니다.\n염기서열의 문자열을 복사하여 다른 기능에 활용할 수도 있습니다.',
+                    two_seq_comp_description: '두 염기서열의 유사도와 돌연변이 목록을 출력합니다.',
+                    two_seq_comp_description_2: '염기서열의 자세한 정보를 확인할 수 있습니다.',
+                    seq_list_in_db_description: `서버 데이터베이스가 보유하고 있는 염기서열들의 리스트를 확인해보세요. 
+                    뉴클레오타이드 서열의 이해를 돕는 캔버스가 함께 보여집니다.`,
+                    seq_list_in_db_description_2: '염기서열의 문자열을 복사하여 다른 기능에 활용할 수도 있습니다.',
                     map_description: '전 세계의 지도를 손쉽게 확인할 수 있습니다.',
 
                     seq_search: "염기서열 검색",

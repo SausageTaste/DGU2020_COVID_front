@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Header } from 'semantic-ui-react';
 import { Map, GoogleApiWrapper, IMapProps, Circle, InfoWindow } from 'google-maps-react';
-// import GoogleMapReact from 'google-map-react';
 import '../major_elements/index.js';
 
 import * as cst from "../utils/konst";
@@ -78,6 +77,7 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             center= {ctryinfo[country]['center']}
             radius= {ctryinfo[country]['num_cases'] * 30}
           />
+          
         )
       } else continue;
     }

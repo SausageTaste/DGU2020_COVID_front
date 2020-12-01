@@ -114,3 +114,12 @@ export function find_mutations(sequence_1: string, sequence_2: string, cancelTok
         [cst.KEY_SEQUENCE_LIST]: [sequence_1, sequence_2],
     }, {cancelToken});
 }
+
+
+export function num_cases_per_division(cancelToken: CancelToken = null) {
+    return instance.get("num_cases_per_division/", {cancelToken});
+}
+
+export function num_cases_per_country(cancelToken: CancelToken = null) {
+    return instance.get("num_cases_per_country/", {cancelToken});
+}

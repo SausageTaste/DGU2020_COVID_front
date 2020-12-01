@@ -24,6 +24,7 @@
     "@react-google-maps/api": "^1.13.0",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
+    "google-map-react": "^2.1.9",
     "google-maps-react": "^2.0.6",
     "i18next": "^19.8.4",
     "react-bootstrap-table-next": "^4.0.3",

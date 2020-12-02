@@ -224,19 +224,20 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
     }
 
     private does_support_copy_to_clipboard() {
+        console.log(navigator);
+        console.log(navigator.clipboard);
+        console.log(navigator.clipboard.writeText);
+
         if (null == navigator) {
             return false;
         }
         else if (null == navigator.clipboard) {
-            console.log(navigator);
             return false;
         }
         else if (null == navigator.clipboard.writeText) {
-            console.log(navigator.clipboard);
             return false;
         }
         else {
-            console.log(navigator.clipboard.writeText);
             return true;
         }
     }

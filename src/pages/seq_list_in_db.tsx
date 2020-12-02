@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Header, Table, Segment, Grid, Label, Button } from 'semantic-ui-react';
+import * as copy_text_to_clipboard from 'copy-to-clipboard';
 
 import * as clt from "../utils/client";
 import * as cst from "../utils/konst";
@@ -224,24 +225,12 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
     }
 
     private does_support_copy_to_clipboard() {
-        console.log(navigator);
-
-        if (null == navigator) {
-            return false;
-        }
-        else if (null == navigator.clipboard) {
-            return false;
-        }
-        else if (null == navigator.clipboard.writeText) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return null != copy_text_to_clipboard;
     }
 
     private copy_seq_to_clipboard() {
-        navigator.clipboard.writeText(this.state.metadata_dict[cst.KEY_SEQUENCE]);
+        const seq = this.state.metadata_dict[cst.KEY_SEQUENCE];
+        copy_text_to_clipboard(seq);
     }
 
     private select_a_data(acc_id: string) {

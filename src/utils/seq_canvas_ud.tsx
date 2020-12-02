@@ -220,7 +220,6 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         this.draw_scroll_control_bar(ctx);
 
         this.need_redraw = false;
-        console.log("draw done");
     }
 
     private draw_scroll_control_bar(ctx: CanvasRenderingContext2D) {

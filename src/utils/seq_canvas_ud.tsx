@@ -111,6 +111,7 @@ function calc_visible_cell_count(canvas_width: number, cell_step_dist: number, c
 export class MyCanvas2DUserData implements Canvas2DUserData {
 
     private mouse_captured: boolean = false;
+    private need_redraw: boolean = false;
 
     private cam_pos = new Vec2(0, 0);
     private cam_scale: number = 1;
@@ -130,6 +131,12 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     public init(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         ctx.font = `${this.FONT_SIZE}px '${this.FONT_FAMILY}'`;
+    }
+
+    public update(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+        if (this.need_redraw) {
+            this.draw(canvas, ctx);
+        }
     }
 
     public draw(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
@@ -177,6 +184,9 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
                 this.draw_detail_info_box_for_triplet_cell(ctx, triplet_index);
             }
         }
+
+        this.need_redraw = false;
+        console.log("draw done");
     }
 
     private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, font_size: number, x: number, y: number, w: number, h: number) {
@@ -233,6 +243,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     public set_seq(seq: string) {
         this.sequence = seq;
+        this.need_redraw = true;
     }
 
     private cell_step_dist() {
@@ -327,23 +338,29 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     public on_mouse_down(e: React.MouseEvent) {
         this.mouse_captured = true;
+        this.need_redraw = true;
     }
 
     public on_mouse_up(e: React.MouseEvent) {
         this.mouse_captured = false;
+        this.need_redraw = true;
     }
 
     public on_mouse_enter(e: React.MouseEvent) {
+        this.need_redraw = true;
         set_scroll_state(false);
     }
 
     public on_mouse_leave(e: React.MouseEvent) {
         this.mouse_captured = false;
+        this.need_redraw = true;
         this.last_mouse_pose = null;
         set_scroll_state(true);
     }
 
     public on_mouse_move(e: React.MouseEvent) {
+        this.need_redraw = true;
+
         const scalar = 1 / this.cam_scale;
 
         if (this.mouse_captured) {
@@ -358,6 +375,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         if (0 == e.deltaY) {
             return;
         }
+
+        this.need_redraw = true;
 
         const mouse_pos_element = get_mouse_pos_in_element(e);
         const mouse_pos_world_before = this.convert_pos_element_to_world(mouse_pos_element.x, mouse_pos_element.y);

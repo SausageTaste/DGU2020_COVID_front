@@ -3,7 +3,7 @@ import * as React from 'react';
 
 export interface Canvas2DUserData {
     init: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => void;
-    draw: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => void;
+    update: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => void;
 
     on_mouse_enter?: React.MouseEventHandler<HTMLCanvasElement>;
     on_mouse_leave?: React.MouseEventHandler<HTMLCanvasElement>;
@@ -108,7 +108,7 @@ export class Canvas2D extends React.Component<Canvas2DProps, Canvas2DState> {
         const ud = this.props.userdata;
 
         ud.init(can, ctx);
-        const inter = setInterval(() => ud.draw(can, ctx), 1000 / this.props.fps);
+        const inter = setInterval(() => ud.update(can, ctx), 1000 / this.props.fps);
         this.setState({interval: inter});
     }
 

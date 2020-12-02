@@ -137,7 +137,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     {error_prompt_list}
                 </Segment>
 
-                <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 600}}>
+                <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 600, margin:'0px auto'}}>
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
@@ -162,7 +162,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     </Table>
                 </Segment>
 
-                <Segment basic loading={this.state.is_loading_mutations} style={{maxWidth: 600}}>
+                <Segment basic loading={this.state.is_loading_mutations} style={{maxWidth: 600, margin:'0px auto'}}>
                     <Table celled>
                         <Table.Header>
                             <Table.Row>

@@ -69,15 +69,14 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
       if (ctryinfo[country]['center']!=null){
         mapinfo.push(
           <Circle
-            strokeColor= "#FF0000"
-            trokeOpacity= {0.8}
-            strokeWeight= {2}
-            fillColor= "#FF0000"
-            fillOpacity= {0.35}
-            center= {ctryinfo[country]['center']}
-            radius= {Math.log(ctryinfo[country]['num_cases']+1)*15000}
-          />
-          
+            strokeColor="#FF0000"
+            trokeOpacity={0.8}
+            strokeWeight={1}
+            fillColor="#FF0000"
+            fillOpacity={0.35}
+            label= {ctryinfo[country]['num_cases']}
+            center={ctryinfo[country]['center']}
+            radius={Math.log(ctryinfo[country]['num_cases'] + 1) * 15000} />
         )
       } else continue;
     }
@@ -97,20 +96,8 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
               onZoomChanged={this.on_zoom_changed}
             >
               
-              {mapinfo}
-
-              {/* <Circle
-                radius={1200000 / (this.state.zoom_level + 1)}
-                center={{ lat: 35, lng: 155 }}
-                onMouseover={() => console.log('mouse enter')}
-                onClick={() => console.log('click')}
-                onMouseout={() => console.log('mouse out')}
-                strokeColor='transparent'
-                strokeOpacity={0}
-                strokeWeight={5}
-                fillColor='#FF0000'
-                fillOpacity={0.3}
-              /> */}
+            {mapinfo}
+              
               {/* <InfoWindow
                 marker={null}
                 google={window.google}
@@ -127,6 +114,7 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
       </div>
     );
   }
+
 
   private on_zoom_changed(mapProps?: IMapProps, map?: google.maps.Map, event?) {
     const zoom_level = map.getZoom();

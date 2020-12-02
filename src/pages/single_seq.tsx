@@ -187,11 +187,12 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     <Circle
                         strokeColor= "#FF0000"
                         trokeOpacity= {0.8}
-                        strokeWeight= {2}
+                        strokeWeight= {1}
                         fillColor= "#FF0000"
                         fillOpacity= {0.35}
                         center= {ctryinfo[country]['center']}
                         radius= {Math.log(ctryinfo[country]['num_cases']+1)*15000}
+                        content= {ctryinfo[country]['num_cases']}
                     />
                     )
                 } else continue;

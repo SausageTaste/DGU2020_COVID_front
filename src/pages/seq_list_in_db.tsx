@@ -183,24 +183,24 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             textAlign: 'center',
           };
       
-          const ctryinfo = this.state.country_list
-          const mapinfo = [];
-          for (const country in ctryinfo) {
+        const ctryinfo = this.state.country_list
+        const mapinfo = [];
+        for (const country in ctryinfo) {
             if (ctryinfo[country]['center']!=null){
-              mapinfo.push(
+                mapinfo.push(
                 <Circle
-                  strokeColor= "#FF0000"
-                  trokeOpacity= {0.8}
-                  strokeWeight= {2}
-                  fillColor= "#FF0000"
-                  fillOpacity= {0.35}
-                  center= {ctryinfo[country]['center']}
-                  radius= {Math.log(ctryinfo[country]['num_cases']+1)*15000}
+                    strokeColor= "#FF0000"
+                    trokeOpacity= {0.8}
+                    strokeWeight= {1}
+                    fillColor= "#FF0000"
+                    fillOpacity= {0.35}
+                    center= {ctryinfo[country]['center']}
+                    radius= {Math.log(ctryinfo[country]['num_cases']+1)*15000}
                 />
                 
-              )
+                )
             } else continue;
-          }
+        }
 
         return (
             <div style={{maxHeight: "100%"}}>

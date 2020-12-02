@@ -228,12 +228,15 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             return false;
         }
         else if (null == navigator.clipboard) {
+            console.log(navigator);
             return false;
         }
         else if (null == navigator.clipboard.writeText) {
+            console.log(navigator.clipboard);
             return false;
         }
         else {
+            console.log(navigator.clipboard.writeText);
             return true;
         }
     }

@@ -272,6 +272,8 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         this.setState({
             is_showing_copied_prompt: true,
         });
+
+        setTimeout(() => this.setState({is_showing_copied_prompt: false}), 3000);
     }
 
 }

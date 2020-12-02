@@ -232,7 +232,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
             this.canvas_height
         )
 
-        const scroll_ratio = (this.CELL_SEQ_OFFSET.x + this.cam_pos.x + this.canvas_width*0.5) / (this.cell_step_dist() * this.sequence.length);
+        const scroll_ratio = (this.CELL_SEQ_OFFSET.x + this.cam_pos.x + this.canvas_width*0.5/this.cam_scale) / (this.cell_step_dist() * this.sequence.length);
         const indicator_pos_x = this.SCROLL_CTRL_BAR_MARGIN + scroll_ratio * (this.canvas_width - 2*this.SCROLL_CTRL_BAR_MARGIN);
 
         ctx.fillStyle = "rgba(20, 20, 20, 1)";
@@ -399,7 +399,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     private move_cam_to_percentage(percentage: number) {
         const render_area_width = (this.CELL_SIZE.x + this.CELL_DISTANCE) * this.sequence.length;
-        const camera_target_pos = this.CELL_SEQ_OFFSET.x - 0.5*this.canvas_width + render_area_width*percentage;
+        const camera_target_pos = this.CELL_SEQ_OFFSET.x - 0.5*this.canvas_width/this.cam_scale + render_area_width*percentage;
         this.cam_pos.x = camera_target_pos;
     }
 

@@ -117,7 +117,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     }
 
     public render() {
-        const max_seq_num = 250;
         
         //sequence_list
         const lists = this.state.acc_id_list
@@ -159,7 +158,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             );
         }
         
-        //About Bootstrap Table/////////////////////////////////////////////////////
+        //Bootstrap Table
         const columns = [
             { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
             { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
@@ -174,8 +173,8 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
         //map
         const mapStyles = {
-            width: '72%',
-            height: '70%',
+            width: '98%',
+            height: '450px',
             textAlign: 'center',
           };
 
@@ -192,7 +191,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         fillColor= "#FF0000"
                         fillOpacity= {0.35}
                         center= {ctryinfo[country]['center']}
-                        radius= {Math.log(ctryinfo[country]['num_cases']+1)*10000}
+                        radius= {Math.log(ctryinfo[country]['num_cases']+1)*15000}
                     />
                     )
                 } else continue;
@@ -207,17 +206,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
                 <Segment basic>
                     <Form onSubmit={this.onBtnClicked}>
-                        {/* <Form.Field> 
-                            <label >{i18n.t("put_your_seq_count")}</label>
-                            <NumericInput type="text" 
-                                placeholder={i18n.t("howmany")}
-                                min={1} 
-	                            max={max_seq_num} 
-	                            step={1}
-                                initValue={this.state.howmany}
-                                value={this.state.howmany}
-                                onChange={value => this.setState({howmany: value})} />
-                        </Form.Field> */}
                         <Form.Field>    
                             <TextArea
                                 placeholder={i18n.t("put_your_seq_here")}
@@ -234,50 +222,49 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     {error_prompt_list}
                 </Segment>
                 
-                
-
-                <Grid columns='equal' textAlign="center">
-                    <Grid.Column>
-                        <Segment basic textAlign='center'>
-                            <BootstrapTable 
-                                bootstrap4
-                                keyField='acc_id' 
-                                data={ seq_list } 
-                                columns={ columns } 
-                                noDataIndication={i18n.t("no_data")}
-                                // expandRow={ expandRow }
-                                rowEvents={ rowEvents }
-                                pagination={ paginationFactory() }/>   
-                        </Segment>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Segment basic loading={this.state.isLoading_metadata}>
-                        <Table celled>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {metadata_element_list}
-                            </Table.Body>
-                        </Table>
-                        </Segment>
-                    </Grid.Column>
-                </Grid>
-                <div>
+                <Segment basic>
                     <Map
                         google={window.google}
                         zoom={2}
                         // centerAroundCurrentLocation={true}
                         style={mapStyles}
                         initialCenter={{ lat: 35, lng: 155 }}
-                    >
-
-                    {mapinfo}
-
+                        >
+                        {mapinfo}
                     </Map>
-                </div>
+                </Segment>
+                
+                <Segment basic style={{marginTop:450}}>
+                    <Grid columns='equal' textAlign="center">
+                        <Grid.Column>
+                            <Segment basic textAlign='center' style={{paddingBottom:100}}>
+                                <BootstrapTable 
+                                    bootstrap4
+                                    keyField='acc_id' 
+                                    data={ seq_list } 
+                                    columns={ columns } 
+                                    noDataIndication={i18n.t("no_data")}
+                                    rowEvents={ rowEvents }
+                                    pagination={ paginationFactory() }/>   
+                            </Segment>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <Segment basic loading={this.state.isLoading_metadata}>
+                            <Table celled>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {metadata_element_list}
+                                </Table.Body>
+                            </Table>
+                            </Segment>
+                        </Grid.Column>
+                    </Grid>
+                </Segment>
+                
             </div>
         );
     }

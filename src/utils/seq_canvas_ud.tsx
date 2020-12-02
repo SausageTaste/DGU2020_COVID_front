@@ -107,6 +107,24 @@ function calc_visible_cell_count(canvas_width: number, cell_step_dist: number, c
     return Math.ceil(canvas_width / cell_step_dist / cam_scale) + 1;
 }
 
+function select_color_by_nucleic_acid(code: string) {
+    if ("A" == code) {
+        return [1, 0, 0];
+    }
+    else if ("G" == code) {
+        return [0, 1, 0];
+    }
+    else if ("C" == code) {
+        return [0.2, 0.2, 1];
+    }
+    else if ("T" == code) {
+        return [1, 1, 0];
+    }
+    else {
+        return [1, 1, 1];
+    }
+}
+
 
 export class MyCanvas2DUserData implements Canvas2DUserData {
 
@@ -189,26 +207,32 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         console.log("draw done");
     }
 
-    private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, font_size: number, x: number, y: number, w: number, h: number) {
-        ctx.fillStyle = "rgba(0, 0, 0, 1)";
+    private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, font_size: number,
+        x: number, y: number, w: number, h: number,
+        r: number, g: number, b: number, a: number,
+    ) {
 
         const rect_rect = new RectArea(x, y, w, h);
         rect_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
-        ctx.strokeRect(rect_rect.x, rect_rect.y, rect_rect.w, rect_rect.h);
+        ctx.fillStyle = `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a})`;
+        ctx.fillRect(rect_rect.x, rect_rect.y, rect_rect.w, rect_rect.h);
 
         const text_rect = new RectArea(x + w / 2, y + (h + font_size) / 2, 0, font_size);
         text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
         ctx.font = `${text_rect.h}px '${this.FONT_FAMILY}'`;
         ctx.textAlign = "center";
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillText(text, text_rect.x, text_rect.y);
     }
 
     private draw_a_cell(ctx: CanvasRenderingContext2D, index: number, char: string) {
+        const box_color = select_color_by_nucleic_acid(char);
         this.stroke_rect_str(ctx, char, this.FONT_SIZE,
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
             this.CELL_SEQ_OFFSET.y,
             this.CELL_SIZE.x,
-            this.CELL_SIZE.y
+            this.CELL_SIZE.y,
+            box_color[0], box_color[1], box_color[2], 0.5
         );
 
         if (index % 6 == 0) {
@@ -237,7 +261,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
             this.CELL_SEQ_OFFSET.y - (this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST) * (elevation + 1),
             3 * this.CELL_SIZE.x + 2 * this.CELL_DISTANCE,
-            this.CELL_SIZE.y
+            this.CELL_SIZE.y,
+            0.8, 0.8, 0.8, 0.5
         );
     }
 

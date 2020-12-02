@@ -128,7 +128,8 @@ function select_color_by_nucleic_acid(code: string) {
 
 export class MyCanvas2DUserData implements Canvas2DUserData {
 
-    private mouse_captured: boolean = false;
+    private mouse_captured_for_translate: boolean = false;
+    private mouse_captured_for_scroll: boolean = false;
     private need_redraw: boolean = false;
 
     private cam_pos = new Vec2(0, 0);
@@ -136,6 +137,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     private sequence: string = "";
     private last_mouse_pose: Vec2 = null;
+    private canvas_width: number = 1;
+    private canvas_height: number = 1;
 
     private FONT_SIZE: number = 30;
     private CELL_SIZE: Vec2 = new Vec2(40, 45);
@@ -145,13 +148,22 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private TRIPLET_CELL_INDEX_OFFSET = 0;
     private FONT_FAMILY = "Consolas"
 
+    private SCROLL_CTRL_BAR_HEIGHT = 15;
+    private SCROLL_CTRL_BAR_MARGIN = 10;
+
     ////
 
     public init(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         ctx.font = `${this.FONT_SIZE}px '${this.FONT_FAMILY}'`;
+
+        this.canvas_width = canvas.width;
+        this.canvas_height = canvas.height;
     }
 
     public update(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+        this.canvas_width = canvas.width;
+        this.canvas_height = canvas.height;
+
         if (this.need_redraw) {
             this.draw(canvas, ctx);
         }
@@ -203,8 +215,22 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
             }
         }
 
+        // Draw scroll control bar
+
+        this.draw_scroll_control_bar(ctx);
+
         this.need_redraw = false;
         console.log("draw done");
+    }
+
+    private draw_scroll_control_bar(ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+        ctx.fillRect(
+            this.SCROLL_CTRL_BAR_MARGIN,
+            this.canvas_height - this.SCROLL_CTRL_BAR_HEIGHT,
+            this.canvas_width - this.SCROLL_CTRL_BAR_MARGIN * 2,
+            this.canvas_height
+        )
     }
 
     private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, font_size: number,
@@ -360,14 +386,39 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         ctx.fillText(amino_acid_text, text_rect.x, text_rect.y);
     }
 
+    private move_cam_to_percentage(percentage: number) {
+        const render_area_width = (this.CELL_SIZE.x + this.CELL_DISTANCE) * this.sequence.length;
+        const camera_target_pos = this.CELL_SEQ_OFFSET.x - 0.5*this.canvas_width + render_area_width*percentage;
+        this.cam_pos.x = camera_target_pos;
+    }
+
+    private calc_ratio_on_scroll_ctrl_bar(mouse_pos_element_x: number) {
+        let progress_ratio = (mouse_pos_element_x - this.SCROLL_CTRL_BAR_MARGIN) / (this.canvas_width - this.SCROLL_CTRL_BAR_MARGIN * 2);
+        return clamp(progress_ratio, 0, 1);
+    }
+
 
     public on_mouse_down(e: React.MouseEvent) {
-        this.mouse_captured = true;
+        const mouse_pos_element = get_mouse_pos_in_element(e);
+
+        if (mouse_pos_element.y > this.canvas_height - this.SCROLL_CTRL_BAR_HEIGHT) {
+            this.mouse_captured_for_scroll = true;
+            this.mouse_captured_for_translate = false;
+
+            const progress_ratio = this.calc_ratio_on_scroll_ctrl_bar(mouse_pos_element.x);
+            this.move_cam_to_percentage(progress_ratio);
+        }
+        else {
+            this.mouse_captured_for_scroll = false;
+            this.mouse_captured_for_translate = true;
+        }
+
         this.need_redraw = true;
     }
 
     public on_mouse_up(e: React.MouseEvent) {
-        this.mouse_captured = false;
+        this.mouse_captured_for_translate = false;
+        this.mouse_captured_for_scroll = false;
         this.need_redraw = true;
     }
 
@@ -377,7 +428,8 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     }
 
     public on_mouse_leave(e: React.MouseEvent) {
-        this.mouse_captured = false;
+        this.mouse_captured_for_translate = false;
+        this.mouse_captured_for_scroll = false;
         this.need_redraw = true;
         this.last_mouse_pose = null;
         set_scroll_state(true);
@@ -385,15 +437,20 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
 
     public on_mouse_move(e: React.MouseEvent) {
         this.need_redraw = true;
+        const mouse_pos_element = get_mouse_pos_in_element(e);
 
-        const scalar = 1 / this.cam_scale;
+        if (this.mouse_captured_for_translate) {
+            const scalar = 1 / this.cam_scale;
 
-        if (this.mouse_captured) {
             this.cam_pos.x -= e.movementX * scalar;
             this.cam_pos.y -= e.movementY * scalar;
         }
+        else if (this.mouse_captured_for_scroll) {
+            const progress_ratio = this.calc_ratio_on_scroll_ctrl_bar(mouse_pos_element.x);
+            this.move_cam_to_percentage(progress_ratio);
+        }
 
-        this.last_mouse_pose = get_mouse_pos_in_element(e);
+        this.last_mouse_pose = mouse_pos_element;
     }
 
     public on_wheel(e: React.WheelEvent) {

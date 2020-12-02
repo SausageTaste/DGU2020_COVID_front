@@ -75,7 +75,7 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             fillColor= "#FF0000"
             fillOpacity= {0.35}
             center= {ctryinfo[country]['center']}
-            radius= {ctryinfo[country]['num_cases'] * 30}
+            radius= {Math.log(ctryinfo[country]['num_cases']+1)*10000}
           />
           
         )

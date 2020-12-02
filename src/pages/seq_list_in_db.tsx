@@ -215,6 +215,21 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         }
     }
 
+    private does_support_copy_to_clipboard() {
+        if (null == navigator) {
+            return false;
+        }
+        else if (null == navigator.clipboard) {
+            return false;
+        }
+        else if (null == navigator.clipboard.writeText) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     private copy_seq_to_clipboard() {
         navigator.clipboard.writeText(this.state.metadata_dict[cst.KEY_SEQUENCE]);
     }

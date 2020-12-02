@@ -107,16 +107,38 @@ function calc_visible_cell_count(canvas_width: number, cell_step_dist: number, c
     return Math.ceil(canvas_width / cell_step_dist / cam_scale) + 1;
 }
 
+function select_color_by_nucleic_acid(code: string) {
+    if ("A" == code) {
+        return [1, 0, 0];
+    }
+    else if ("G" == code) {
+        return [0, 1, 0];
+    }
+    else if ("C" == code) {
+        return [0.2, 0.2, 1];
+    }
+    else if ("T" == code) {
+        return [1, 1, 0];
+    }
+    else {
+        return [1, 1, 1];
+    }
+}
+
 
 export class MyCanvas2DUserData implements Canvas2DUserData {
 
-    private mouse_captured: boolean = false;
+    private mouse_captured_for_translate: boolean = false;
+    private mouse_captured_for_scroll: boolean = false;
+    private need_redraw: boolean = false;
 
     private cam_pos = new Vec2(0, 0);
     private cam_scale: number = 1;
 
     private sequence: string = "";
     private last_mouse_pose: Vec2 = null;
+    private canvas_width: number = 1;
+    private canvas_height: number = 1;
 
     private FONT_SIZE: number = 30;
     private CELL_SIZE: Vec2 = new Vec2(40, 45);
@@ -126,10 +148,25 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     private TRIPLET_CELL_INDEX_OFFSET = 0;
     private FONT_FAMILY = "Consolas"
 
+    private SCROLL_CTRL_BAR_HEIGHT = 15;
+    private SCROLL_CTRL_BAR_MARGIN = 10;
+
     ////
 
     public init(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         ctx.font = `${this.FONT_SIZE}px '${this.FONT_FAMILY}'`;
+
+        this.canvas_width = canvas.width;
+        this.canvas_height = canvas.height;
+    }
+
+    public update(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+        this.canvas_width = canvas.width;
+        this.canvas_height = canvas.height;
+
+        if (this.need_redraw) {
+            this.draw(canvas, ctx);
+        }
     }
 
     public draw(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
@@ -177,28 +214,61 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
                 this.draw_detail_info_box_for_triplet_cell(ctx, triplet_index);
             }
         }
+
+        // Draw scroll control bar
+
+        this.draw_scroll_control_bar(ctx);
+
+        this.need_redraw = false;
     }
 
-    private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, font_size: number, x: number, y: number, w: number, h: number) {
-        ctx.fillStyle = "rgba(0, 0, 0, 1)";
+    private draw_scroll_control_bar(ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = "rgba(20, 20, 20, 0.3)";
+        ctx.fillRect(
+            this.SCROLL_CTRL_BAR_MARGIN,
+            this.canvas_height - this.SCROLL_CTRL_BAR_HEIGHT,
+            this.canvas_width - this.SCROLL_CTRL_BAR_MARGIN * 2,
+            this.canvas_height
+        )
+
+        const scroll_ratio = (this.CELL_SEQ_OFFSET.x + this.cam_pos.x + this.canvas_width*0.5/this.cam_scale) / (this.cell_step_dist() * this.sequence.length);
+        const indicator_pos_x = this.SCROLL_CTRL_BAR_MARGIN + clamp(scroll_ratio, 0, 1) * (this.canvas_width - 2*this.SCROLL_CTRL_BAR_MARGIN);
+
+        ctx.fillStyle = "rgba(20, 20, 20, 1)";
+        ctx.fillRect(
+            indicator_pos_x - 1,
+            this.canvas_height - this.SCROLL_CTRL_BAR_HEIGHT,
+            2,
+            this.canvas_height
+        )
+    }
+
+    private stroke_rect_str(ctx: CanvasRenderingContext2D, text: string, font_size: number,
+        x: number, y: number, w: number, h: number,
+        r: number, g: number, b: number, a: number,
+    ) {
 
         const rect_rect = new RectArea(x, y, w, h);
         rect_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
-        ctx.strokeRect(rect_rect.x, rect_rect.y, rect_rect.w, rect_rect.h);
+        ctx.fillStyle = `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a})`;
+        ctx.fillRect(rect_rect.x, rect_rect.y, rect_rect.w, rect_rect.h);
 
         const text_rect = new RectArea(x + w / 2, y + (h + font_size) / 2, 0, font_size);
         text_rect.transform(this.cam_pos.x, this.cam_pos.y, this.cam_scale);
         ctx.font = `${text_rect.h}px '${this.FONT_FAMILY}'`;
         ctx.textAlign = "center";
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillText(text, text_rect.x, text_rect.y);
     }
 
     private draw_a_cell(ctx: CanvasRenderingContext2D, index: number, char: string) {
+        const box_color = select_color_by_nucleic_acid(char);
         this.stroke_rect_str(ctx, char, this.FONT_SIZE,
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
             this.CELL_SEQ_OFFSET.y,
             this.CELL_SIZE.x,
-            this.CELL_SIZE.y
+            this.CELL_SIZE.y,
+            box_color[0], box_color[1], box_color[2], 0.5
         );
 
         if (index % 6 == 0) {
@@ -227,12 +297,14 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
             this.CELL_SEQ_OFFSET.x + this.cell_step_dist() * index,
             this.CELL_SEQ_OFFSET.y - (this.CELL_SIZE.y + this.TRIPLET_CELL_ELEVATION_DIST) * (elevation + 1),
             3 * this.CELL_SIZE.x + 2 * this.CELL_DISTANCE,
-            this.CELL_SIZE.y
+            this.CELL_SIZE.y,
+            0.8, 0.8, 0.8, 0.5
         );
     }
 
     public set_seq(seq: string) {
         this.sequence = seq;
+        this.need_redraw = true;
     }
 
     private cell_step_dist() {
@@ -324,40 +396,79 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         ctx.fillText(amino_acid_text, text_rect.x, text_rect.y);
     }
 
+    private move_cam_to_percentage(percentage: number) {
+        const render_area_width = (this.CELL_SIZE.x + this.CELL_DISTANCE) * this.sequence.length;
+        const camera_target_pos = this.CELL_SEQ_OFFSET.x - 0.5*this.canvas_width/this.cam_scale + render_area_width*percentage;
+        this.cam_pos.x = camera_target_pos;
+    }
+
+    private calc_ratio_on_scroll_ctrl_bar(mouse_pos_element_x: number) {
+        let progress_ratio = (mouse_pos_element_x - this.SCROLL_CTRL_BAR_MARGIN) / (this.canvas_width - this.SCROLL_CTRL_BAR_MARGIN * 2);
+        return clamp(progress_ratio, 0, 1);
+    }
+
 
     public on_mouse_down(e: React.MouseEvent) {
-        this.mouse_captured = true;
+        const mouse_pos_element = get_mouse_pos_in_element(e);
+
+        if (mouse_pos_element.y > this.canvas_height - this.SCROLL_CTRL_BAR_HEIGHT) {
+            this.mouse_captured_for_scroll = true;
+            this.mouse_captured_for_translate = false;
+
+            const progress_ratio = this.calc_ratio_on_scroll_ctrl_bar(mouse_pos_element.x);
+            this.move_cam_to_percentage(progress_ratio);
+        }
+        else {
+            this.mouse_captured_for_scroll = false;
+            this.mouse_captured_for_translate = true;
+        }
+
+        this.need_redraw = true;
     }
 
     public on_mouse_up(e: React.MouseEvent) {
-        this.mouse_captured = false;
+        this.mouse_captured_for_translate = false;
+        this.mouse_captured_for_scroll = false;
+        this.need_redraw = true;
     }
 
     public on_mouse_enter(e: React.MouseEvent) {
+        this.need_redraw = true;
         set_scroll_state(false);
     }
 
     public on_mouse_leave(e: React.MouseEvent) {
-        this.mouse_captured = false;
+        this.mouse_captured_for_translate = false;
+        this.mouse_captured_for_scroll = false;
+        this.need_redraw = true;
         this.last_mouse_pose = null;
         set_scroll_state(true);
     }
 
     public on_mouse_move(e: React.MouseEvent) {
-        const scalar = 1 / this.cam_scale;
+        this.need_redraw = true;
+        const mouse_pos_element = get_mouse_pos_in_element(e);
 
-        if (this.mouse_captured) {
+        if (this.mouse_captured_for_translate) {
+            const scalar = 1 / this.cam_scale;
+
             this.cam_pos.x -= e.movementX * scalar;
             this.cam_pos.y -= e.movementY * scalar;
         }
+        else if (this.mouse_captured_for_scroll) {
+            const progress_ratio = this.calc_ratio_on_scroll_ctrl_bar(mouse_pos_element.x);
+            this.move_cam_to_percentage(progress_ratio);
+        }
 
-        this.last_mouse_pose = get_mouse_pos_in_element(e);
+        this.last_mouse_pose = mouse_pos_element;
     }
 
     public on_wheel(e: React.WheelEvent) {
         if (0 == e.deltaY) {
             return;
         }
+
+        this.need_redraw = true;
 
         const mouse_pos_element = get_mouse_pos_in_element(e);
         const mouse_pos_world_before = this.convert_pos_element_to_world(mouse_pos_element.x, mouse_pos_element.y);

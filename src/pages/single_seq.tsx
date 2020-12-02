@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid } from 'semantic-ui-react';
+import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid, Container } from 'semantic-ui-react';
 import _ from 'lodash';
 import * as NumericInput from "react-numeric-input";
+
+import { Map, GoogleApiWrapper, IMapProps, Circle, InfoWindow } from 'google-maps-react';
 
 import '../major_elements/index.js';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -57,6 +59,13 @@ class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
 
 }
 
+class MapContainer extends React.Component<IMapProps> {
+
+    constructor(props) {
+        super(props);
+    }
+}
+
 
 interface SequenceSearchProps {
 
@@ -66,17 +75,19 @@ interface SequenceSearchState {
     shouldReload: boolean
     isLoading: boolean
     isLoading_metadata: boolean
+    isSubmit: boolean
 
     howmany: number;
     userInput: string;
     acc_id_list: any;
     metadata_dict: object;
+    country_list: any;
 
     err_message_list: string[];
 }
 
 
-export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState> {
+export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState, MapContainer> {
 
     private META_KEYS_TO_SKIP = new Set([
         "sequence",
@@ -89,10 +100,12 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             shouldReload: false,
             isLoading: false,
             isLoading_metadata: false,
+            isSubmit: false,
             howmany: 10,
             userInput: "",
             acc_id_list: [],
             metadata_dict: {},
+            country_list: [],
             
             err_message_list: [],
         };
@@ -106,6 +119,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     public render() {
         const max_seq_num = 250;
         
+        //sequence_list
         const lists = this.state.acc_id_list
         const seq_list = [];
         for (const acc_id in lists) {
@@ -116,6 +130,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             });
         }
         
+        //metadata_list
         const metadata_element_list = [];
         for (const key in this.state.metadata_dict) {
             const value = this.state.metadata_dict[key];
@@ -157,18 +172,32 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             }
         };
 
-        // const options = {
-        //     sizePerPageList: [{ text: '25', value: 25 }] 
-        // };
-            
-        // const expandRow = {
-        //     onlyOneExpanding: true,
-        //     renderer: (row) => (
-        //             <p>{ `This Expand row is belong to rowKey ${row.acc_id}` }</p>
-        //     )
-        // };
-        /////////////////////////////////////////////////////////////////////////////
+        //map
+        const mapStyles = {
+            width: '72%',
+            height: '70%',
+            textAlign: 'center',
+          };
 
+        const ctryinfo = this.state.country_list
+        const mapinfo = [];
+        if (this.state.isSubmit){
+            for (const country in ctryinfo) {
+                if (ctryinfo[country]['center']!=null){
+                    mapinfo.push(
+                    <Circle
+                        strokeColor= "#FF0000"
+                        trokeOpacity= {0.8}
+                        strokeWeight= {2}
+                        fillColor= "#FF0000"
+                        fillOpacity= {0.35}
+                        center= {ctryinfo[country]['center']}
+                        radius= {ctryinfo[country]['num_cases'] * 30}
+                    />
+                    )
+                } else continue;
+            }
+        }
 
         return (
             <div>
@@ -178,7 +207,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
                 <Segment basic>
                     <Form onSubmit={this.onBtnClicked}>
-                        <Form.Field> 
+                        {/* <Form.Field> 
                             <label >{i18n.t("put_your_seq_count")}</label>
                             <NumericInput type="text" 
                                 placeholder={i18n.t("howmany")}
@@ -188,7 +217,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                                 initValue={this.state.howmany}
                                 value={this.state.howmany}
                                 onChange={value => this.setState({howmany: value})} />
-                        </Form.Field>
+                        </Form.Field> */}
                         <Form.Field>    
                             <TextArea
                                 placeholder={i18n.t("put_your_seq_here")}
@@ -204,6 +233,8 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     </Form>
                     {error_prompt_list}
                 </Segment>
+                
+                
 
                 <Grid columns='equal' textAlign="center">
                     <Grid.Column>
@@ -234,11 +265,24 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         </Segment>
                     </Grid.Column>
                 </Grid>
+                <div>
+                    <Map
+                        google={window.google}
+                        zoom={2}
+                        // centerAroundCurrentLocation={true}
+                        style={mapStyles}
+                        initialCenter={{ lat: 35, lng: 155 }}
+                    >
+
+                    {mapinfo}
+
+                    </Map>
+                </div>
             </div>
         );
     }
-
     
+
     private handleTextAreaChange(event) {
         // event.preventDefault();
         this.setState({ userInput: event.currentTarget.value });
@@ -252,7 +296,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         })
         
         const seq = this.state.userInput
-        const hm = Number(this.state.howmany)
 
         if (seq.length <= 0){
             this.setState({
@@ -266,9 +309,10 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
         this.setState({
             isLoading: true,
+            isSubmit: true,
         });
 
-        clt.get_similar_seq_ids(seq, hm)
+        clt.get_similar_seq_ids(seq, 250)
             .then((response) => {
                 const payload = response.data
                 const error_code = payload[cst.KEY_ERROR_CODE];
@@ -277,6 +321,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         isLoading: false,
 
                         acc_id_list: payload[cst.KEY_ACC_ID_LIST],
+                        country_list: payload[cst.KEY_FREQ_LATLNG_MAP],
                     })
                 }
                 else {
@@ -303,6 +348,8 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 });
             })
         };
+
+        
 
     private onCellClicked(event: React.MouseEvent<HTMLElement>, acc_id: string) {
         event.preventDefault();

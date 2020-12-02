@@ -124,7 +124,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
         let copied_prompt = null;
         if (this.state.is_showing_copied_prompt) {
-            copied_prompt = <Label pointing="left">Copied!</Label>;
+            copied_prompt = <Label pointing="left">{i18n.t("copied")}</Label>;
         }
 
         return (

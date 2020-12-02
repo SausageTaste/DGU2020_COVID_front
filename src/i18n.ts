@@ -60,6 +60,7 @@ i18n
                     seq_list_in_db: "Sequences in Server Database",
                     btn_next: "Next",
                     btn_prev: "Previous",
+                    copied: "Copied",
                     label_metadata: "Metadata",
                     copy_seq_clipboard: "Copy sequence to clipboard",
 
@@ -136,6 +137,7 @@ i18n
                     seq_list_in_db: "서버 DB에 있는 염기서열",
                     btn_next: "다음",
                     btn_prev: "이전",
+                    copied: "복사 완료",
                     label_metadata: "메타데이터",
                     copy_seq_clipboard: "염기서열을 클립보드로 복사",
 

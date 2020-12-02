@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Header, Table, Segment, Grid, Label, Button } from 'semantic-ui-react';
+import * as copy_text_to_clipboard from 'copy-to-clipboard';
 
 import * as clt from "../utils/client";
 import * as cst from "../utils/konst";
@@ -15,6 +16,7 @@ interface SeqListInDBProps {
 interface SeqListInDBState {
     is_loading_list: boolean,
     is_loading_metadata: boolean,
+    is_showing_copied_prompt: boolean,
 
     current_page: number,
     items_per_page: number,
@@ -37,6 +39,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         this.state = {
             is_loading_list: true,
             is_loading_metadata: false,
+            is_showing_copied_prompt: false,
 
             current_page: 0,
             items_per_page: 20,
@@ -119,6 +122,11 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             );
         }
 
+        let copied_prompt = null;
+        if (this.state.is_showing_copied_prompt) {
+            copied_prompt = <Label pointing="left">{i18n.t("copied")}</Label>;
+        }
+
         return (
             <div style={{maxHeight: "100%"}}>
                 <Header as='h1' dividing>{i18n.t("seq_list_in_db")}</Header>
@@ -159,10 +167,14 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                             <Canvas2D id={"seq_canvas"} width="600" height="250" fps={60} userdata={this.state.userdata} />
                         </Segment>
 
-                        <Button
-                            compact
-                            onClick={() => this.copy_seq_to_clipboard()}
-                        >{i18n.t("copy_seq_clipboard")}</Button>
+                        <Segment basic textAlign='left'>
+                            <Button
+                                compact
+                                onClick={() => this.on_copy_btn_clicked()}
+
+                            >{i18n.t("copy_seq_clipboard")}</Button>
+                            {copied_prompt}
+                        </Segment>
 
                         <Segment basic loading={this.state.is_loading_metadata} style={{maxHeight: "10", overflowY: "auto"}}>
                             <Table celled>
@@ -215,10 +227,6 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
         }
     }
 
-    private copy_seq_to_clipboard() {
-        navigator.clipboard.writeText(this.state.metadata_dict[cst.KEY_SEQUENCE]);
-    }
-
     private select_a_data(acc_id: string) {
         if (this.state.is_loading_metadata)
             return;
@@ -256,6 +264,16 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
     private on_label_click(event: React.MouseEvent<HTMLElement>, acc_id: string) {
         event.preventDefault();
         this.select_a_data(acc_id);
+    }
+
+    private on_copy_btn_clicked() {
+        copy_text_to_clipboard(this.state.metadata_dict[cst.KEY_SEQUENCE]);
+
+        this.setState({
+            is_showing_copied_prompt: true,
+        });
+
+        setTimeout(() => this.setState({is_showing_copied_prompt: false}), 3000);
     }
 
 }

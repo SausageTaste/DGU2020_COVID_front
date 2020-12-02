@@ -233,7 +233,7 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
         )
 
         const scroll_ratio = (this.CELL_SEQ_OFFSET.x + this.cam_pos.x + this.canvas_width*0.5/this.cam_scale) / (this.cell_step_dist() * this.sequence.length);
-        const indicator_pos_x = this.SCROLL_CTRL_BAR_MARGIN + scroll_ratio * (this.canvas_width - 2*this.SCROLL_CTRL_BAR_MARGIN);
+        const indicator_pos_x = this.SCROLL_CTRL_BAR_MARGIN + clamp(scroll_ratio, 0, 1) * (this.canvas_width - 2*this.SCROLL_CTRL_BAR_MARGIN);
 
         ctx.fillStyle = "rgba(20, 20, 20, 1)";
         ctx.fillRect(

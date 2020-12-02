@@ -119,6 +119,17 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             );
         }
 
+        // Copy to clipboard button
+        let btn_copy_to_clipboard = null;
+        if (this.does_support_copy_to_clipboard()) {
+            btn_copy_to_clipboard = (
+                <Button
+                    compact
+                    onClick={() => this.copy_seq_to_clipboard()}
+                >{i18n.t("copy_seq_clipboard")}</Button>
+            );
+        }
+
         return (
             <div style={{maxHeight: "100%"}}>
                 <Header as='h1' dividing>{i18n.t("seq_list_in_db")}</Header>
@@ -159,10 +170,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                             <Canvas2D id={"seq_canvas"} width="600" height="250" fps={60} userdata={this.state.userdata} />
                         </Segment>
 
-                        <Button
-                            compact
-                            onClick={() => this.copy_seq_to_clipboard()}
-                        >{i18n.t("copy_seq_clipboard")}</Button>
+                        {btn_copy_to_clipboard}
 
                         <Segment basic loading={this.state.is_loading_metadata} style={{maxHeight: "10", overflowY: "auto"}}>
                             <Table celled>

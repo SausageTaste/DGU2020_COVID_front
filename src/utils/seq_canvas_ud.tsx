@@ -224,11 +224,22 @@ export class MyCanvas2DUserData implements Canvas2DUserData {
     }
 
     private draw_scroll_control_bar(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+        ctx.fillStyle = "rgba(20, 20, 20, 0.3)";
         ctx.fillRect(
             this.SCROLL_CTRL_BAR_MARGIN,
             this.canvas_height - this.SCROLL_CTRL_BAR_HEIGHT,
             this.canvas_width - this.SCROLL_CTRL_BAR_MARGIN * 2,
+            this.canvas_height
+        )
+
+        const scroll_ratio = (this.CELL_SEQ_OFFSET.x + this.cam_pos.x + this.canvas_width*0.5) / (this.cell_step_dist() * this.sequence.length);
+        const indicator_pos_x = this.SCROLL_CTRL_BAR_MARGIN + scroll_ratio * (this.canvas_width - 2*this.SCROLL_CTRL_BAR_MARGIN);
+
+        ctx.fillStyle = "rgba(20, 20, 20, 1)";
+        ctx.fillRect(
+            indicator_pos_x - 1,
+            this.canvas_height - this.SCROLL_CTRL_BAR_HEIGHT,
+            2,
             this.canvas_height
         )
     }

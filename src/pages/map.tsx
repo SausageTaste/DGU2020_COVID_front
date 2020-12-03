@@ -71,7 +71,7 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
           <Circle
             strokeColor="#FF0000"
             trokeOpacity={0.8}
-            strokeWeight={1}
+            strokeWeight={0.8}
             fillColor="#FF0000"
             fillOpacity={0.35}
             label= {ctryinfo[country]['num_cases']}

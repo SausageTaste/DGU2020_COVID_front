@@ -196,6 +196,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     fillOpacity= {0.35}
                     center= {ctryinfo[country]['center']}
                     radius= {Math.log(ctryinfo[country]['num_cases']+1)*20000}
+                    clickable={false}
                 />
                 
                 )
@@ -255,7 +256,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                             <Canvas2D id={"seq_canvas"} width="600" height="250" fps={60} userdata={this.state.userdata} />
                         </Segment>
 
-                        <Segment basic textAlign='center'>
+                        <Segment basic textAlign='left'>
                             <Button
                                 compact
                                 onClick={() => this.on_copy_btn_clicked()}

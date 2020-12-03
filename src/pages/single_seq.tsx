@@ -192,7 +192,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         fillOpacity= {0.35}
                         center= {ctryinfo[country]['center']}
                         radius= {Math.log(ctryinfo[country]['num_cases']+1)*100000}
-                        content= {ctryinfo[country]['num_cases']}
+                        clickable={false}
                     />
                     )
                 } else continue;

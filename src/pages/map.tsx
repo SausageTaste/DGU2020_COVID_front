@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Header } from 'semantic-ui-react';
 import { Map, GoogleApiWrapper, IMapProps, Circle, InfoWindow } from 'google-maps-react';
 import '../major_elements/index.js';
-import "../utils/map.ts";
 
 import * as cst from "../utils/konst";
 import i18n from '../i18n';
@@ -10,20 +9,15 @@ import * as clt from "../utils/client";
 
 
 interface MapContainerState {
-  // zoom_level: number;
   info_box_lat: number,
   info_box_lng: number,
 
   country_list:any,
   
   map: any,
-  // google: any,
-
   cases: number,
   country: string,
   showingInfoWindow: boolean,
-  // activeCircle: {},
-  // selectedPlace: {},
 }
 
 export class MapContainer extends React.Component<IMapProps, MapContainerState> {
@@ -32,27 +26,21 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
     super(props);
 
     this.state = {
-      // zoom_level: 2,
       info_box_lat: 35,
       info_box_lng: 155,
 
       country_list: [],
 
       map: null,
-      // google: null,
-
       cases: 0,
       country: "",
       showingInfoWindow: false,
-      // activeCircle: {},
-      // selectedPlace: {},
+      
     }
 
-    // this.on_zoom_changed = this.on_zoom_changed.bind(this);
-    // this.onCircleClicked = this.onCircleClicked.bind(this);
-    this.mouse_on_map = this.mouse_on_map.bind(this);
-    this.on_Mouse_over = this.on_Mouse_over.bind(this);
-    this.on_Mouse_out = this.on_Mouse_out.bind(this);
+    this.Mouseover_Map = this.Mouseover_Map.bind(this);
+    this.Mouseover_Circle = this.Mouseover_Circle.bind(this);
+    this.Mouseout_Circle = this.Mouseout_Circle.bind(this);
 
 
     
@@ -92,7 +80,6 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
       if (ctryinfo[country]['center']!=null){
         mapinfo.push(
           <Circle 
-            // onClick={this.onCircleClicked}
             key={`Circle of ${country}`}
             country={`${country}`}
             cases={`${ctryinfo[country]['num_cases']}`}
@@ -101,11 +88,10 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             strokeWeight={0.8}
             fillColor="#FF0000"
             fillOpacity={0.35}
-            onMouseover={this.on_Mouse_over}
-            onMouseout={this.on_Mouse_out}
+            onMouseover={this.Mouseover_Circle}
+            onMouseout={this.Mouseout_Circle}
             center={ctryinfo[country]['center']}
             radius={Math.log(ctryinfo[country]['num_cases'] + 1) * 15000}>
-            {/* // clickable={false}> */}
           </Circle>
         )
       } else continue;
@@ -130,6 +116,13 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             {/* <div id="map"></div> */}
               
             {mapinfo}
+          <Map
+            google={window.google}
+            zoom={2}
+            style={mapStyles}
+            initialCenter={{ lat: 35, lng: 155 }}
+            onMouseover={this.Mouseover_Map}
+          >
             
 
             <InfoWindow
@@ -146,13 +139,27 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             </InfoWindow>
 
             </Map>
+          {mapinfo}
+          
+          <InfoWindow
+            marker={null}
+            google={window.google}
+            map={this.state.map}
+            position={{ lat: this.state.info_box_lat, lng: this.state.info_box_lng }}
+            visible={this.state.showingInfoWindow}
+          >
+            <p>{this.state.country}</p>
+            <p>{this.state.cases}</p>
+          </InfoWindow>
+
+          </Map>
         </div>
         
       </div>
     );
   }
 
-  private mouse_on_map(){
+  private Mouseover_Map(){
     this.setState({
       showingInfoWindow: false,
     })
@@ -164,6 +171,7 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
     console.log(b)
     
     
+  private Mouseover_Circle(a:any, map?: google.maps.Map,) {
     this.setState({
       showingInfoWindow: true,
       info_box_lat: a.center.lat,
@@ -172,41 +180,16 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
       cases: a.cases,
       map: map,
     })
-
-    console.log(this.state.info_box_lat)
-    console.log(this.state.info_box_lng)
-    
-    // console.log(this.state.selectedPlace)
-    // console.log(this.state.map)
-    // console.log(this.state.google)
-    console.log(this.state.showingInfoWindow)
   }
 
-  private on_Mouse_out(a:any, b:any) {
+  private Mouseout_Circle() {
     if (this.state.showingInfoWindow) {
       this.setState({
         showingInfoWindow: false,
       })
     }
-    console.log(this.state.showingInfoWindow)
   };
   
-  // private onCircleClicked(props, marker, event) {
-  //   this.setState({
-  //     selectedPlace: props,
-  //     activeCircle: marker,
-  //     showingInfoWindow: true
-  //   });
-  // }
-
-  // private onMapClicked(props){
-  //   if (this.state.showingInfoWindow) {
-  //     this.setState({
-  //       showingInfoWindow: false,
-  //       activeCircle: null
-  //     })
-  //   }
-  // };
 }
 
 export default GoogleApiWrapper({

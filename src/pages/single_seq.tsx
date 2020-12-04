@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid } from 'semantic-ui-react';
+import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid, Container } from 'semantic-ui-react';
 import _ from 'lodash';
 import * as NumericInput from "react-numeric-input";
+
+import { Map, GoogleApiWrapper, IMapProps, Circle, InfoWindow } from 'google-maps-react';
 
 import '../major_elements/index.js';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -57,6 +59,13 @@ class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
 
 }
 
+class MapContainer extends React.Component<IMapProps> {
+
+    constructor(props) {
+        super(props);
+    }
+}
+
 
 interface SequenceSearchProps {
 
@@ -66,17 +75,19 @@ interface SequenceSearchState {
     shouldReload: boolean
     isLoading: boolean
     isLoading_metadata: boolean
+    isSubmit: boolean
 
     howmany: number;
     userInput: string;
     acc_id_list: any;
     metadata_dict: object;
+    country_list: any;
 
     err_message_list: string[];
 }
 
 
-export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState> {
+export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState, MapContainer> {
 
     private META_KEYS_TO_SKIP = new Set([
         "sequence",
@@ -89,10 +100,12 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             shouldReload: false,
             isLoading: false,
             isLoading_metadata: false,
+            isSubmit: false,
             howmany: 10,
             userInput: "",
             acc_id_list: [],
             metadata_dict: {},
+            country_list: [],
             
             err_message_list: [],
         };
@@ -104,8 +117,8 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     }
 
     public render() {
-        const max_seq_num = 250;
         
+        //sequence_list
         const lists = this.state.acc_id_list
         const seq_list = [];
         for (const acc_id in lists) {
@@ -116,6 +129,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             });
         }
         
+        //metadata_list
         const metadata_element_list = [];
         for (const key in this.state.metadata_dict) {
             const value = this.state.metadata_dict[key];
@@ -123,12 +137,22 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             if (this.META_KEYS_TO_SKIP.has(key))
             continue;
             
-            metadata_element_list.push(
-                <Table.Row key={`metadata ${key} of ${value.acc_id}` }>
-                    <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
-                    <Table.Cell>{value}</Table.Cell>
-                </Table.Row>
-            )
+            if (value != null){
+                metadata_element_list.push(
+                    <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
+                        <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
+                        <Table.Cell>{value}</Table.Cell>
+                    </Table.Row>
+                )
+            }
+            else{
+                metadata_element_list.push(
+                    <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
+                        <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
+                        <Table.Cell>?</Table.Cell>
+                    </Table.Row>
+                )
+            }
         }
 
         const error_prompt_list = [];
@@ -144,7 +168,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             );
         }
         
-        //About Bootstrap Table/////////////////////////////////////////////////////
+        //Bootstrap Table
         const columns = [
             { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true },
             { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true },
@@ -157,18 +181,33 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             }
         };
 
-        // const options = {
-        //     sizePerPageList: [{ text: '25', value: 25 }] 
-        // };
-            
-        // const expandRow = {
-        //     onlyOneExpanding: true,
-        //     renderer: (row) => (
-        //             <p>{ `This Expand row is belong to rowKey ${row.acc_id}` }</p>
-        //     )
-        // };
-        /////////////////////////////////////////////////////////////////////////////
+        //map
+        const mapStyles = {
+            width: '98%',
+            height: '450px',
+            textAlign: 'center',
+          };
 
+        const ctryinfo = this.state.country_list
+        const mapinfo = [];
+        if (this.state.isSubmit){
+            for (const country in ctryinfo) {
+                if (ctryinfo[country]['center']!=null){
+                    mapinfo.push(
+                    <Circle
+                        strokeColor= "#FF0000"
+                        trokeOpacity= {0.8}
+                        strokeWeight= {0.8}
+                        fillColor= "#FF0000"
+                        fillOpacity= {0.35}
+                        center= {ctryinfo[country]['center']}
+                        radius= {Math.log(ctryinfo[country]['num_cases']+1)*100000}
+                        clickable={false}
+                    />
+                    )
+                } else continue;
+            }
+        }
 
         return (
             <div>
@@ -178,17 +217,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
                 <Segment basic>
                     <Form onSubmit={this.onBtnClicked}>
-                        <Form.Field> 
-                            <label >{i18n.t("put_your_seq_count")}</label>
-                            <NumericInput type="text" 
-                                placeholder={i18n.t("howmany")}
-                                min={1} 
-	                            max={max_seq_num} 
-	                            step={1}
-                                initValue={this.state.howmany}
-                                value={this.state.howmany}
-                                onChange={value => this.setState({howmany: value})} />
-                        </Form.Field>
                         <Form.Field>    
                             <TextArea
                                 placeholder={i18n.t("put_your_seq_here")}
@@ -204,41 +232,55 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     </Form>
                     {error_prompt_list}
                 </Segment>
-
-                <Grid columns='equal' textAlign="center">
-                    <Grid.Column>
-                        <Segment basic textAlign='center'>
-                            <BootstrapTable 
-                                bootstrap4
-                                keyField='acc_id' 
-                                data={ seq_list } 
-                                columns={ columns } 
-                                noDataIndication={i18n.t("no_data")}
-                                // expandRow={ expandRow }
-                                rowEvents={ rowEvents }
-                                pagination={ paginationFactory() }/>   
-                        </Segment>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Segment basic loading={this.state.isLoading_metadata}>
-                        <Table celled>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {metadata_element_list}
-                            </Table.Body>
-                        </Table>
-                        </Segment>
-                    </Grid.Column>
-                </Grid>
+                
+                <Segment basic>
+                    <Map
+                        google={window.google}
+                        zoom={2}
+                        // centerAroundCurrentLocation={true}
+                        style={mapStyles}
+                        initialCenter={{ lat: 35, lng: 155 }}
+                        >
+                        {mapinfo}
+                    </Map>
+                </Segment>
+                
+                <Segment basic style={{marginTop:450}}>
+                    <Grid columns='equal' textAlign="center">
+                        <Grid.Column>
+                            <Segment basic textAlign='center' style={{paddingBottom:100}}>
+                                <BootstrapTable 
+                                    bootstrap4
+                                    keyField='acc_id' 
+                                    data={ seq_list } 
+                                    columns={ columns } 
+                                    noDataIndication={i18n.t("no_data")}
+                                    rowEvents={ rowEvents }
+                                    pagination={ paginationFactory() }/>   
+                            </Segment>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <Segment basic loading={this.state.isLoading_metadata}>
+                            <Table celled>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell colSpan={2} textAlign="center">{i18n.t("label_metadata")}</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {metadata_element_list}
+                                </Table.Body>
+                            </Table>
+                            </Segment>
+                        </Grid.Column>
+                    </Grid>
+                </Segment>
+                
             </div>
         );
     }
-
     
+
     private handleTextAreaChange(event) {
         // event.preventDefault();
         this.setState({ userInput: event.currentTarget.value });
@@ -252,7 +294,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         })
         
         const seq = this.state.userInput
-        const hm = Number(this.state.howmany)
 
         if (seq.length <= 0){
             this.setState({
@@ -266,9 +307,10 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
         this.setState({
             isLoading: true,
+            isSubmit: true,
         });
 
-        clt.get_similar_seq_ids(seq, hm)
+        clt.get_similar_seq_ids(seq, 250)
             .then((response) => {
                 const payload = response.data
                 const error_code = payload[cst.KEY_ERROR_CODE];
@@ -277,6 +319,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         isLoading: false,
 
                         acc_id_list: payload[cst.KEY_ACC_ID_LIST],
+                        country_list: payload[cst.KEY_FREQ_LATLNG_MAP],
                     })
                 }
                 else {
@@ -303,6 +346,8 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 });
             })
         };
+
+        
 
     private onCellClicked(event: React.MouseEvent<HTMLElement>, acc_id: string) {
         event.preventDefault();

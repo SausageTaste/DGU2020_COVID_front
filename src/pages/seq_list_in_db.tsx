@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Header, Table, Segment, Grid, Label, Button } from 'semantic-ui-react';
 import * as copy_text_to_clipboard from 'copy-to-clipboard';
 
+import { Map, GoogleApiWrapper, IMapProps, Circle, InfoWindow } from 'google-maps-react';
+
 import * as clt from "../utils/client";
 import * as cst from "../utils/konst";
 import i18n from '../i18n';
@@ -23,11 +25,37 @@ interface SeqListInDBState {
 
     acc_id_list: string[];
     metadata_dict: object;
+    country_list: any,
 
     userdata: MyCanvas2DUserData;
 }
 
-export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState> {
+interface MapContainerState {
+    zoom_level: number;
+    info_box_lat: number,
+    info_box_lng: number,
+  
+    map: any,
+  }
+  
+class MapContainer extends React.Component<IMapProps, MapContainerState> {
+    
+    constructor(props) {
+      super(props);
+  
+      this.state = {
+        zoom_level: 2,
+        info_box_lat: 35,
+        info_box_lng: 155,
+  
+        map: null,
+      }
+    }
+    //   this.on_zoom_changed = this.on_zoom_changed.bind(this);
+
+}  
+
+export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState, MapContainer> {
 
     private META_KEYS_TO_SKIP = new Set([
         "sequence",
@@ -46,6 +74,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
             acc_id_list: [],
             metadata_dict: {},
+            country_list: [],
 
             userdata: new MyCanvas2DUserData(),
         };
@@ -76,6 +105,26 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     is_loading_list: false,
                 })
             })
+
+        clt.num_cases_per_country()
+            .then(response => {
+            const payload = response.data
+            const error_code = payload[cst.KEY_ERROR_CODE]
+    
+            if (0 == error_code) {
+                this.setState({
+                    country_list: payload[cst.KEY_RESULT]
+                })
+            }
+            else {
+                const err_msg = payload[cst.KEY_ERROR_TEXT];
+                console.log(err_msg);
+            }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+      
     }
 
     public render() {
@@ -127,10 +176,50 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             copied_prompt = <Label pointing="left">{i18n.t("copied")}</Label>;
         }
 
+        //map
+        const mapStyles = {
+            width: '98%',
+            height: '500px',
+            textAlign: 'center',
+          };
+      
+        const ctryinfo = this.state.country_list
+        const mapinfo = [];
+        for (const country in ctryinfo) {
+            if (ctryinfo[country]['center']!=null){
+                mapinfo.push(
+                <Circle
+                    strokeColor= "#FF0000"
+                    trokeOpacity= {0.8}
+                    strokeWeight= {0.8}
+                    fillColor= "#FF0000"
+                    fillOpacity= {0.35}
+                    center= {ctryinfo[country]['center']}
+                    radius= {Math.log(ctryinfo[country]['num_cases']+1)*20000}
+                    clickable={false}
+                />
+                
+                )
+            } else continue;
+        }
+
         return (
             <div style={{maxHeight: "100%"}}>
                 <Header as='h1' dividing>{i18n.t("seq_list_in_db")}</Header>
-                <Grid columns='equal' textAlign="center">
+
+                <Segment basic>
+                    <Map
+                        google={window.google}
+                        zoom={2}
+                        // centerAroundCurrentLocation={true}
+                        style={mapStyles}
+                        initialCenter={{ lat: 35, lng: 155 }}
+                        >
+                        {mapinfo}
+                    </Map>
+                </Segment>
+
+                <Grid columns='equal' textAlign="center" style={{marginTop:500}}>
 
                     <Grid.Row>
                         <Grid columns={3}>

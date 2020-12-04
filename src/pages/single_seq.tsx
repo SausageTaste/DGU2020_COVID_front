@@ -137,12 +137,22 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             if (this.META_KEYS_TO_SKIP.has(key))
             continue;
             
-            metadata_element_list.push(
-                <Table.Row key={`metadata ${key} of ${value.acc_id}` }>
-                    <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
-                    <Table.Cell>{value}</Table.Cell>
-                </Table.Row>
-            )
+            if (value != null){
+                metadata_element_list.push(
+                    <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
+                        <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
+                        <Table.Cell>{value}</Table.Cell>
+                    </Table.Row>
+                )
+            }
+            else{
+                metadata_element_list.push(
+                    <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
+                        <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
+                        <Table.Cell>?</Table.Cell>
+                    </Table.Row>
+                )
+            }
         }
 
         const error_prompt_list = [];

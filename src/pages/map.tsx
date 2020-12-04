@@ -43,7 +43,7 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
 
     // this.on_zoom_changed = this.on_zoom_changed.bind(this);
     // this.onCircleClicked = this.onCircleClicked.bind(this);
-    // this.onMapClicked = this.onMapClicked(this);
+    this.on_Mouse_over = this.on_Mouse_over.bind(this);
 
     
     clt.num_cases_per_country()
@@ -99,6 +99,7 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             strokeWeight={0.8}
             fillColor="#FF0000"
             fillOpacity={0.35}
+            onMouseover={this.on_Mouse_over}
             center={ctryinfo[country]['center']}
             radius={Math.log(ctryinfo[country]['num_cases'] + 1) * 15000}
             clickable={false}>
@@ -127,11 +128,13 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             {mapinfo}
 
             {/* <InfoWindow
-              marker={this.state.activeCircle}
-              visible={this.state.showingInfoWindow}>
-                <div>
-                  <h1>실험</h1>
-                </div>
+                marker={null}
+                google={window.google}
+                map={this.state.map}
+                position={{ lat: this.state.info_box_lat, lng: this.state.info_box_lng }}
+                visible={true}
+              >
+                  <p>305 cases</p>
             </InfoWindow> */}
 
             </Map>
@@ -141,14 +144,11 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
     );
   }
 
-  // private on_zoom_changed(mapProps?: IMapProps, map?: google.maps.Map, event?) {
-  //   const zoom_level = map.getZoom();
-  
-  //   this.setState({
-  //     zoom_level: zoom_level,
-  //     map: map,
-  //   });
-  // }
+  private on_Mouse_over(a:any, b:any) {
+    console.log(a)
+    console.log(b)
+    console.log("hi")
+  }
   
   // private onCircleClicked(props, marker, event) {
   //   this.setState({

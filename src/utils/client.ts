@@ -5,7 +5,6 @@ import * as cst from "./konst";
 
 const baseURL = "http://58.145.3.213:8000/api";
 
-
 const instance: AxiosInstance = Axios.create({
     baseURL,
     timeout: 100_000,

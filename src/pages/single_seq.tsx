@@ -68,14 +68,13 @@ interface SequenceSearchState {
     isLoading: boolean
     isLoading_metadata: boolean
     isSubmit: boolean
-
     howmany: number;
     userInput: string;
     acc_id_list: any;
     metadata_dict: object;
-    country_list: any;
-
+    
     err_message_list: string[];
+
     //map
     info_box_lat: number,
     info_box_lng: number,
@@ -148,22 +147,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             if (this.META_KEYS_TO_SKIP.has(key))
             continue;
             
-            if (value != null){
-                metadata_element_list.push(
-                    <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
-                        <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
-                        <Table.Cell>{value}</Table.Cell>
-                    </Table.Row>
-                )
-            }
-            else{
-                metadata_element_list.push(
-                    <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
-                        <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
-                        <Table.Cell>?</Table.Cell>
-                    </Table.Row>
-                )
-            }
             metadata_element_list.push(
                 <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
                     <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
@@ -199,7 +182,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             }
         };
 
-        //map
         //map&circle
         const mapStyles = {
             width: '98%',
@@ -260,10 +242,9 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     <Map
                         google={window.google}
                         zoom={2}
-                        // centerAroundCurrentLocation={true}
                         style={mapStyles}
                         initialCenter={{ lat: 35, lng: 155 }}
-                        >
+                    >
                         {mapinfo}
                         <InfoWindow
                             marker={null}
@@ -315,7 +296,6 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
     
 
     private handleTextAreaChange(event) {
-        // event.preventDefault();
         this.setState({ userInput: event.currentTarget.value });
     }
 
@@ -365,6 +345,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
 
                         err_message_list: new_err_list,
                     });
+                    
                 }
             })
             .catch(err => {
@@ -380,7 +361,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             })
         };
 
-        
+      
 
     private onCellClicked(event: React.MouseEvent<HTMLElement>, acc_id: string) {
         event.preventDefault();

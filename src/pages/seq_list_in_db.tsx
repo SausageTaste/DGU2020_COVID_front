@@ -28,13 +28,10 @@ interface SeqListInDBState {
     country_list: any,
 
     userdata: MyCanvas2DUserData;
-}
 
-interface MapContainerState {
-    zoom_level: number;
+    //map
     info_box_lat: number,
     info_box_lng: number,
-  
     map: any,
     cases: number,
     country: string,
@@ -199,7 +196,6 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     center= {ctryinfo[country]['center']}
                     radius= {Math.log(ctryinfo[country]['num_cases']+1)*20000}
                 />
-                
                 )
             } else continue;
         }
@@ -212,7 +208,6 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     <Map
                         google={window.google}
                         zoom={2}
-                        // centerAroundCurrentLocation={true}
                         style={mapStyles}
                         initialCenter={{ lat: 35, lng: 155 }}
                         >

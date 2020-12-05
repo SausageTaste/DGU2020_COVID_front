@@ -36,26 +36,12 @@ interface MapContainerState {
     info_box_lng: number,
   
     map: any,
-  }
-  
-class MapContainer extends React.Component<IMapProps, MapContainerState> {
-    
-    constructor(props) {
-      super(props);
-  
-      this.state = {
-        zoom_level: 2,
-        info_box_lat: 35,
-        info_box_lng: 155,
-  
-        map: null,
-      }
-    }
-    //   this.on_zoom_changed = this.on_zoom_changed.bind(this);
+    cases: number,
+    country: string,
+    showingInfoWindow: boolean,
+}
 
-}  
-
-export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState, MapContainer> {
+export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState> {
 
     private META_KEYS_TO_SKIP = new Set([
         "sequence",
@@ -77,7 +63,18 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             country_list: [],
 
             userdata: new MyCanvas2DUserData(),
+
+            //map
+            info_box_lat: 35,
+            info_box_lng: 155,
+            map: null,
+            cases: 0,
+            country: "",
+            showingInfoWindow: false,
         };
+
+        this.Mouseover_Circle = this.Mouseover_Circle.bind(this);
+        this.Mouseout_Circle = this.Mouseout_Circle.bind(this);
 
         clt.get_all_acc_ids()
             .then(response => {
@@ -189,14 +186,18 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
             if (ctryinfo[country]['center']!=null){
                 mapinfo.push(
                 <Circle
+                    key={`Circle of ${country}`}
+                    country={`${country}`}
+                    cases={`${ctryinfo[country]['num_cases']}`}
                     strokeColor= "#FF0000"
                     trokeOpacity= {0.8}
                     strokeWeight= {0.8}
                     fillColor= "#FF0000"
                     fillOpacity= {0.35}
+                    onMouseover={this.Mouseover_Circle}
+                    onMouseout={this.Mouseout_Circle}
                     center= {ctryinfo[country]['center']}
                     radius= {Math.log(ctryinfo[country]['num_cases']+1)*20000}
-                    clickable={false}
                 />
                 
                 )
@@ -216,6 +217,16 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                         initialCenter={{ lat: 35, lng: 155 }}
                         >
                         {mapinfo}
+                        <InfoWindow
+                            marker={null}
+                            google={window.google}
+                            map={this.state.map}
+                            position={{ lat: this.state.info_box_lat, lng: this.state.info_box_lng }}
+                            visible={this.state.showingInfoWindow}
+                        >
+                            <p style={{fontWeight:'bold', textTransform: 'capitalize'}}>{this.state.country}</p>
+                            <p>{this.state.cases}</p>
+                        </InfoWindow>
                     </Map>
                 </Segment>
 
@@ -364,5 +375,24 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
         setTimeout(() => this.setState({is_showing_copied_prompt: false}), 3000);
     }
+
+    //map_event
+    private Mouseover_Circle(a:any, map?: google.maps.Map,) {
+    this.setState({
+        showingInfoWindow: true,
+        info_box_lat: a.center.lat,
+        info_box_lng: a.center.lng,
+        country: a.country,
+        cases: a.cases,
+        map: map,
+        })
+    }
+
+    private Mouseout_Circle() {
+    if (this.state.showingInfoWindow) {
+        this.setState({
+            showingInfoWindow: false,
+        })
+    }};
 
 }

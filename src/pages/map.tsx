@@ -8,7 +8,8 @@ import i18n from '../i18n';
 import * as clt from "../utils/client";
 
 
-interface MapContainerState {
+interface MapProps { };
+interface MapState { 
   info_box_lat: number,
   info_box_lng: number,
 
@@ -18,9 +19,9 @@ interface MapContainerState {
   cases: number,
   country: string,
   showingInfoWindow: boolean,
-}
+};
 
-export class MapContainer extends React.Component<IMapProps, MapContainerState> {
+export class MapContainer extends React.Component<MapProps, MapState> {
   
   constructor(props) {
     super(props);
@@ -103,19 +104,6 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
         <Header as='h1' dividing>{i18n.t("map")}</Header>
         
         <div>
-            <Map
-              google={window.google}
-              zoom={2}
-              style={mapStyles}
-              initialCenter={{ lat: 35, lng: 155 }}
-              onMouseover={this.mouse_on_map}
-              // onZoomChanged={this.on_zoom_changed}
-
-              // onClick={this.onMapClicked}
-            >
-            {/* <div id="map"></div> */}
-              
-            {mapinfo}
           <Map
             google={window.google}
             zoom={2}
@@ -124,21 +112,6 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             onMouseover={this.Mouseover_Map}
           >
             
-
-            <InfoWindow
-                marker={null}
-                google={window.google}
-                map={this.state.map}
-                // onOpen={this.state.showingInfoWindow}
-                // position={this.state.selectedPlace}
-                position={new google.maps.LatLng(this.state.info_box_lat, this.state.info_box_lng)}
-                visible={this.state.showingInfoWindow}
-            >
-              <p>{this.state.country}</p>
-              <p>{this.state.cases}</p>
-            </InfoWindow>
-
-            </Map>
           {mapinfo}
           
           <InfoWindow
@@ -148,13 +121,12 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
             position={{ lat: this.state.info_box_lat, lng: this.state.info_box_lng }}
             visible={this.state.showingInfoWindow}
           >
-            <p>{this.state.country}</p>
+            <p style={{fontWeight:'bold', textTransform: 'capitalize'}}>{this.state.country}</p>
             <p>{this.state.cases}</p>
           </InfoWindow>
 
           </Map>
         </div>
-        
       </div>
     );
   }
@@ -165,12 +137,6 @@ export class MapContainer extends React.Component<IMapProps, MapContainerState> 
     })
   }
 
-  private on_Mouse_over(a:any, b:any, map?: google.maps.Map,) {
-    console.log(a)
-    // console.log(a)
-    console.log(b)
-    
-    
   private Mouseover_Circle(a:any, map?: google.maps.Map,) {
     this.setState({
       showingInfoWindow: true,

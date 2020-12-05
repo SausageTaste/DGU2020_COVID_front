@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid, Container } from 'semantic-ui-react';
 import _ from 'lodash';
-import * as NumericInput from "react-numeric-input";
 
 import { Map, GoogleApiWrapper, IMapProps, Circle, InfoWindow } from 'google-maps-react';
 
 import '../major_elements/index.js';
 import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
+import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import * as cst from "../utils/konst";
 import * as clt from "../utils/client";
@@ -59,19 +58,12 @@ class DimmerWidget extends React.Component<{ isActivated: boolean }, {}> {
 
 }
 
-class MapContainer extends React.Component<IMapProps> {
-
-    constructor(props) {
-        super(props);
-    }
-}
-
-
 interface SequenceSearchProps {
 
 }
 
 interface SequenceSearchState {
+    //seq_search
     shouldReload: boolean
     isLoading: boolean
     isLoading_metadata: boolean
@@ -84,10 +76,18 @@ interface SequenceSearchState {
     country_list: any;
 
     err_message_list: string[];
+    //map
+    info_box_lat: number,
+    info_box_lng: number,
+    country_list: any;
+    map: any,
+    cases: number,
+    country: string,
+    showingInfoWindow: boolean,
 }
 
 
-export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState, MapContainer> {
+export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSearchState> {
 
     private META_KEYS_TO_SKIP = new Set([
         "sequence",
@@ -105,15 +105,26 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             userInput: "",
             acc_id_list: [],
             metadata_dict: {},
-            country_list: [],
             
             err_message_list: [],
+
+            info_box_lat: 35,
+            info_box_lng: 155,
+            country_list: [],
+            map: null,
+            cases: 0,
+            country: "",
+            showingInfoWindow: false,
         };
 
+        //seq_search
         this.onBtnClicked = this.onBtnClicked.bind(this);
         this.onCellClicked = this.onCellClicked.bind(this);
         this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
 
+        //map
+        this.Mouseover_Circle = this.Mouseover_Circle.bind(this);
+        this.Mouseout_Circle = this.Mouseout_Circle.bind(this);
     }
 
     public render() {
@@ -153,6 +164,13 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     </Table.Row>
                 )
             }
+            metadata_element_list.push(
+                <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}` }>
+                    <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
+                    <Table.Cell>{value!=null ? value : "?"}</Table.Cell>
+                </Table.Row>
+            )
+            
         }
 
         const error_prompt_list = [];
@@ -182,6 +200,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         };
 
         //map
+        //map&circle
         const mapStyles = {
             width: '98%',
             height: '450px',
@@ -195,14 +214,18 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 if (ctryinfo[country]['center']!=null){
                     mapinfo.push(
                     <Circle
+                        key={`Circle of ${country}`}
+                        country={`${country}`}
+                        cases={`${ctryinfo[country]['num_cases']}`}
                         strokeColor= "#FF0000"
                         trokeOpacity= {0.8}
                         strokeWeight= {0.8}
                         fillColor= "#FF0000"
                         fillOpacity= {0.35}
+                        onMouseover={this.Mouseover_Circle}
+                        onMouseout={this.Mouseout_Circle}
                         center= {ctryinfo[country]['center']}
                         radius= {Math.log(ctryinfo[country]['num_cases']+1)*100000}
-                        clickable={false}
                     />
                     )
                 } else continue;
@@ -242,6 +265,16 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                         initialCenter={{ lat: 35, lng: 155 }}
                         >
                         {mapinfo}
+                        <InfoWindow
+                            marker={null}
+                            google={window.google}
+                            map={this.state.map}
+                            position={{ lat: this.state.info_box_lat, lng: this.state.info_box_lng }}
+                            visible={this.state.showingInfoWindow}
+                        >
+                            <p style={{fontWeight:'bold', textTransform: 'capitalize'}}>{this.state.country}</p>
+                            <p>{this.state.cases}</p>
+                        </InfoWindow>
                     </Map>
                 </Segment>
                 
@@ -384,5 +417,25 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 })
             });
     }
+
+    //map_event
+    private Mouseover_Circle(a:any, map?: google.maps.Map,) {
+    this.setState({
+        showingInfoWindow: true,
+        info_box_lat: a.center.lat,
+        info_box_lng: a.center.lng,
+        country: a.country,
+        cases: a.cases,
+        map: map,
+    })
+    }
+
+    private Mouseout_Circle() {
+    if (this.state.showingInfoWindow) {
+        this.setState({
+        showingInfoWindow: false,
+        })
+    }
+    };
 
 }

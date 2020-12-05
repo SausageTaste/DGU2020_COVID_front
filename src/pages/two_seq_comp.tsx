@@ -270,12 +270,16 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
                     for (const i in indel_list) {
                         const value = indel_list[i];
-                        result_str_list.push(`${value[0]} - ${value[1]}`);
+                        // if (value[1]>200){
+                            result_str_list.push(`${value[0]} - ${value[1]}`);
+                        // } else continue;
                     }
 
                     for (const i in change_list) {
                         const value = change_list[i];
-                        result_str_list.push(`${value[0]} - ${value[1]} - ${value[2]}`);
+                        if (value[2]>200){
+                            result_str_list.push(`${value[0]} - ${value[1]} - ${value[2]}`);
+                        } else continue;
                     }
 
                     this.setState({

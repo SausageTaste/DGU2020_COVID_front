@@ -38,7 +38,32 @@ interface SeqListInDBState {
     showingInfoWindow: boolean,
 }
 
-export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState> {
+interface MapContainerState {
+    zoom_level: number;
+    info_box_lat: number,
+    info_box_lng: number,
+  
+    map: any,
+  }
+  
+class MapContainer extends React.Component<IMapProps, MapContainerState> {
+    
+    constructor(props) {
+      super(props);
+  
+      this.state = {
+        zoom_level: 2,
+        info_box_lat: 35,
+        info_box_lng: 155,
+  
+        map: null,
+      }
+    }
+    //   this.on_zoom_changed = this.on_zoom_changed.bind(this);
+
+}  
+
+export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBState, MapContainer> {
 
     private META_KEYS_TO_SKIP = new Set([
         "sequence",

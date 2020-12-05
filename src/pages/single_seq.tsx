@@ -104,12 +104,12 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
             userInput: "",
             acc_id_list: [],
             metadata_dict: {},
+            country_list: [],
             
             err_message_list: [],
 
             info_box_lat: 35,
             info_box_lng: 155,
-            country_list: [],
             map: null,
             cases: 0,
             country: "",

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid } from 'semantic-ui-react';
+import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid, Flag, Label, Icon } from 'semantic-ui-react';
 
+import wuhan from "../utils/wuhan.js"
 import * as clt from "../utils/client";
 import * as cst from "../utils/konst";
 import i18n from '../i18n';
@@ -68,6 +69,8 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             err_message_list: [],
         };
 
+        this.clear = this.clear.bind(this);
+        this.input_refseq = this.input_refseq.bind(this);
         this.on_submit_btn_clicked = this.on_submit_btn_clicked.bind(this);
         this.handle_text_area_change_1 = this.handle_text_area_change_1.bind(this);
         this.handle_text_area_change_2 = this.handle_text_area_change_2.bind(this);
@@ -135,6 +138,14 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     </Form>
 
                     {error_prompt_list}
+                   
+                    <Label as='a' basic style={{float:'left'}} onClick={this.clear}>
+                        <Icon name='eraser'/>{i18n.t("clear")}
+                    </Label>
+                    <Label as='a' basic style={{float:'right'}} onClick={this.input_refseq}>
+                        <Flag name="cn"></Flag>{i18n.t("compare_with_refseq")}
+                    </Label>
+                    
                 </Segment>
 
                 <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 600, margin:'0px auto'}}>
@@ -177,6 +188,21 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
             </div>
         );
+    }
+
+    private clear(event: React.MouseEvent<HTMLElement>) {
+        event.preventDefault();
+        this.setState({
+            user_input_1: "",
+            user_input_2: ""
+        });
+    }
+
+    private input_refseq(event: React.MouseEvent<HTMLElement>) {
+        event.preventDefault();
+        this.setState({
+            user_input_2: wuhan
+        });
     }
 
     private handle_text_area_change_1(event: React.FormEvent<HTMLTextAreaElement>) {

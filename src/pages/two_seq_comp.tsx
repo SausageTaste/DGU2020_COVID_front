@@ -90,7 +90,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
         if (0 == mutation_element_list.length) {
             mutation_element_list.push(
                 <Table.Row key={"mutation_list_no_data"}>
-                    <Table.Cell textAlign="center">{i18n.t("no_data")}</Table.Cell>
+                    <Table.Cell textAlign="center" colSpan="2">{i18n.t("no_data")}</Table.Cell>
                 </Table.Row>
             );
         }
@@ -178,6 +178,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell textAlign="center">{i18n.t("mutation_list")}</Table.HeaderCell>
+                                <Table.HeaderCell textAlign="center">{i18n.t("danger_level")}</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -296,9 +297,10 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
                     for (const i in indel_list) {
                         const value = indel_list[i];
-                        // if (value[1]>200){
+                        const indel_split = value[0].split("_");
+                        if (indel_split[1]>200){
                             result_str_list.push(`${value[0]} - ${value[1]}`);
-                        // } else continue;
+                        } else continue;
                     }
 
                     for (const i in change_list) {

@@ -86,40 +86,12 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
         for (const i in this.state.mutation_list) {
             const mut = this.state.mutation_list[i];
 
-            switch (mut.score) {
-                case 0:
-                    mutation_element_list.push(
-                        <Table.Row key={mut.mut_text}>
-                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
-                            <Table.Cell positive textAlign="center">{i18n.t("caution")}</Table.Cell>
-                        </Table.Row>
-                    );
-                    break;
-                case 1:
-                    mutation_element_list.push(
-                        <Table.Row key={mut.mut_text}>
-                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
-                            <Table.Cell warning textAlign="center">{i18n.t("warning")}</Table.Cell>
-                        </Table.Row>
-                    );
-                    break;
-                case 2:
-                    mutation_element_list.push(
-                        <Table.Row key={mut.mut_text}>
-                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
-                            <Table.Cell negative textAlign="center" style={{fontWeight:'bold'}}>{i18n.t("danger")}</Table.Cell>
-                        </Table.Row>
-                    );
-                    break;
-                default:
-                    mutation_element_list.push(
-                        <Table.Row key={mut.mut_text}>
-                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
-                            <Table.Cell textAlign="center">{i18n.t("null")}</Table.Cell>
-                        </Table.Row>
-                    );
-                    break;
-            }
+            mutation_element_list.push(
+                <Table.Row key={mut.mut_text}>
+                    <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
+                    {this.make_mut_score_cell(mut.score)}
+                </Table.Row>
+            );
         }
         if (0 == mutation_element_list.length) {
             mutation_element_list.push(
@@ -263,6 +235,43 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     private handle_text_area_change_2(event: React.FormEvent<HTMLTextAreaElement>) {
         event.preventDefault();
         this.setState({ user_input_2: event.currentTarget.value });
+    }
+
+    private make_mut_score_cell(mut_score: number) {
+        let is_positive = false;
+        let is_warning  = false;
+        let is_negative = false;
+        let cell_style = null;
+        let cell_text: string = "";
+
+        switch (mut_score) {
+
+        case 0:
+            cell_text = i18n.t("caution");
+            is_positive = true;
+            break;
+        case 1:
+            cell_text = i18n.t("warning");
+            is_warning = true;
+            break;
+        case 2:
+            cell_text = i18n.t("danger");
+            is_negative = true;
+            cell_style = {fontWeight:'bold'};
+            break;
+        default:
+            cell_text = i18n.t("null");
+            break;
+
+        }
+
+        return (<Table.Cell
+            positive={is_positive}
+            warning={is_warning}
+            negative={is_negative}
+            style={cell_style}
+            textAlign="center"
+        >{cell_text}</Table.Cell>);
     }
 
     private on_submit_btn_clicked = (event: React.FormEvent<HTMLFormElement>) => {

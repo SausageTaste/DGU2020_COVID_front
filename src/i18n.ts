@@ -60,12 +60,13 @@ i18n
                     clear: "Clear",
                     danger_level: "Risk",
                     caution: "Caution",
-                    caution_description: "It is a mutation found only in one region(country).",
+                    caution_description: "The mutations found only in one region(country).",
                     warning: "Warning",
-                    warning_description: "It is a mutation found in several regions(countries) and needs attention.",
+                    warning_description: "The mutations found in several regions. Attention required.",
                     danger: "Danger",
-                    danger_description: `It is a mutation found in several regions (countries) and 
-                    affecting infection in regions (countries). It is very dangerous.`,
+                    danger_description: `The mutations found in several regions. ` +
+                                        `They have significant effect on infections in those regions, ` +
+                                        `thus they are dangerous.`,
                     null: "Unknown",
 
 

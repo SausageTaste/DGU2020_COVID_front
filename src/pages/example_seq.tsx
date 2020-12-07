@@ -42,7 +42,7 @@ export default class Example_seq extends React.Component<desProps, desState> {
             <div style={describe_style}>
                 <div>{i18n.t("example_seq_id")}</div>
                 <br/>
-                <textarea style={{width: "100%", height: "100px"}} value={example_sequence}/>
+                <textarea style={{width: "100%", height: "100px"}} defaultValue={example_sequence}/>
             </div>);
 
         return (

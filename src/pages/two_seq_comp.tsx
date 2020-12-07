@@ -223,7 +223,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                 <Segment basic>
                     <Grid columns='equal' textAlign="center">
                         <Grid.Row columns={3}>
-                            <Card.Group>
                                 <Grid.Column>
                                     <Card fluid color='olive' header={i18n.t("caution")} description={i18n.t("caution_description")}/>
                                 </Grid.Column>
@@ -233,7 +232,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                                 <Grid.Column>
                                     <Card fluid color='red' header={i18n.t("danger")} description={i18n.t("danger_description")}/>
                                 </Grid.Column>
-                            </Card.Group>
                         </Grid.Row>
                     </Grid>
                 </Segment>

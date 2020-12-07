@@ -32,6 +32,11 @@ class ErrorPrompt extends React.Component<ErrorPromptProps, {}> {
 }
 
 
+interface MutationDataPair {
+    mut_text: string;
+    score: number;
+}
+
 interface TwoSeqCompProps {
 
 }
@@ -45,8 +50,7 @@ interface TwoSeqCompState {
 
     result_cell_texts_1: string;
     result_cell_texts_2: string;
-    mutation_list_texts: string[];
-    mutation_score_list: string[];
+    mutation_list: MutationDataPair[];
 
     err_message_list: string[];
 }
@@ -65,8 +69,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
             result_cell_texts_1: "",
             result_cell_texts_2: "",
-            mutation_list_texts: [],
-            mutation_score_list: [],
+            mutation_list: [],
 
             err_message_list: [],
         };
@@ -80,38 +83,38 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
     public render() {
         const mutation_element_list: JSX.Element[] = [];
-        for (const i in this.state.mutation_list_texts) {
-            const mut_value = this.state.mutation_list_texts[i];
-            const mut_score = this.state.mutation_score_list[i];
-            switch (parseInt(mut_score)){
-                case 0: 
+        for (const i in this.state.mutation_list) {
+            const mut = this.state.mutation_list[i];
+
+            switch (mut.score) {
+                case 0:
                     mutation_element_list.push(
-                        <Table.Row key={mut_value}>
-                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                        <Table.Row key={mut.mut_text}>
+                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
                             <Table.Cell positive textAlign="center">{i18n.t("caution")}</Table.Cell>
                         </Table.Row>
                     );
                     break;
                 case 1: 
                     mutation_element_list.push(
-                        <Table.Row key={mut_value}>
-                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                        <Table.Row key={mut.mut_text}>
+                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
                             <Table.Cell warning textAlign="center">{i18n.t("warning")}</Table.Cell>
                         </Table.Row>
                     );
                     break;
                 case 2: 
                     mutation_element_list.push(
-                        <Table.Row key={mut_value}>
-                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                        <Table.Row key={mut.mut_text}>
+                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
                             <Table.Cell negative textAlign="center" style={{fontWeight:'bold'}}>{i18n.t("danger")}</Table.Cell>
                         </Table.Row>
                     );
                     break;
                 default: 
                     mutation_element_list.push(
-                        <Table.Row key={mut_value}>
-                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                        <Table.Row key={mut.mut_text}>
+                            <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
                             <Table.Cell textAlign="center">{i18n.t("null")}</Table.Cell>
                         </Table.Row>
                     );
@@ -341,29 +344,38 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     const change_list = payload[cst.KEY_MUT_CHANGE_LIST];
                     const indel_list = payload[cst.KEY_MUT_INDEL_LIST];
 
-                    const result_str_list: string[] = [];
-                    const result_score_list: string[] = [];
+                    const new_mut_list: MutationDataPair[] = [];
 
                     for (const i in indel_list) {
-                        const value = indel_list[i];
-                        const indel_split = value[0].split("_");
-                        if (parseInt(indel_split[1])>200){
-                            result_str_list.push(`${value[0]} - ${value[1]}`);
-                            result_score_list.push(`${value[2]}`);
-                        } else continue;
+                        const value: [string, string, number?] = indel_list[i];
+                        const indel_pos_split = value[0].split("_");
+                        const pos_bigger = Math.max(parseInt(indel_pos_split[0]), parseInt(indel_pos_split[1]));
+
+                        if (pos_bigger <= 200) {
+                            continue;
+                        }
+
+                        new_mut_list.push({
+                            mut_text: `${value[0]} - ${value[1]}`,
+                            score: value[2],
+                        });
                     }
 
                     for (const i in change_list) {
-                        const value = change_list[i];
-                        if (parseInt(value[2])>200){
-                            result_str_list.push(`${value[0]} - ${value[1]} - ${value[2]}`);
-                            result_score_list.push(value[3]);
-                        } else continue;
+                        const value: [string, string, number, number?] = change_list[i];
+
+                        if (value[2] <= 200) {
+                            continue;
+                        }
+
+                        new_mut_list.push({
+                            mut_text: `${value[0]} - ${value[1]} - ${value[2]}`,
+                            score: value[3],
+                        })
                     }
 
                     this.setState({
-                        mutation_list_texts: result_str_list,
-                        mutation_score_list: result_score_list,
+                        mutation_list: new_mut_list,
                     })
                 }
                 else {

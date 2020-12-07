@@ -22,14 +22,14 @@ i18n
                     home: "COVIDGU",
                     home_page: "COVIDGU",
 
-                    service_description: 'COVIDGU is a COVID19 sequence analysis service that can be easily used by the general public.',
-                    function_description: 'We offer the following features:',
-                    single_seq_query_description: 'You can look up the sequences that are similar to the ones you have, and check the detailed information.',
-                    two_seq_comp_description: 'It shows the similarity of the two sequences and a list of mutations.',
-                    two_seq_comp_description_2: 'You can check detailed information of the nucleotide sequence.',
-                    seq_list_in_db_description: `You can see the list of sequences in the server database. 
-                    Canvas to help you understand nucleotide sequences are shown together.`,
-                    seq_list_in_db_description_2: 'You can also copy sequence strings and use it for other functions.',
+                    service_description: 'COVIDGU is COVID-19 sequence analysis service, designed to be easy for nonprofessional population',
+                    function_description: 'Here are the features',
+                    single_seq_query_description: "Enter your nucleotide sequence and get virus data, whose sequence is similiar to yours.",
+                    two_seq_comp_description: 'Enter two nucleotide sequences. We\'ll show you similarity scores and a mutation list.',
+                    two_seq_comp_description_2: "Each mutation is labeled with a degree of danger.",
+                    seq_list_in_db_description: `List of all virus data we have in DB can be found here. ` +
+                                                `There is a small interactive sequence view.`,
+                    seq_list_in_db_description_2: 'You can copy sequences to your clipboard.',
                     map_description: 'You can easily check the maps around the world.',
 
                     seq_search: "Sequence Search",

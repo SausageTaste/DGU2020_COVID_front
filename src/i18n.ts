@@ -22,21 +22,21 @@ i18n
                     home: "COVIDGU",
                     home_page: "COVIDGU",
 
-                    service_description: 'COVIDGU is a COVID19 sequence analysis service that can be easily used by the general public.',
-                    function_description: 'We offer the following features:',
-                    single_seq_query_description: 'You can look up the sequences that are similar to the ones you have, and check the detailed information.',
-                    two_seq_comp_description: 'It shows the similarity of the two sequences and a list of mutations.',
-                    two_seq_comp_description_2: 'You can check detailed information of the nucleotide sequence.',
-                    seq_list_in_db_description: `You can see the list of sequences in the server database. 
-                    Canvas to help you understand nucleotide sequences are shown together.`,
-                    seq_list_in_db_description_2: 'You can also copy sequence strings and use it for other functions.',
+                    service_description: 'COVIDGU is COVID-19 sequence analysis service, designed to be easy for nonprofessional population',
+                    function_description: 'Here are the features',
+                    single_seq_query_description: "Enter your nucleotide sequence and get virus data, whose sequence is similiar to yours.",
+                    two_seq_comp_description: 'Enter two nucleotide sequences. We\'ll show you similarity scores and a mutation list.',
+                    two_seq_comp_description_2: "Each mutation is labeled with a degree of danger.",
+                    seq_list_in_db_description: `List of all virus data we have in DB can be found here. ` +
+                                                `There is a small interactive sequence view.`,
+                    seq_list_in_db_description_2: 'You can copy sequences to your clipboard.',
                     map_description: 'You can easily check the maps around the world.',
 
                     seq_search: "Sequence Search",
                     put_your_seq_here: "Put your sequence string here",
                     put_your_seq_or_fasta_here: "Put your sequence or fasta string here",
                     result_will_appear_here: "The result will appear here",
-                    send: "Input",
+                    send: "Send",
                     no_data: "No data",
 
                     opengl_view: "OpenGL Test",
@@ -60,12 +60,13 @@ i18n
                     clear: "Clear",
                     danger_level: "Risk",
                     caution: "Caution",
-                    caution_description: "It is a mutation found only in one region(country).",
+                    caution_description: "The mutations found only in one region(country).",
                     warning: "Warning",
-                    warning_description: "It is a mutation found in several regions(countries) and needs attention.",
+                    warning_description: "The mutations found in several regions. Attention required.",
                     danger: "Danger",
-                    danger_description: `It is a mutation found in several regions (countries) and 
-                    affecting infection in regions (countries). It is very dangerous.`,
+                    danger_description: `The mutations found in several regions. ` +
+                                        `They have significant effect on infections in those regions, ` +
+                                        `thus they are dangerous.`,
                     null: "Unknown",
 
 
@@ -256,7 +257,7 @@ i18n
                     put_your_seq_here: "염기서열 문자열을 이곳에 입력하세요",
                     put_your_seq_or_fasta_here: "염기서열이나 fasta 문자열을 이곳에 입력하세요",
                     result_will_appear_here: "결과는 이곳에 출력됩니다",
-                    send: "입력",
+                    send: "전송",
                     no_data: "데이터 없음",
 
                     opengl_view: "OpenGL 시험",

@@ -74,7 +74,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             err_message_list: [],
         };
 
-        this.clear = this.clear.bind(this);
+        this.clear_user_input_boxes = this.clear_user_input_boxes.bind(this);
         this.input_refseq = this.input_refseq.bind(this);
         this.on_submit_btn_clicked = this.on_submit_btn_clicked.bind(this);
         this.handle_text_area_change_1 = this.handle_text_area_change_1.bind(this);
@@ -145,7 +145,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
 
                     {error_prompt_list}
 
-                    <Label as='a' basic style={{float:'left'}} onClick={this.clear}>
+                    <Label as='a' basic style={{float:'left'}} onClick={this.clear_user_input_boxes}>
                         <Icon name='eraser'/>{i18n.t("clear")}
                     </Label>
                     <Label as='a' basic style={{float:'right'}} onClick={this.input_refseq}>
@@ -212,11 +212,11 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
         );
     }
 
-    private clear(event: React.MouseEvent<HTMLElement>) {
+    private clear_user_input_boxes(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         this.setState({
             user_input_1: "",
-            user_input_2: ""
+            user_input_2: "",
         });
     }
 

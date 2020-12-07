@@ -95,7 +95,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         </Table.Row>
                     );
                     break;
-                case 1: 
+                case 1:
                     mutation_element_list.push(
                         <Table.Row key={mut.mut_text}>
                             <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
@@ -103,7 +103,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         </Table.Row>
                     );
                     break;
-                case 2: 
+                case 2:
                     mutation_element_list.push(
                         <Table.Row key={mut.mut_text}>
                             <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
@@ -111,7 +111,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         </Table.Row>
                     );
                     break;
-                default: 
+                default:
                     mutation_element_list.push(
                         <Table.Row key={mut.mut_text}>
                             <Table.Cell textAlign="center">{mut.mut_text}</Table.Cell>
@@ -120,8 +120,6 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     );
                     break;
             }
-
-            
         }
         if (0 == mutation_element_list.length) {
             mutation_element_list.push(
@@ -174,16 +172,16 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     </Form>
 
                     {error_prompt_list}
-                   
+
                     <Label as='a' basic style={{float:'left'}} onClick={this.clear}>
                         <Icon name='eraser'/>{i18n.t("clear")}
                     </Label>
                     <Label as='a' basic style={{float:'right'}} onClick={this.input_refseq}>
                         <Flag name="cn"></Flag>{i18n.t("compare_with_refseq")}
                     </Label>
-                    
+
                 </Segment>
-            
+
                 <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 400, margin:'0px auto'}}>
                     <Table celled>
                         <Table.Header>

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid } from 'semantic-ui-react';
+import { Message, Header, TextArea, Segment, Form, Button, Dimmer, Loader, Table, Grid, Flag, Label, Icon, Card } from 'semantic-ui-react';
 
+import wuhan from "../utils/wuhan.js"
 import * as clt from "../utils/client";
 import * as cst from "../utils/konst";
 import i18n from '../i18n';
@@ -45,6 +46,7 @@ interface TwoSeqCompState {
     result_cell_texts_1: string;
     result_cell_texts_2: string;
     mutation_list_texts: string[];
+    mutation_score_list: string[];
 
     err_message_list: string[];
 }
@@ -64,10 +66,13 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
             result_cell_texts_1: "",
             result_cell_texts_2: "",
             mutation_list_texts: [],
+            mutation_score_list: [],
 
             err_message_list: [],
         };
 
+        this.clear = this.clear.bind(this);
+        this.input_refseq = this.input_refseq.bind(this);
         this.on_submit_btn_clicked = this.on_submit_btn_clicked.bind(this);
         this.handle_text_area_change_1 = this.handle_text_area_change_1.bind(this);
         this.handle_text_area_change_2 = this.handle_text_area_change_2.bind(this);
@@ -76,18 +81,49 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
     public render() {
         const mutation_element_list: JSX.Element[] = [];
         for (const i in this.state.mutation_list_texts) {
-            const value = this.state.mutation_list_texts[i];
+            const mut_value = this.state.mutation_list_texts[i];
+            const mut_score = this.state.mutation_score_list[i];
+            switch (parseInt(mut_score)){
+                case 0: 
+                    mutation_element_list.push(
+                        <Table.Row key={mut_value}>
+                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                            <Table.Cell positive textAlign="center">{i18n.t("caution")}</Table.Cell>
+                        </Table.Row>
+                    );
+                    break;
+                case 1: 
+                    mutation_element_list.push(
+                        <Table.Row key={mut_value}>
+                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                            <Table.Cell warning textAlign="center">{i18n.t("warning")}</Table.Cell>
+                        </Table.Row>
+                    );
+                    break;
+                case 2: 
+                    mutation_element_list.push(
+                        <Table.Row key={mut_value}>
+                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                            <Table.Cell negative textAlign="center" style={{fontWeight:'bold'}}>{i18n.t("danger")}</Table.Cell>
+                        </Table.Row>
+                    );
+                    break;
+                default: 
+                    mutation_element_list.push(
+                        <Table.Row key={mut_value}>
+                            <Table.Cell textAlign="center">{mut_value}</Table.Cell>
+                            <Table.Cell textAlign="center">{i18n.t("null")}</Table.Cell>
+                        </Table.Row>
+                    );
+                    break;
+            }
 
-            mutation_element_list.push(
-                <Table.Row key={value}>
-                    <Table.Cell textAlign="center">{value}</Table.Cell>
-                </Table.Row>
-            );
+            
         }
         if (0 == mutation_element_list.length) {
             mutation_element_list.push(
                 <Table.Row key={"mutation_list_no_data"}>
-                    <Table.Cell textAlign="center">{i18n.t("no_data")}</Table.Cell>
+                    <Table.Cell textAlign="center" colSpan="2">{i18n.t("no_data")}</Table.Cell>
                 </Table.Row>
             );
         }
@@ -135,9 +171,17 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     </Form>
 
                     {error_prompt_list}
+                   
+                    <Label as='a' basic style={{float:'left'}} onClick={this.clear}>
+                        <Icon name='eraser'/>{i18n.t("clear")}
+                    </Label>
+                    <Label as='a' basic style={{float:'right'}} onClick={this.input_refseq}>
+                        <Flag name="cn"></Flag>{i18n.t("compare_with_refseq")}
+                    </Label>
+                    
                 </Segment>
-
-                <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 600, margin:'0px auto'}}>
+            
+                <Segment basic loading={this.state.is_loading_simil} style={{maxWidth: 400, margin:'0px auto'}}>
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
@@ -167,6 +211,7 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell textAlign="center">{i18n.t("mutation_list")}</Table.HeaderCell>
+                                <Table.HeaderCell textAlign="center">{i18n.t("danger_level")}</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -175,8 +220,40 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     </Table>
                 </Segment>
 
+                <Segment basic>
+                    <Grid columns='equal' textAlign="center">
+                        <Grid.Row columns={3}>
+                            <Card.Group>
+                                <Grid.Column>
+                                    <Card fluid color='olive' header={i18n.t("caution")} description={i18n.t("caution_description")}/>
+                                </Grid.Column>
+                                <Grid.Column>
+                                    <Card fluid color='orange' header={i18n.t("warning")} description={i18n.t("warning_description")}/>
+                                </Grid.Column>
+                                <Grid.Column>
+                                    <Card fluid color='red' header={i18n.t("danger")} description={i18n.t("danger_description")}/>
+                                </Grid.Column>
+                            </Card.Group>
+                        </Grid.Row>
+                    </Grid>
+                </Segment>
             </div>
         );
+    }
+
+    private clear(event: React.MouseEvent<HTMLElement>) {
+        event.preventDefault();
+        this.setState({
+            user_input_1: "",
+            user_input_2: ""
+        });
+    }
+
+    private input_refseq(event: React.MouseEvent<HTMLElement>) {
+        event.preventDefault();
+        this.setState({
+            user_input_2: wuhan
+        });
     }
 
     private handle_text_area_change_1(event: React.FormEvent<HTMLTextAreaElement>) {
@@ -267,19 +344,28 @@ export class TwoSeqComp extends React.Component<TwoSeqCompProps, TwoSeqCompState
                     const indel_list = payload[cst.KEY_MUT_INDEL_LIST];
 
                     const result_str_list: string[] = [];
+                    const result_score_list: string[] = [];
 
                     for (const i in indel_list) {
                         const value = indel_list[i];
-                        result_str_list.push(`${value[0]} - ${value[1]}`);
+                        const indel_split = value[0].split("_");
+                        if (parseInt(indel_split[1])>200){
+                            result_str_list.push(`${value[0]} - ${value[1]}`);
+                            result_score_list.push(`${value[2]}`);
+                        } else continue;
                     }
 
                     for (const i in change_list) {
                         const value = change_list[i];
-                        result_str_list.push(`${value[0]} - ${value[1]} - ${value[2]}`);
+                        if (parseInt(value[2])>200){
+                            result_str_list.push(`${value[0]} - ${value[1]} - ${value[2]}`);
+                            result_score_list.push(value[3]);
+                        } else continue;
                     }
 
                     this.setState({
                         mutation_list_texts: result_str_list,
+                        mutation_score_list: result_score_list,
                     })
                 }
                 else {

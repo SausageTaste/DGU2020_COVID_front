@@ -197,7 +197,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                     mapinfo.push(
                     <Circle
                         key={`Circle of ${country}`}
-                        country={`${country}`}
+                        country={i18n.t(`${country}`)}
                         cases={`${ctryinfo[country]['num_cases']}`}
                         strokeColor= "#FF0000"
                         trokeOpacity= {0.8}

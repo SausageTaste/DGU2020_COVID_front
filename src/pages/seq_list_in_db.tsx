@@ -209,7 +209,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                 mapinfo.push(
                 <Circle
                     key={`Circle of ${country}`}
-                    country={`${country}`}
+                    country={i18n.t(`${country}`)}
                     cases={`${ctryinfo[country]['num_cases']}`}
                     strokeColor= "#FF0000"
                     trokeOpacity= {0.8}
@@ -219,7 +219,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                     onMouseover={this.Mouseover_Circle}
                     onMouseout={this.Mouseout_Circle}
                     center= {ctryinfo[country]['center']}
-                    radius= {Math.log(ctryinfo[country]['num_cases']+1)*20000}
+                    radius= {Math.log(ctryinfo[country]['num_cases']+1)*30000}
                 />
                 )
             } else continue;

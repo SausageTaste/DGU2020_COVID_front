@@ -60,14 +60,6 @@ i18n
                     clear: "Clear",
                     danger_level: "Risk",
                     caution: "Caution",
-<<<<<<< HEAD
-                    caution_description: "It is a mutation found only in one region(country).",
-                    warning: "Warning",
-                    warning_description: "It is a mutation found in several regions(countries) and needs attention.",
-                    danger: "Danger",
-                    danger_description: `It is a mutation found in several regions (countries) and 
-                    affecting infection in regions (countries). It is very dangerous.`,
-=======
                     caution_description: "The mutations found only in one region(country).",
                     warning: "Warning",
                     warning_description: "The mutations found in several regions. Attention required.",
@@ -75,7 +67,6 @@ i18n
                     danger_description: `The mutations found in several regions. ` +
                                         `They have significant effect on infections in those regions, ` +
                                         `thus they are dangerous.`,
->>>>>>> main
                     null: "Unknown",
 
 
@@ -114,8 +105,6 @@ i18n
                     meta_date_submitted: "Submitted date",
                     meta_sequence: "Sequence",
 
-<<<<<<< HEAD
-=======
                     map: 'Map',
 
                     describe_open: "▼ View How to Use and features",
@@ -140,7 +129,6 @@ i18n
                     example_seq_close: "▲ Close",
                     example_seq_id: "Nucleotide sequence ID : SouthKorea/KCDC03/2020",
 
->>>>>>> main
                     algeria: 'Algeria',
                     andorra: 'Andorra',
                     china: 'China',
@@ -357,8 +345,6 @@ i18n
                     meta_date_submitted: "제출 날짜",
                     meta_sequence: "서열",
 
-<<<<<<< HEAD
-=======
                     map: '지도',
 
                     describe_open: "▼ 사용방법 및 특징 보기",
@@ -383,7 +369,6 @@ i18n
                     example_seq_close: "▲ 접기",
                     example_seq_id: "시퀀스 ID : SouthKorea/KCDC03/2020",
 
->>>>>>> main
                     algeria: '알제리',
                     andorra: '안도라',
                     china: '중국',

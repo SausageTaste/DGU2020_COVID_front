@@ -60,8 +60,8 @@ export class HomePage extends React.Component<{}, {}> {
             </div>
             <Example_seq/>
             <div style={{marginTop:140, bottom:0, textAlign:'center'}}>
-                <Header as="h6">Developed by 24.0</Header>
-                <p>윤건식 우성민 이우승 하윤영</p>
+                <Header as="h6">Developed by 24.0 & Theragenbio</Header>
+                <p>윤건식 우성민 이우승 하윤영 & 홍경원 최자은</p>
             </div>
             </Segment>
         );

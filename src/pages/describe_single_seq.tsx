@@ -39,10 +39,10 @@ export default class Describe_single_seq extends React.Component<desProps, desSt
                 <br/>
                 <p>{i18n.t("describe_feature_of_function")}</p>
                 <div style={describe_style}>
+                    <p>{i18n.t("describe_feature_1_single_seq")}</p>
                     <p>{i18n.t("describe_feature_2_single_seq")}</p>
                     <p>{i18n.t("describe_feature_3_single_seq")}</p>
                     <p>{i18n.t("describe_feature_4_single_seq")}</p>
-                    <p>{i18n.t("describe_feature_1_single_seq")}</p>
                 </div>
             </div>);
 

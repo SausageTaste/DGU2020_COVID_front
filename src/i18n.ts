@@ -22,14 +22,14 @@ i18n
                     home: "COVIDGU",
                     home_page: "COVIDGU",
 
-                    service_description: 'COVIDGU is a COVID19 sequence analysis service that can be easily used by the general public.',
-                    function_description: 'We offer the following features:',
-                    single_seq_query_description: 'You can look up the sequences that are similar to the ones you have, and check the detailed information.',
-                    two_seq_comp_description: 'It shows the similarity of the two sequences and a list of mutations.',
-                    two_seq_comp_description_2: 'You can check detailed information of the nucleotide sequence.',
-                    seq_list_in_db_description: `You can see the list of sequences in the server database. 
-                    Canvas to help you understand nucleotide sequences are shown together.`,
-                    seq_list_in_db_description_2: 'You can also copy sequence strings and use it for other functions.',
+                    service_description: 'COVIDGU is COVID-19 sequence analysis service, designed to be easy for nonprofessional population',
+                    function_description: 'Here are the features',
+                    single_seq_query_description: "Enter your nucleotide sequence and get virus data, whose sequence is similiar to yours.",
+                    two_seq_comp_description: 'Enter two nucleotide sequences. We\'ll show you similarity scores and a mutation list.',
+                    two_seq_comp_description_2: "Each mutation is labeled with a degree of danger.",
+                    seq_list_in_db_description: `List of all virus data we have in DB can be found here. ` +
+                                                `There is a small interactive sequence view.`,
+                    seq_list_in_db_description_2: 'You can copy sequences to your clipboard.',
                     map_description: 'You can easily check the maps around the world.',
 
                     seq_search: "Sequence Search",
@@ -60,12 +60,22 @@ i18n
                     clear: "Clear",
                     danger_level: "Risk",
                     caution: "Caution",
+<<<<<<< HEAD
                     caution_description: "It is a mutation found only in one region(country).",
                     warning: "Warning",
                     warning_description: "It is a mutation found in several regions(countries) and needs attention.",
                     danger: "Danger",
                     danger_description: `It is a mutation found in several regions (countries) and 
                     affecting infection in regions (countries). It is very dangerous.`,
+=======
+                    caution_description: "The mutations found only in one region(country).",
+                    warning: "Warning",
+                    warning_description: "The mutations found in several regions. Attention required.",
+                    danger: "Danger",
+                    danger_description: `The mutations found in several regions. ` +
+                                        `They have significant effect on infections in those regions, ` +
+                                        `thus they are dangerous.`,
+>>>>>>> main
                     null: "Unknown",
 
 
@@ -104,6 +114,33 @@ i18n
                     meta_date_submitted: "Submitted date",
                     meta_sequence: "Sequence",
 
+<<<<<<< HEAD
+=======
+                    map: 'Map',
+
+                    describe_open: "▼ View How to Use and features",
+                    describe_close: "▲ Close",
+                    describe_feature_of_function: "Through this function, you can check the information below",
+                    describe_method_single_seq: "How to use: Enter one nucleotide sequence",
+                    describe_feature_1_single_seq: "1. You can check the similarity of the returned sequence.",
+                    describe_feature_2_single_seq: "2. You can sort the returned sequence by similarity or sequence ID.",
+                    describe_feature_3_single_seq: "3. You can check the metadata of the returned sequence.",
+                    describe_feature_4_single_seq: "4. You can check the distribution of similar sequences through Google Map.",
+                    describe_method_two_seq: "How to use: Enter two nucleotide sequences (default: provide Wuhan nucleotide sequences)",
+                    describe_feature_1_two_seq: "1. You can check the similarity of the two entered sequences.",
+                    describe_feature_2_two_seq: "2. You can check the list of mutations of the two entered sequences.",
+                    describe_method_seq_list_in_db: "How to use: Click a nucleotide sequence from the list of provided nucleotide sequences to check information",
+                    describe_feature_1_seq_list_in_db: "1. You can check the list of nucleotide sequences stored in the database.",
+                    describe_feature_2_seq_list_in_db: "2. You can check the sequence and protein structure of the selected nucleotide sequence through the canvas.",
+                    describe_feature_3_seq_list_in_db: "3. You can copy the selected nucleotide sequence to the clipboard.",
+                    describe_feature_4_seq_list_in_db: "4. You can check the meta data of the selected nucleotide sequence.",
+                    describe_feature_5_seq_list_in_db: "5. You can check the distribution of the nucleotide sequence stored in the database through Google Maps.",
+
+                    example_seq_open: "▼ Example nucleotide sequence",
+                    example_seq_close: "▲ Close",
+                    example_seq_id: "Nucleotide sequence ID : SouthKorea/KCDC03/2020",
+
+>>>>>>> main
                     algeria: 'Algeria',
                     andorra: 'Andorra',
                     china: 'China',
@@ -320,6 +357,33 @@ i18n
                     meta_date_submitted: "제출 날짜",
                     meta_sequence: "서열",
 
+<<<<<<< HEAD
+=======
+                    map: '지도',
+
+                    describe_open: "▼ 사용방법 및 특징 보기",
+                    describe_close: "▲ 접기",
+                    describe_feature_of_function: "이 기능을 통해 아래의 정보 들을 확인할 수 있습니다.",
+                    describe_method_single_seq: "사용 방법 : 하나의 염기서열 입력",
+                    describe_feature_1_single_seq: "1. 반환받은 염기서열의 유사도를 확인할 수 있습니다.",
+                    describe_feature_2_single_seq: "2. 반환받은 염기서열을 유사도 혹은 염기서열 ID로 정렬할 수 있습니다.",
+                    describe_feature_3_single_seq: "3. 반환받은 염기서열의 메타 데이터를 확인할 수 있습니다.",
+                    describe_feature_4_single_seq: "4. 구글 맵을 통해 유사한 염기서열의 분포를 확인할 수 있습니다.",
+                    describe_method_two_seq: "사용 방법 : 두 개의 염기서열 입력(기본 값으로 : 우한 염기서열 제공)",
+                    describe_feature_1_two_seq: "1. 입력한 두 서열의 유사도를 확인할 수 있습니다.",
+                    describe_feature_2_two_seq: "2. 입력한 두 서열의 돌연변이 목록을 확인할 수 있습니다.",
+                    describe_method_seq_list_in_db: "사용 방법 : 제공되는 염기서열 목록 중 염기서열을 클릭하여 정보 확인",
+                    describe_feature_1_seq_list_in_db: "1. 데이터 베이스에 저장된 염기서열 목록을 확인할 수 있습니다.",
+                    describe_feature_2_seq_list_in_db: "2. 선택된 염기서열의 서열 및 단백질 구조를 캔버스를 통해 확인할 수 있습니다.",
+                    describe_feature_3_seq_list_in_db: "3. 선택된 염기서열을 클립보드에 복사할 수 있습니다.",
+                    describe_feature_4_seq_list_in_db: "4. 선택된 염기서열의 메타 데이터를 확인할 수 있습니다.",
+                    describe_feature_5_seq_list_in_db: "5. 구글 맵을 통해 데이터 베이스에 저장된 염기서열의 분포를 확인할 수 있습니다.",
+
+                    example_seq_open: "▼ 예시 염기서열 확인",
+                    example_seq_close: "▲ 접기",
+                    example_seq_id: "시퀀스 ID : SouthKorea/KCDC03/2020",
+
+>>>>>>> main
                     algeria: '알제리',
                     andorra: '안도라',
                     china: '중국',

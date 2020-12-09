@@ -49,19 +49,13 @@ export class HomePage extends React.Component<{}, {}> {
                             </Item.Description>
                         </Item.Content>
                     </Item>
-                    <Item>
-                        <Item.Content>
-                            <Item.Header>{i18n.t("map")}</Item.Header>
-                            <Item.Description>{i18n.t("map_description")}</Item.Description>
-                        </Item.Content>
-                    </Item>
                 </Item.Group>
 
             </div>
             <Example_seq/>
             <div style={{marginTop:140, bottom:0, textAlign:'center'}}>
-                <Header as="h6">Developed by 24.0</Header>
-                <p>윤건식 우성민 이우승 하윤영</p>
+                <Header as="h6">Developed by 24.0 & Theragenbio</Header>
+                <p>윤건식 우성민 이우승 하윤영 & 홍경원 최자은</p>
             </div>
             </Segment>
         );

@@ -36,7 +36,7 @@ i18n
                     put_your_seq_here: "Put your sequence string here",
                     put_your_seq_or_fasta_here: "Put your sequence or fasta string here",
                     result_will_appear_here: "The result will appear here",
-                    send: "Send",
+                    send: "Input",
                     no_data: "No data",
 
                     opengl_view: "OpenGL Test",
@@ -281,7 +281,7 @@ i18n
                     put_your_seq_here: "염기서열 문자열을 이곳에 입력하세요",
                     put_your_seq_or_fasta_here: "염기서열이나 fasta 문자열을 이곳에 입력하세요",
                     result_will_appear_here: "결과는 이곳에 출력됩니다",
-                    send: "전송",
+                    send: "입력",
                     no_data: "데이터 없음",
 
                     opengl_view: "OpenGL 시험",

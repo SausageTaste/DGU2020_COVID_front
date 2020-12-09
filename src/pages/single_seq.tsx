@@ -173,9 +173,11 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         //Bootstrap Table
         const columns = [
             { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true, style: { wordBreak: 'break-all', tableLayout: 'fixed' },
-            headerStyle: { width: '45%' }, filter: textFilter()},
-            { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true, style: { verticalAlign: 'middle' }},
-            { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true, style: { verticalAlign: 'middle' }},
+                headerStyle: { width: '45%' }, filter: textFilter()},
+            { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true, style: { verticalAlign: 'middle' },
+                headerStyle: { verticalAlign: 'middle' }},
+            { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true, style: { verticalAlign: 'middle' },
+                headerStyle: { verticalAlign: 'middle' }},
         ]
 
         const rowEvents = {

@@ -49,12 +49,6 @@ export class HomePage extends React.Component<{}, {}> {
                             </Item.Description>
                         </Item.Content>
                     </Item>
-                    <Item>
-                        <Item.Content>
-                            <Item.Header>{i18n.t("map")}</Item.Header>
-                            <Item.Description>{i18n.t("map_description")}</Item.Description>
-                        </Item.Content>
-                    </Item>
                 </Item.Group>
 
             </div>

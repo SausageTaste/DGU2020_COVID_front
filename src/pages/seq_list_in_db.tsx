@@ -9,6 +9,9 @@ import * as cst from "../utils/konst";
 import i18n from '../i18n';
 import { Canvas2D } from "./../utils/canvas_2d";
 import { MyCanvas2DUserData } from "./../utils/seq_canvas_ud";
+import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 
 interface SeqListInDBProps {
@@ -147,35 +150,58 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
     }
 
     public render() {
-        const acc_id_element_list: JSX.Element[] = [];
+        //bootstrap_table
+        // const acc_id_element_list: JSX.Element[] = [];
+        const acc_id_element_list = [];
         const sliced_acc_id_list = this.slice_acc_id_list_of_cur_page();
         const head_index = this.calc_head_index_of_id_list_in_cur_page();
+        const column = [{ dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true, 
+        style: { wordBreak: 'break-all', tableLayout: 'fixed' }, filter: textFilter()}];
+        // headerStyle: { width: '45%' }, filter: textFilter()}]
 
-        for (const i in sliced_acc_id_list) {
-            const acc_id = sliced_acc_id_list[i];
+        // for (const i in sliced_acc_id_list) {
+        //     const acc_id = sliced_acc_id_list[i];
+        for (const i in this.state.acc_id_list) {
+            const acc_id = this.state.acc_id_list[i];
             let label: JSX.Element = null;
-            const label_text = `[${Number(i) + head_index + 1}] ${acc_id}`;
+            const label_text = `[${Number(i) + head_index + 1}]`;
 
-            if (!this.state.is_loading_metadata) {
-                label = (
-                    <Label as="a" onClick={(e) => {this.on_label_click(e, acc_id)}}>
-                        {label_text}
-                    </Label>
-                );
-            }
-            else {
-                label = (<Label>{label_text}</Label>);
-            }
+            // if (!this.state.is_loading_metadata) {
+            //     label = (
+            //         <Label as="a" onClick={(e) => {this.on_label_click(e, acc_id)}}>
+            //             {label_text}
+            //         </Label>
+            //     );
+            // }
+            // else {
+            //     label = (<Label>{label_text}</Label>);
+            // }
 
             acc_id_element_list.push(
-                <Table.Row key={`acc_id_list_${acc_id}`}>
-                    <Table.Cell>
-                        {label}
-                    </Table.Cell>
-                </Table.Row>
+                {acc_id: `${acc_id}`}
+                // <Table.Row key={`acc_id_list_${acc_id}`}>
+                //     <Table.Cell>
+                //         {label}
+                //     </Table.Cell>
+                // </Table.Row>
             );
         }
 
+        const rowEvents = {
+            onClick: (e, row) => {
+                {this.on_label_click(e, `${row.acc_id}`)}
+            }
+        };
+
+        const page_options = {
+            paginationSize: 3,
+            sizePerPageList: [{
+                text: '35', value: 35
+              }],
+            hidePageListOnlyOnePage: true
+        }
+
+        //metadata_list
         const metadata_element_list: JSX.Element[] = [];
         for (const key in this.state.metadata_dict) {
             if (this.META_KEYS_TO_SKIP.has(key)) {
@@ -184,8 +210,8 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
             metadata_element_list.push(
                 <Table.Row key={`metadata ${key} of ${this.state.metadata_dict["strain"]}`}>
-                    <Table.Cell>{i18n.t(`meta_${key}`)}</Table.Cell>
-                    <Table.Cell>{this.state.metadata_dict[key]}</Table.Cell>
+                    <Table.Cell style={{width:'160px', tableLayout: 'fixed'}}>{i18n.t(`meta_${key}`)}</Table.Cell>
+                    <Table.Cell style={{tableLayout: 'fixed'}}>{this.state.metadata_dict[key]}</Table.Cell>
                 </Table.Row>
             );
         }
@@ -252,7 +278,7 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
                 <Grid columns='equal' textAlign="center" style={{marginTop:500}}>
 
-                    <Grid.Row>
+                    {/* <Grid.Row>
                         <Grid columns={3}>
                             <Grid.Column textAlign="right">
                                 <Button compact onClick={() => {this.add_cur_page(-1)}}>{i18n.t("btn_prev")}</Button>
@@ -264,11 +290,21 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
                                 <Button compact onClick={() => {this.add_cur_page(1)}}>{i18n.t("btn_next")}</Button>
                             </Grid.Column>
                         </Grid>
-                    </Grid.Row>
+                    </Grid.Row> */}
 
                     <Grid.Column width={5}>
-                        <Segment basic loading={this.state.is_loading_list} style={{maxHeight: "10", overflowY: "auto"}}>
-                            <Table celled>
+                        <Segment basic loading={this.state.is_loading_list} style={{maxHeight: "10",  paddingBottom:100 }}>
+                            <BootstrapTable 
+                                bootstrap4
+                                keyField='acc_id' 
+                                data={ acc_id_element_list } 
+                                columns={ column } 
+                                noDataIndication={i18n.t("no_data")}
+                                rowEvents={ rowEvents }
+                                pagination={ paginationFactory(page_options) }
+                                filter={ filterFactory() } 
+                                />   
+                            {/* <Table celled>
                                 <Table.Header>
                                     <Table.Row>
                                         <Table.HeaderCell textAlign="center">IDs</Table.HeaderCell>
@@ -277,8 +313,8 @@ export class SeqListInDB extends React.Component<SeqListInDBProps, SeqListInDBSt
 
                                 <Table.Body>
                                     {acc_id_element_list}
-                                </Table.Body>
-                            </Table>
+                                </Table.Body> 
+                            </Table> */}
                         </Segment>
                     </Grid.Column>
 

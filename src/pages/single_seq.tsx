@@ -173,8 +173,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
         //Bootstrap Table
         const columns = [
             { dataField: 'acc_id', text: i18n.t("sequence_id"), sort: true, style: { wordBreak: 'break-all', tableLayout: 'fixed' },
-                headerStyle: { width: '45%' },
-                filter: textFilter()},
+            headerStyle: { width: '45%' }, filter: textFilter()},
             { dataField: 'simil_identity', text: i18n.t("similarity"), sort: true, style: { verticalAlign: 'middle' }},
             { dataField: 'simil_bit_score', text: i18n.t("bit_score"), sort: true, style: { verticalAlign: 'middle' }},
         ]
@@ -184,6 +183,14 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                 {this.onCellClicked(e, `${row.acc_id}`)}
             }
         };
+
+        const page_options = {
+            sizePerPageList: [{
+                text: '10', value: 10
+            }, {
+                text: '25', value: 25
+            }]
+        }
 
         //map&circle
         const mapStyles = {
@@ -273,7 +280,7 @@ export class SingleSeq extends React.Component<SequenceSearchProps, SequenceSear
                                     columns={ columns } 
                                     noDataIndication={i18n.t("no_data")}
                                     rowEvents={ rowEvents }
-                                    pagination={ paginationFactory() }
+                                    pagination={ paginationFactory(page_options) }
                                     filter={ filterFactory() } 
                                     />   
                             </Segment>
